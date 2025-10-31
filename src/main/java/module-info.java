@@ -1,7 +1,8 @@
 module co.edu.uniquindio.sameday {
     requires javafx.controls;
     requires javafx.fxml;
-
+    requires javafx.graphics;
+    requires jdk.sctp;
 
 
     opens co.edu.uniquindio.sameday to javafx.fxml;
