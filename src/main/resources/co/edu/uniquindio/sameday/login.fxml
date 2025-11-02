@@ -15,11 +15,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="327.0" prefWidth="487.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.sameday.controllers.LoginController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="368.0" prefWidth="487.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.sameday.controllers.LoginController">
    <left>
-      <AnchorPane prefHeight="315.0" prefWidth="177.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="320.0" prefWidth="185.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="327.0" fitWidth="181.0" pickOnBounds="true" smooth="false">
+            <ImageView fitHeight="368.0" fitWidth="181.0" pickOnBounds="true" smooth="false">
                <image>
                   <Image url="@Imagen/LogoSameDay.png" />
                </image>
@@ -28,7 +28,7 @@
       </AnchorPane>
    </left>
    <right>
-      <AnchorPane prefHeight="318.0" prefWidth="308.0" BorderPane.alignment="CENTER">
+      <AnchorPane prefHeight="367.0" prefWidth="327.0" BorderPane.alignment="CENTER">
          <children>
             <TextField fx:id="txtUsuario" layoutX="140.0" layoutY="95.0" />
             <Label layoutX="22.0" layoutY="93.0" text="Usuario:">
