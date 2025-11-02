@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
@@ -10,11 +15,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="292.0" prefWidth="487.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.sameday.controllers.LoginController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="327.0" prefWidth="487.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.sameday.controllers.LoginController">
    <left>
       <AnchorPane prefHeight="315.0" prefWidth="177.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="292.0" fitWidth="181.0" pickOnBounds="true" smooth="false">
+            <ImageView fitHeight="327.0" fitWidth="181.0" pickOnBounds="true" smooth="false">
                <image>
                   <Image url="@Imagen/LogoSameDay.png" />
                </image>
@@ -52,6 +57,7 @@
                   <Image url="@Imagen/Candado.png" />
                </image>
             </ImageView>
+            <Hyperlink fx:id="hyl" layoutX="104.0" layoutY="276.0" onAction="#onCrearCuenta" text="Crear una Cuenta" />
          </children>
       </AnchorPane>
    </right>
