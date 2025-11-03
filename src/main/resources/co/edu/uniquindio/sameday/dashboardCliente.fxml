@@ -1,14 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="co.edu.uniquindio.sameday.controllers.DashboardClienteController"
-            prefHeight="400.0" prefWidth="600.0">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="700.0" prefWidth="1200.0"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.sameday.controllers.DashboardClienteController">
 
-</AnchorPane>
+    <!-- MENÚ LATERAL IZQUIERDO -->
+    <left>
+        <VBox prefHeight="700.0" prefWidth="250.0" style="-fx-background-color: #1a1a2e;" BorderPane.alignment="CENTER">
+            <children>
+                <!-- HEADER CON LOGO Y TÍTULO -->
+                <VBox alignment="CENTER" prefHeight="120.0" prefWidth="250.0" style="-fx-background-color: #16213e;">
+                    <children>
+                        <Label text="SameDay" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="28.0" />
+                            </font>
+                        </Label>
+                        <Label text="Plataforma de Logística" textFill="#94a3b8">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Label>
+                        <!-- Información del usuario -->
+                        <Label fx:id="lblNombreUsuario" text="Usuario" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets top="10.0" />
+                            </VBox.margin>
+                        </Label>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" top="10.0" />
+                    </padding>
+                </VBox>
+
+                <!-- SEPARADOR -->
+                <Separator prefWidth="250.0" style="-fx-background-color: #2d3748;">
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                    </VBox.margin>
+                </Separator>
+
+                <!-- BOTÓN PRINCIPAL: CREAR ENVÍO -->
+                <Button fx:id="btnCrearEnvio" alignment="CENTER" mnemonicParsing="false" onAction="#onCrearEnvio"
+                        prefHeight="50.0" prefWidth="230.0"
+                        style="-fx-background-color: #6366f1; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-font-size: 14px;"
+                        text="+ Crear Envío">
+                    <VBox.margin>
+                        <Insets bottom="15.0" left="10.0" right="10.0" top="5.0" />
+                    </VBox.margin>
+                </Button>
+
+                <!-- SEPARADOR -->
+                <Separator prefWidth="250.0" style="-fx-background-color: #2d3748;">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                </Separator>
+
+                <!-- OPCIONES DEL MENÚ -->
+                <VBox prefHeight="400.0" prefWidth="250.0" spacing="5.0">
+                    <children>
+                        <!-- Opción: Envíos -->
+                        <Button fx:id="btnEnvios" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false"
+                                onAction="#onEnvios" prefHeight="45.0" prefWidth="250.0"
+                                style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;"
+                                text="📦  Envíos">
+                            <padding>
+                                <Insets left="20.0" />
+                            </padding>
+                        </Button>
+
+                        <!-- Opción: Pagos -->
+                        <Button fx:id="btnPagos" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false"
+                                onAction="#onPagos" prefHeight="45.0" prefWidth="250.0"
+                                style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;"
+                                text="💳  Pagos">
+                            <padding>
+                                <Insets left="20.0" />
+                            </padding>
+                        </Button>
+
+                        <!-- Opción: Historial de Envíos -->
+                        <Button fx:id="btnHistorial" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false"
+                                onAction="#onHistorial" prefHeight="45.0" prefWidth="250.0"
+                                style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;"
+                                text="📋  Historial de Envíos">
+                            <padding>
+                                <Insets left="20.0" />
+                            </padding>
+                        </Button>
+
+                        <!-- Opción: Direcciones -->
+                        <Button fx:id="btnDirecciones" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false"
+                                onAction="#onDirecciones" prefHeight="45.0" prefWidth="250.0"
+                                style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;"
+                                text="📍  Direcciones">
+                            <padding>
+                                <Insets left="20.0" />
+                            </padding>
+                        </Button>
+
+                        <!-- Opción: Editar Perfil -->
+                        <Button fx:id="btnEditarPerfil" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false"
+                                onAction="#onEditarPerfil" prefHeight="45.0" prefWidth="250.0"
+                                style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;"
+                                text="👤  Editar Perfil">
+                            <padding>
+                                <Insets left="20.0" />
+                            </padding>
+                        </Button>
+                    </children>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </VBox>
+
+                <!-- ESPACIADOR PARA EMPUJAR EL BOTÓN DE SALIR HACIA ABAJO -->
+                <Region VBox.vgrow="ALWAYS" />
+
+                <!-- SEPARADOR -->
+                <Separator prefWidth="250.0" style="-fx-background-color: #2d3748;">
+                    <VBox.margin>
+                        <Insets bottom="10.0" />
+                    </VBox.margin>
+                </Separator>
+
+                <!-- BOTÓN CERRAR SESIÓN -->
+                <Button fx:id="btnCerrarSesion" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false"
+                        onAction="#onCerrarSesion" prefHeight="45.0" prefWidth="250.0"
+                        style="-fx-background-color: transparent; -fx-text-fill: #ef4444; -fx-font-size: 14px; -fx-cursor: hand; -fx-font-weight: bold;"
+                        text="🚪  Cerrar Sesión">
+                    <padding>
+                        <Insets left="20.0" />
+                    </padding>
+                    <VBox.margin>
+                        <Insets bottom="15.0" />
+                    </VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+    </left>
+
+    <!-- ÁREA CENTRAL DONDE SE CARGARÁN LAS VISTAS -->
+    <center>
+        <AnchorPane fx:id="contentArea" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #f8fafc;" BorderPane.alignment="CENTER">
+            <children>
+                <!-- Vista de bienvenida por defecto -->
+                <VBox alignment="CENTER" prefHeight="700.0" prefWidth="950.0" spacing="20.0">
+                    <children>
+                        <Label text="¡Bienvenido a SameDay!" textFill="#1e293b">
+                            <font>
+                                <Font name="System Bold" size="32.0" />
+                            </font>
+                        </Label>
+                        <Label text="Selecciona una opción del menú lateral para comenzar" textFill="#64748b">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </center>
+
+</BorderPane>

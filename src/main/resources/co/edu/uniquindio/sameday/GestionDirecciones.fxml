@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #f8fafc;"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.sameday.controllers.GestionDireccionesController">
+
+    <children>
+        <!-- TÍTULO PRINCIPAL -->
+        <Label layoutX="30.0" layoutY="20.0" text="Gestión de Direcciones" textFill="#1e293b">
+            <font>
+                <Font name="System Bold" size="28.0" />
+            </font>
+        </Label>
+
+        <Label layoutX="30.0" layoutY="60.0" text="Administra las direcciones de origen y destino para tus envíos" textFill="#64748b">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+
+        <Separator layoutX="30.0" layoutY="90.0" prefWidth="890.0" />
+
+        <!-- FORMULARIO DE DIRECCIÓN -->
+        <VBox layoutX="30.0" layoutY="110.0" prefHeight="280.0" prefWidth="890.0" spacing="15.0"
+              style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            <children>
+                <!-- FILA 1: Alias y Tipo de Dirección -->
+                <HBox spacing="20.0">
+                    <children>
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="Alias / Nombre:" textFill="#334155">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txtAlias" prefHeight="35.0" promptText="Ej: Casa, Oficina Principal, Mi Apartamento" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="5.0" prefWidth="250.0">
+                            <children>
+                                <Label text="Tipo de Dirección:" textFill="#334155">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <ComboBox fx:id="cmbTipo" prefHeight="35.0" prefWidth="250.0" promptText="Seleccione tipo" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+
+                <!-- FILA 2: Dirección completa -->
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="Dirección (Calle, Carrera, Número):" textFill="#334155">
+                            <font>
+                                <Font name="System Bold" size="13.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="txtCalle" prefHeight="35.0" promptText="Ej: Calle 15 # 20-45" />
+                    </children>
+                </VBox>
+
+                <!-- FILA 3: Ciudad y Descripción del Lugar -->
+                <HBox spacing="20.0">
+                    <children>
+                        <VBox spacing="5.0" prefWidth="300.0">
+                            <children>
+                                <Label text="Municipio:" textFill="#334155">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <ComboBox fx:id="cmbCiudad" prefHeight="35.0" prefWidth="300.0" promptText="Seleccione municipio" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="5.0" prefWidth="250.0">
+                            <children>
+                                <Label text="Descripción del Lugar:" textFill="#334155">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txtDescripcionLugar" prefHeight="35.0" promptText="Casa, Oficina, Local, etc." />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="Info Adicional:" textFill="#334155">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txtInfoAdicional" prefHeight="35.0" promptText="Torre, Apto, Piso (opcional)" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <HBox layoutX="30.0" layoutY="410.0" spacing="15.0">
+            <children>
+                <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#onAgregar"
+                        prefHeight="40.0" prefWidth="150.0"
+                        style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"
+                        text="➕ Agregar">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Button>
+
+                <Button fx:id="btnActualizar" mnemonicParsing="false" onAction="#onActualizar"
+                        prefHeight="40.0" prefWidth="150.0"
+                        style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"
+                        text="✏️ Actualizar">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Button>
+
+                <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#onLimpiar"
+                        prefHeight="40.0" prefWidth="150.0"
+                        style="-fx-background-color: #6b7280; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"
+                        text="🔄 Limpiar">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Button>
+            </children>
+        </HBox>
+
+        <!-- TABLA DE DIRECCIONES -->
+        <VBox layoutX="30.0" layoutY="470.0" prefHeight="200.0" prefWidth="890.0" spacing="10.0">
+            <children>
+                <Label text="Direcciones Registradas" textFill="#1e293b">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+
+                <TableView fx:id="tablaDirecciones" prefHeight="140.0" prefWidth="890.0">
+                    <columns>
+                        <TableColumn fx:id="colAlias" prefWidth="120.0" text="Alias" />
+                        <TableColumn fx:id="colTipo" prefWidth="100.0" text="Tipo" />
+                        <TableColumn fx:id="colCalle" prefWidth="250.0" text="Dirección" />
+                        <TableColumn fx:id="colCiudad" prefWidth="120.0" text="Municipio" />
+                        <TableColumn fx:id="colDescripcion" prefWidth="120.0" text="Descripción" />
+                        <TableColumn fx:id="colInfoAdicional" prefWidth="180.0" text="Info Adicional" />
+                    </columns>
+                </TableView>
+
+                <!-- BOTÓN ELIMINAR -->
+                <HBox alignment="CENTER_RIGHT">
+                    <children>
+                        <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#onEliminar"
+                                prefHeight="35.0" prefWidth="130.0"
+                                style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"
+                                text="🗑️ Eliminar">
+                            <font>
+                                <Font size="13.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
