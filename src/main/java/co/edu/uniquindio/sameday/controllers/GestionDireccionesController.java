@@ -1,6 +1,7 @@
 package co.edu.uniquindio.sameday.controllers;
 
 import co.edu.uniquindio.sameday.models.SameDay;
+import co.edu.uniquindio.sameday.models.entities.Address;
 import co.edu.uniquindio.sameday.models.AddressType;
 import co.edu.uniquindio.sameday.models.City;
 import javafx.collections.FXCollections;
@@ -20,10 +21,10 @@ public class GestionDireccionesController {
     private SameDay sameDay = SameDay.getInstance();
 
     // Lista observable para la tabla
-    private ObservableList<co.edu.uniquindio.sameday.models.entities.Address> addressList = FXCollections.observableArrayList();
+    private ObservableList<Address> addressList = FXCollections.observableArrayList();
 
     // Dirección seleccionada para editar
-    private co.edu.uniquindio.sameday.models.entities.Address selectedAddress = null;
+    private Address selectedAddress = null;
 
     // ==================== COMPONENTES FXML ====================
 
@@ -32,9 +33,6 @@ public class GestionDireccionesController {
 
     @FXML
     private TextField txtCalle;
-
-    @FXML
-    private TextField txtDescripcionLugar;
 
     @FXML
     private TextField txtInfoAdicional;
@@ -50,9 +48,6 @@ public class GestionDireccionesController {
 
     @FXML
     private Button btnActualizar;
-
-    @FXML
-    private Button btnLimpiar;
 
     @FXML
     private Button btnEliminar;
@@ -73,16 +68,10 @@ public class GestionDireccionesController {
     private TableColumn<Address, City> colCiudad;
 
     @FXML
-    private TableColumn<Address, String> colDescripcion;
-
-    @FXML
     private TableColumn<Address, String> colInfoAdicional;
 
     // ==================== INICIALIZACIÓN ====================
 
-    /**
-     * Método de inicialización que se ejecuta automáticamente al cargar el FXML
-     */
     @FXML
     void initialize() {
         configureComboBoxes();
@@ -92,30 +81,20 @@ public class GestionDireccionesController {
         btnActualizar.setDisable(true);
     }
 
-    /**
-     * Configura los ComboBoxes con los valores de los enums
-     */
     private void configureComboBoxes() {
         cmbTipo.setItems(FXCollections.observableArrayList(AddressType.values()));
         cmbCiudad.setItems(FXCollections.observableArrayList(City.values()));
     }
 
-    /**
-     * Configura las columnas de la tabla
-     */
     private void configureTable() {
         colAlias.setCellValueFactory(new PropertyValueFactory<>("alias"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("type"));
         colCalle.setCellValueFactory(new PropertyValueFactory<>("street"));
         colCiudad.setCellValueFactory(new PropertyValueFactory<>("city"));
-        colDescripcion.setCellValueFactory(new PropertyValueFactory<>("placeDescription"));
         colInfoAdicional.setCellValueFactory(new PropertyValueFactory<>("additionalInfo"));
         tablaDirecciones.setItems(addressList);
     }
 
-    /**
-     * Configura el listener para la selección de filas en la tabla
-     */
     private void configureTableSelection() {
         tablaDirecciones.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
@@ -129,13 +108,9 @@ public class GestionDireccionesController {
         );
     }
 
-    /**
-     * Carga una dirección seleccionada en el formulario para edición
-     */
     private void loadAddressInForm(Address address) {
         txtAlias.setText(address.getAlias());
         txtCalle.setText(address.getStreet());
-        txtDescripcionLugar.setText(address.getPlaceDescription());
         txtInfoAdicional.setText(address.getAdditionalInfo());
         cmbTipo.setValue(address.getType());
         cmbCiudad.setValue(address.getCity());
@@ -145,6 +120,7 @@ public class GestionDireccionesController {
 
     /**
      * Agrega una nueva dirección al sistema
+     * Se actualiza automáticamente la tabla y se limpian los campos
      */
     @FXML
     void onAgregar(ActionEvent event) {
@@ -154,19 +130,28 @@ public class GestionDireccionesController {
 
         String id = generateAddressId();
 
+        // Crear nueva dirección sin descripción del lugar
         Address newAddress = new Address(
                 id,
                 txtAlias.getText().trim(),
                 txtCalle.getText().trim(),
                 cmbCiudad.getValue(),
                 cmbTipo.getValue(),
-                txtDescripcionLugar.getText().trim(),
+                "Sin descripción",  // Valor por defecto
                 txtInfoAdicional.getText().trim()
         );
 
+        // Agregar al sistema
         sameDay.addAddress(newAddress);
+
+        // Actualizar la tabla inmediatamente
         addressList.add(newAddress);
+        tablaDirecciones.refresh();
+
+        // Mostrar mensaje de éxito
         showAlert("Éxito", "Dirección agregada correctamente", Alert.AlertType.INFORMATION);
+
+        // Limpiar campos automáticamente
         clearForm();
     }
 
@@ -188,7 +173,6 @@ public class GestionDireccionesController {
         selectedAddress.setStreet(txtCalle.getText().trim());
         selectedAddress.setCity(cmbCiudad.getValue());
         selectedAddress.setType(cmbTipo.getValue());
-        selectedAddress.setPlaceDescription(txtDescripcionLugar.getText().trim());
         selectedAddress.setAdditionalInfo(txtInfoAdicional.getText().trim());
 
         sameDay.updateAddress(selectedAddress);
@@ -217,17 +201,10 @@ public class GestionDireccionesController {
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             sameDay.deleteAddress(selected.getId());
             addressList.remove(selected);
+            tablaDirecciones.refresh();
             showAlert("Éxito", "Dirección eliminada correctamente", Alert.AlertType.INFORMATION);
             clearForm();
         }
-    }
-
-    /**
-     * Limpia el formulario
-     */
-    @FXML
-    void onLimpiar(ActionEvent event) {
-        clearForm();
     }
 
     // ==================== MÉTODOS AUXILIARES ====================
@@ -238,7 +215,6 @@ public class GestionDireccionesController {
     private void clearForm() {
         txtAlias.clear();
         txtCalle.clear();
-        txtDescripcionLugar.clear();
         txtInfoAdicional.clear();
         cmbTipo.setValue(null);
         cmbCiudad.setValue(null);
@@ -273,12 +249,6 @@ public class GestionDireccionesController {
         if (cmbCiudad.getValue() == null) {
             showAlert("Campos Incompletos", "Debe seleccionar el municipio", Alert.AlertType.WARNING);
             cmbCiudad.requestFocus();
-            return false;
-        }
-
-        if (txtDescripcionLugar.getText().trim().isEmpty()) {
-            showAlert("Campos Incompletos", "Debe ingresar la descripción del lugar", Alert.AlertType.WARNING);
-            txtDescripcionLugar.requestFocus();
             return false;
         }
 

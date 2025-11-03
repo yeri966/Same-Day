@@ -1,5 +1,6 @@
 package co.edu.uniquindio.sameday.models;
 
+import co.edu.uniquindio.sameday.models.entities.Address;
 import java.util.ArrayList;
 
 /**
@@ -10,6 +11,7 @@ public class SameDay {
 
     private static SameDay instance;
     private ArrayList<Person> listPersons;
+    private ArrayList<Address> listAddresses;  // NUEVO
 
     /**
      * Constructor privado para implementar el patrón Singleton
@@ -17,6 +19,7 @@ public class SameDay {
      */
     private SameDay() {
         listPersons = new ArrayList<>();
+        listAddresses = new ArrayList<>();  // NUEVO
         cargarDatos();
     }
 
@@ -56,6 +59,14 @@ public class SameDay {
         admin1.setUser(user3);
         user3.setPerson(admin1);
         agregarPersona(admin1);
+
+        // Cargar direcciones de prueba
+        Address dir1 = new Address("DIR001", "Mi Casa", "Calle 15 # 20-45",
+                City.ARMENIA, AddressType.REMITENTE, "Casa", "Torre 3, Apto 501");
+        Address dir2 = new Address("DIR002", "Oficina Principal", "Carrera 14 # 10-20",
+                City.ARMENIA, AddressType.DESTINATARIO, "Oficina", "Piso 2");
+        addAddress(dir1);
+        addAddress(dir2);
     }
 
     /**
@@ -96,5 +107,40 @@ public class SameDay {
      */
     public void setListPersons(ArrayList<Person> listPersons) {
         this.listPersons = listPersons;
+    }
+
+    // ========== MÉTODOS PARA GESTIONAR DIRECCIONES ==========
+
+    /**
+     * Agrega una nueva dirección al sistema
+     */
+    public void addAddress(Address address) {
+        listAddresses.add(address);
+    }
+
+    /**
+     * Actualiza una dirección existente
+     */
+    public void updateAddress(Address address) {
+        for (int i = 0; i < listAddresses.size(); i++) {
+            if (listAddresses.get(i).getId().equals(address.getId())) {
+                listAddresses.set(i, address);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Elimina una dirección del sistema
+     */
+    public boolean deleteAddress(String addressId) {
+        return listAddresses.removeIf(address -> address.getId().equals(addressId));
+    }
+
+    /**
+     * Obtiene todas las direcciones del sistema
+     */
+    public ArrayList<Address> getListAddresses() {
+        return listAddresses;
     }
 }

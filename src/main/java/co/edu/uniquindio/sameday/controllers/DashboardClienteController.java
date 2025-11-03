@@ -3,6 +3,7 @@ package co.edu.uniquindio.sameday.controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -69,8 +70,7 @@ public class DashboardClienteController {
     void onCrearEnvio(ActionEvent event) {
         System.out.println("Crear Envío clickeado");
         cambiarEstiloBotonActivo(btnCrearEnvio);
-        // Aquí cargarás la vista de crear envío
-        cargarVista("Crear Envío - Próximamente");
+        cargarVistaProximamente("Crear Envío - Próximamente");
     }
 
     /**
@@ -80,7 +80,7 @@ public class DashboardClienteController {
     void onEnvios(ActionEvent event) {
         System.out.println("Envíos clickeado");
         cambiarEstiloBotonActivo(btnEnvios);
-        cargarVista("Lista de Envíos - Próximamente");
+        cargarVistaProximamente("Lista de Envíos - Próximamente");
     }
 
     /**
@@ -90,7 +90,7 @@ public class DashboardClienteController {
     void onPagos(ActionEvent event) {
         System.out.println("Pagos clickeado");
         cambiarEstiloBotonActivo(btnPagos);
-        cargarVista("Pagos - Próximamente");
+        cargarVistaProximamente("Pagos - Próximamente");
     }
 
     /**
@@ -100,7 +100,7 @@ public class DashboardClienteController {
     void onHistorial(ActionEvent event) {
         System.out.println("Historial clickeado");
         cambiarEstiloBotonActivo(btnHistorial);
-        cargarVista("Historial de Envíos - Próximamente");
+        cargarVistaProximamente("Historial de Envíos - Próximamente");
     }
 
     /**
@@ -110,7 +110,8 @@ public class DashboardClienteController {
     void onDirecciones(ActionEvent event) {
         System.out.println("Direcciones clickeado");
         cambiarEstiloBotonActivo(btnDirecciones);
-        cargarVista("Direcciones - Próximamente");
+        // Cargar el FXML de gestión de direcciones
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/GestionDirecciones.fxml");
     }
 
     /**
@@ -120,7 +121,7 @@ public class DashboardClienteController {
     void onEditarPerfil(ActionEvent event) {
         System.out.println("Editar Perfil clickeado");
         cambiarEstiloBotonActivo(btnEditarPerfil);
-        cargarVista("Editar Perfil - Próximamente");
+        cargarVistaProximamente("Editar Perfil - Próximamente");
     }
 
     /**
@@ -183,20 +184,51 @@ public class DashboardClienteController {
     }
 
     /**
-     * Carga una vista temporal en el área de contenido
-     * Más adelante este método cargará archivos FXML específicos
+     * Carga una vista FXML en el área de contenido central
+     * Este método carga el FXML dentro del AnchorPane contentArea
+     * @param fxmlPath Ruta del archivo FXML a cargar
+     */
+    private void cargarVistaEnContentArea(String fxmlPath) {
+        try {
+            // Cargar el archivo FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Node vista = loader.load();
+
+            // Limpiar el área de contenido
+            contentArea.getChildren().clear();
+
+            // Agregar la nueva vista
+            contentArea.getChildren().add(vista);
+
+            // Hacer que la vista ocupe todo el espacio disponible
+            AnchorPane.setTopAnchor(vista, 0.0);
+            AnchorPane.setBottomAnchor(vista, 0.0);
+            AnchorPane.setLeftAnchor(vista, 0.0);
+            AnchorPane.setRightAnchor(vista, 0.0);
+
+            System.out.println("Vista cargada exitosamente: " + fxmlPath);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo cargar la vista: " + fxmlPath, Alert.AlertType.ERROR);
+        }
+    }
+
+    /**
+     * Carga una vista temporal de "Próximamente" en el área de contenido
      * @param mensaje El mensaje a mostrar temporalmente
      */
-    private void cargarVista(String mensaje) {
-        // Por ahora solo mostramos un mensaje
-        // Más adelante aquí cargaremos los FXML específicos de cada sección
+    private void cargarVistaProximamente(String mensaje) {
+        // Limpiar el área de contenido
         contentArea.getChildren().clear();
 
+        // Crear un label con el mensaje
         Label label = new Label(mensaje);
         label.setStyle("-fx-font-size: 24px; -fx-text-fill: #1e293b;");
         label.setLayoutX(300);
         label.setLayoutY(300);
 
+        // Agregar el label al contentArea
         contentArea.getChildren().add(label);
     }
 

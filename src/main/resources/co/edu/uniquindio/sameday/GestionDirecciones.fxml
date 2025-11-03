@@ -27,7 +27,7 @@
         <Separator layoutX="30.0" layoutY="90.0" prefWidth="890.0" />
 
         <!-- FORMULARIO DE DIRECCIÓN -->
-        <VBox layoutX="30.0" layoutY="110.0" prefHeight="280.0" prefWidth="890.0" spacing="15.0"
+        <VBox layoutX="30.0" layoutY="110.0" prefHeight="220.0" prefWidth="890.0" spacing="15.0"
               style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
             <padding>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -72,28 +72,17 @@
                     </children>
                 </VBox>
 
-                <!-- FILA 3: Ciudad y Descripción del Lugar -->
+                <!-- FILA 3: Ciudad e Info Adicional -->
                 <HBox spacing="20.0">
                     <children>
-                        <VBox spacing="5.0" prefWidth="300.0">
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label text="Municipio:" textFill="#334155">
                                     <font>
                                         <Font name="System Bold" size="13.0" />
                                     </font>
                                 </Label>
-                                <ComboBox fx:id="cmbCiudad" prefHeight="35.0" prefWidth="300.0" promptText="Seleccione municipio" />
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="5.0" prefWidth="250.0">
-                            <children>
-                                <Label text="Descripción del Lugar:" textFill="#334155">
-                                    <font>
-                                        <Font name="System Bold" size="13.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="txtDescripcionLugar" prefHeight="35.0" promptText="Casa, Oficina, Local, etc." />
+                                <ComboBox fx:id="cmbCiudad" prefHeight="35.0" prefWidth="400.0" promptText="Seleccione municipio" />
                             </children>
                         </VBox>
 
@@ -112,8 +101,8 @@
             </children>
         </VBox>
 
-        <!-- BOTONES DE ACCIÓN -->
-        <HBox layoutX="30.0" layoutY="410.0" spacing="15.0">
+        <!-- BOTONES DE ACCIÓN (SIN BOTÓN LIMPIAR) -->
+        <HBox layoutX="30.0" layoutY="350.0" spacing="15.0">
             <children>
                 <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#onAgregar"
                         prefHeight="40.0" prefWidth="150.0"
@@ -132,20 +121,11 @@
                         <Font size="14.0" />
                     </font>
                 </Button>
-
-                <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#onLimpiar"
-                        prefHeight="40.0" prefWidth="150.0"
-                        style="-fx-background-color: #6b7280; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"
-                        text="🔄 Limpiar">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Button>
             </children>
         </HBox>
 
         <!-- TABLA DE DIRECCIONES -->
-        <VBox layoutX="30.0" layoutY="470.0" prefHeight="200.0" prefWidth="890.0" spacing="10.0">
+        <VBox layoutX="30.0" layoutY="410.0" prefHeight="270.0" prefWidth="890.0" spacing="10.0">
             <children>
                 <Label text="Direcciones Registradas" textFill="#1e293b">
                     <font>
@@ -153,13 +133,12 @@
                     </font>
                 </Label>
 
-                <TableView fx:id="tablaDirecciones" prefHeight="140.0" prefWidth="890.0">
+                <TableView fx:id="tablaDirecciones" prefHeight="210.0" prefWidth="890.0">
                     <columns>
-                        <TableColumn fx:id="colAlias" prefWidth="120.0" text="Alias" />
-                        <TableColumn fx:id="colTipo" prefWidth="100.0" text="Tipo" />
-                        <TableColumn fx:id="colCalle" prefWidth="250.0" text="Dirección" />
-                        <TableColumn fx:id="colCiudad" prefWidth="120.0" text="Municipio" />
-                        <TableColumn fx:id="colDescripcion" prefWidth="120.0" text="Descripción" />
+                        <TableColumn fx:id="colAlias" prefWidth="150.0" text="Alias" />
+                        <TableColumn fx:id="colTipo" prefWidth="120.0" text="Tipo" />
+                        <TableColumn fx:id="colCalle" prefWidth="300.0" text="Dirección" />
+                        <TableColumn fx:id="colCiudad" prefWidth="140.0" text="Municipio" />
                         <TableColumn fx:id="colInfoAdicional" prefWidth="180.0" text="Info Adicional" />
                     </columns>
                 </TableView>
