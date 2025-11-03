@@ -101,7 +101,7 @@
             </children>
         </VBox>
 
-        <!-- BOTONES DE ACCIÓN (SIN BOTÓN LIMPIAR) -->
+        <!-- BOTONES DE ACCIÓN -->
         <HBox layoutX="30.0" layoutY="350.0" spacing="15.0">
             <children>
                 <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#onAgregar"
@@ -124,7 +124,7 @@
             </children>
         </HBox>
 
-        <!-- TABLA DE DIRECCIONES -->
+        <!-- TABLA DE DIRECCIONES CON ESTILOS CORREGIDOS -->
         <VBox layoutX="30.0" layoutY="410.0" prefHeight="270.0" prefWidth="890.0" spacing="10.0">
             <children>
                 <Label text="Direcciones Registradas" textFill="#1e293b">
@@ -133,13 +133,20 @@
                     </font>
                 </Label>
 
-                <TableView fx:id="tablaDirecciones" prefHeight="210.0" prefWidth="890.0">
+                <!-- TABLA CON ESTILO PARA TEXTO VISIBLE -->
+                <TableView fx:id="tablaDirecciones" prefHeight="210.0" prefWidth="890.0"
+                           style="-fx-background-color: white; -fx-text-fill: #1e293b;">
                     <columns>
-                        <TableColumn fx:id="colAlias" prefWidth="150.0" text="Alias" />
-                        <TableColumn fx:id="colTipo" prefWidth="120.0" text="Tipo" />
-                        <TableColumn fx:id="colCalle" prefWidth="300.0" text="Dirección" />
-                        <TableColumn fx:id="colCiudad" prefWidth="140.0" text="Municipio" />
-                        <TableColumn fx:id="colInfoAdicional" prefWidth="180.0" text="Info Adicional" />
+                        <TableColumn fx:id="colAlias" prefWidth="150.0" text="Alias"
+                                     style="-fx-text-fill: #1e293b; -fx-alignment: CENTER-LEFT;" />
+                        <TableColumn fx:id="colTipo" prefWidth="120.0" text="Tipo"
+                                     style="-fx-text-fill: #1e293b; -fx-alignment: CENTER;" />
+                        <TableColumn fx:id="colCalle" prefWidth="300.0" text="Dirección"
+                                     style="-fx-text-fill: #1e293b; -fx-alignment: CENTER-LEFT;" />
+                        <TableColumn fx:id="colCiudad" prefWidth="140.0" text="Municipio"
+                                     style="-fx-text-fill: #1e293b; -fx-alignment: CENTER;" />
+                        <TableColumn fx:id="colInfoAdicional" prefWidth="180.0" text="Info Adicional"
+                                     style="-fx-text-fill: #1e293b; -fx-alignment: CENTER-LEFT;" />
                     </columns>
                 </TableView>
 

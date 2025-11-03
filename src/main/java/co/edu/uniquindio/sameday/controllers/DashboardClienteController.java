@@ -121,7 +121,8 @@ public class DashboardClienteController {
     void onEditarPerfil(ActionEvent event) {
         System.out.println("Editar Perfil clickeado");
         cambiarEstiloBotonActivo(btnEditarPerfil);
-        cargarVistaProximamente("Editar Perfil - Próximamente");
+        // Cargar el FXML de editar perfil
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/EditarPerfil.fxml");
     }
 
     /**

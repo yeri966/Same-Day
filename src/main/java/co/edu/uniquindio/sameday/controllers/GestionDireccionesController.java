@@ -10,20 +10,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.beans.property.SimpleStringProperty;
 
-/**
- * Controlador para la gestión de direcciones en el sistema
- * Permite realizar operaciones CRUD sobre las direcciones
- */
+
 public class GestionDireccionesController {
 
-    // Referencia al modelo principal (Singleton)
     private SameDay sameDay = SameDay.getInstance();
 
-    // Dirección seleccionada para editar
+
     private Address selectedAddress = null;
 
-    // ==================== COMPONENTES FXML ====================
 
     @FXML
     private TextField txtAlias;
@@ -56,26 +52,27 @@ public class GestionDireccionesController {
     private TableColumn<Address, String> colAlias;
 
     @FXML
-    private TableColumn<Address, AddressType> colTipo;
+    private TableColumn<Address, String> colTipo;
 
     @FXML
     private TableColumn<Address, String> colCalle;
 
     @FXML
-    private TableColumn<Address, City> colCiudad;
+    private TableColumn<Address, String> colCiudad;
 
     @FXML
     private TableColumn<Address, String> colInfoAdicional;
 
-    // ==================== INICIALIZACIÓN ====================
 
     @FXML
     void initialize() {
+        System.out.println("=== INICIALIZANDO CONTROLADOR ===");
         configureComboBoxes();
         configureTable();
-        loadTable();  // CAMBIO: usar loadTable en lugar de loadAddresses
+        loadTable();
         configureTableSelection();
         btnActualizar.setDisable(true);
+        System.out.println("=== INICIALIZACIÓN COMPLETA ===");
     }
 
     private void configureComboBoxes() {
@@ -84,11 +81,46 @@ public class GestionDireccionesController {
     }
 
     private void configureTable() {
-        colAlias.setCellValueFactory(new PropertyValueFactory<>("alias"));
-        colTipo.setCellValueFactory(new PropertyValueFactory<>("type"));
-        colCalle.setCellValueFactory(new PropertyValueFactory<>("street"));
-        colCiudad.setCellValueFactory(new PropertyValueFactory<>("city"));
-        colInfoAdicional.setCellValueFactory(new PropertyValueFactory<>("additionalInfo"));
+        System.out.println("Configurando columnas de la tabla...");
+
+        // Configurar columna Alias
+        colAlias.setCellValueFactory(cellData -> {
+            String alias = cellData.getValue().getAlias();
+            System.out.println("  Alias: " + alias);
+            return new SimpleStringProperty(alias != null ? alias : "");
+        });
+
+        // Configurar columna Tipo
+        colTipo.setCellValueFactory(cellData -> {
+            AddressType type = cellData.getValue().getType();
+            String typeStr = type != null ? type.toString() : "";
+            System.out.println("  Tipo: " + typeStr);
+            return new SimpleStringProperty(typeStr);
+        });
+
+        // Configurar columna Dirección (Calle)
+        colCalle.setCellValueFactory(cellData -> {
+            String street = cellData.getValue().getStreet();
+            System.out.println("  Calle: " + street);
+            return new SimpleStringProperty(street != null ? street : "");
+        });
+
+        // Configurar columna Ciudad
+        colCiudad.setCellValueFactory(cellData -> {
+            City city = cellData.getValue().getCity();
+            String cityStr = city != null ? city.toString() : "";
+            System.out.println("  Ciudad: " + cityStr);
+            return new SimpleStringProperty(cityStr);
+        });
+
+        // Configurar columna Info Adicional
+        colInfoAdicional.setCellValueFactory(cellData -> {
+            String info = cellData.getValue().getAdditionalInfo();
+            System.out.println("  Info Adicional: " + info);
+            return new SimpleStringProperty(info != null ? info : "");
+        });
+
+        System.out.println("Columnas configuradas correctamente");
     }
 
     private void configureTableSelection() {
@@ -112,8 +144,6 @@ public class GestionDireccionesController {
         cmbCiudad.setValue(address.getCity());
     }
 
-    // ==================== OPERACIONES CRUD ====================
-
     /**
      * Agrega una nueva dirección al sistema
      * Se actualiza automáticamente la tabla y se limpian los campos
@@ -136,6 +166,8 @@ public class GestionDireccionesController {
                 "Sin descripción",
                 txtInfoAdicional.getText().trim()
         );
+
+        System.out.println("Agregando dirección: " + newAddress.toString());
 
         // Agregar al sistema
         sameDay.addAddress(newAddress);
@@ -209,8 +241,6 @@ public class GestionDireccionesController {
         }
     }
 
-    // ==================== MÉTODOS AUXILIARES ====================
-
     /**
      * Limpia todos los campos del formulario
      */
@@ -259,9 +289,21 @@ public class GestionDireccionesController {
 
     /**
      * Carga/Recarga la tabla con los datos actuales de SameDay
-     * Similar a loadTable() en InmobiliariaViewController
      */
     public void loadTable() {
+        System.out.println("\n=== CARGANDO TABLA ===");
+        System.out.println("Número de direcciones en SameDay: " + sameDay.getListAddresses().size());
+
+        // Imprimir todas las direcciones para debug
+        for (Address addr : sameDay.getListAddresses()) {
+            System.out.println("Dirección: " + addr.getId() +
+                    " | Alias: " + addr.getAlias() +
+                    " | Tipo: " + addr.getType() +
+                    " | Calle: " + addr.getStreet() +
+                    " | Ciudad: " + addr.getCity() +
+                    " | Info: " + addr.getAdditionalInfo());
+        }
+
         // Crear una nueva ObservableList con los datos actuales
         ObservableList<Address> addressList = FXCollections.observableArrayList(sameDay.getListAddresses());
 
@@ -270,6 +312,9 @@ public class GestionDireccionesController {
 
         // Refrescar la tabla
         tablaDirecciones.refresh();
+
+        System.out.println("Items en la tabla: " + tablaDirecciones.getItems().size());
+        System.out.println("=== TABLA CARGADA ===\n");
     }
 
     /**
