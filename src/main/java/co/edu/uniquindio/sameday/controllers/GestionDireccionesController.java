@@ -20,9 +20,6 @@ public class GestionDireccionesController {
     // Referencia al modelo principal (Singleton)
     private SameDay sameDay = SameDay.getInstance();
 
-    // Lista observable para la tabla
-    private ObservableList<Address> addressList = FXCollections.observableArrayList();
-
     // Dirección seleccionada para editar
     private Address selectedAddress = null;
 
@@ -76,7 +73,7 @@ public class GestionDireccionesController {
     void initialize() {
         configureComboBoxes();
         configureTable();
-        loadAddresses();
+        loadTable();  // CAMBIO: usar loadTable en lugar de loadAddresses
         configureTableSelection();
         btnActualizar.setDisable(true);
     }
@@ -92,7 +89,6 @@ public class GestionDireccionesController {
         colCalle.setCellValueFactory(new PropertyValueFactory<>("street"));
         colCiudad.setCellValueFactory(new PropertyValueFactory<>("city"));
         colInfoAdicional.setCellValueFactory(new PropertyValueFactory<>("additionalInfo"));
-        tablaDirecciones.setItems(addressList);
     }
 
     private void configureTableSelection() {
@@ -137,19 +133,18 @@ public class GestionDireccionesController {
                 txtCalle.getText().trim(),
                 cmbCiudad.getValue(),
                 cmbTipo.getValue(),
-                "Sin descripción",  // Valor por defecto
+                "Sin descripción",
                 txtInfoAdicional.getText().trim()
         );
 
         // Agregar al sistema
         sameDay.addAddress(newAddress);
 
-        // Actualizar la tabla inmediatamente
-        addressList.add(newAddress);
-        tablaDirecciones.refresh();
-
         // Mostrar mensaje de éxito
         showAlert("Éxito", "Dirección agregada correctamente", Alert.AlertType.INFORMATION);
+
+        // Recargar la tabla completa desde SameDay
+        loadTable();
 
         // Limpiar campos automáticamente
         clearForm();
@@ -176,8 +171,12 @@ public class GestionDireccionesController {
         selectedAddress.setAdditionalInfo(txtInfoAdicional.getText().trim());
 
         sameDay.updateAddress(selectedAddress);
-        tablaDirecciones.refresh();
+
         showAlert("Éxito", "Dirección actualizada correctamente", Alert.AlertType.INFORMATION);
+
+        // Recargar la tabla
+        loadTable();
+
         clearForm();
     }
 
@@ -200,9 +199,12 @@ public class GestionDireccionesController {
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             sameDay.deleteAddress(selected.getId());
-            addressList.remove(selected);
-            tablaDirecciones.refresh();
+
             showAlert("Éxito", "Dirección eliminada correctamente", Alert.AlertType.INFORMATION);
+
+            // Recargar la tabla
+            loadTable();
+
             clearForm();
         }
     }
@@ -256,11 +258,18 @@ public class GestionDireccionesController {
     }
 
     /**
-     * Carga las direcciones desde el sistema a la tabla
+     * Carga/Recarga la tabla con los datos actuales de SameDay
+     * Similar a loadTable() en InmobiliariaViewController
      */
-    private void loadAddresses() {
-        addressList.clear();
-        addressList.addAll(sameDay.getListAddresses());
+    public void loadTable() {
+        // Crear una nueva ObservableList con los datos actuales
+        ObservableList<Address> addressList = FXCollections.observableArrayList(sameDay.getListAddresses());
+
+        // Asignar a la tabla
+        tablaDirecciones.setItems(addressList);
+
+        // Refrescar la tabla
+        tablaDirecciones.refresh();
     }
 
     /**
