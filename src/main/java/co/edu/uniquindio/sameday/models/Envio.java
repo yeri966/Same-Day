@@ -1,6 +1,5 @@
 package co.edu.uniquindio.sameday.models;
 
-import co.edu.uniquindio.sameday.models.ServicioAdicional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

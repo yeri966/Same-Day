@@ -1,32 +1,21 @@
 package co.edu.uniquindio.sameday.models;
 
-import co.edu.uniquindio.sameday.models.entities.Address;
 import java.util.ArrayList;
 
-/**
- * Clase principal del sistema que gestiona todos los usuarios (Singleton)
- * Mantiene una lista de todas las personas registradas en la plataforma
- */
 public class SameDay {
 
     private static SameDay instance;
     private ArrayList<Person> listPersons;
-    private ArrayList<Address> listAddresses;  // NUEVO
+    private ArrayList<Address> listAddresses;
+    private ArrayList<Envio> listEnvios;
 
-    /**
-     * Constructor privado para implementar el patrón Singleton
-     * Inicializa la lista de personas y carga datos de prueba
-     */
     private SameDay() {
         listPersons = new ArrayList<>();
-        listAddresses = new ArrayList<>();  // NUEVO
+        listAddresses = new ArrayList<>();
+        listEnvios = new ArrayList<>();
         cargarDatos();
     }
 
-    /**
-     * Método para obtener la única instancia de SameDay (Singleton)
-     * @return La instancia única de SameDay
-     */
     public static SameDay getInstance() {
         if (instance == null) {
             instance = new SameDay();
@@ -34,10 +23,6 @@ public class SameDay {
         return instance;
     }
 
-    /**
-     * Método que carga datos iniciales de prueba en el sistema
-     * Crea usuarios de tipo Cliente, Repartidor y Administrador
-     */
     public void cargarDatos() {
         // Crear Cliente de prueba
         User user1 = new User("cristian", "1010", null, TipoUsuario.CLIENTE);
@@ -69,20 +54,10 @@ public class SameDay {
         addAddress(dir2);
     }
 
-    /**
-     * Agrega una nueva persona al sistema
-     * @param person La persona a agregar (puede ser Client, Dealer o Admin)
-     */
     public void agregarPersona(Person person) {
         listPersons.add(person);
     }
 
-    /**
-     * Valida las credenciales de un usuario
-     * @param usuario Nombre de usuario
-     * @param contrasenia Contraseña del usuario
-     * @return La persona si las credenciales son correctas, null en caso contrario
-     */
     public Person validarUsuario(String usuario, String contrasenia) {
         for (Person person : listPersons) {
             if (person.getUser().getUsuario().equals(usuario) &&
@@ -93,34 +68,19 @@ public class SameDay {
         return null;
     }
 
-    /**
-     * Obtiene la lista de todas las personas registradas
-     * @return ArrayList con todas las personas del sistema
-     */
     public ArrayList<Person> getListPersons() {
         return listPersons;
     }
 
-    /**
-     * Establece la lista de personas (útil para cargar datos desde archivo)
-     * @param listPersons Nueva lista de personas
-     */
     public void setListPersons(ArrayList<Person> listPersons) {
         this.listPersons = listPersons;
     }
 
-    // ========== MÉTODOS PARA GESTIONAR DIRECCIONES ==========
-
-    /**
-     * Agrega una nueva dirección al sistema
-     */
+    // MÉTODOS PARA DIRECCIONES
     public void addAddress(Address address) {
         listAddresses.add(address);
     }
 
-    /**
-     * Actualiza una dirección existente
-     */
     public void updateAddress(Address address) {
         for (int i = 0; i < listAddresses.size(); i++) {
             if (listAddresses.get(i).getId().equals(address.getId())) {
@@ -130,17 +90,33 @@ public class SameDay {
         }
     }
 
-    /**
-     * Elimina una dirección del sistema
-     */
     public boolean deleteAddress(String addressId) {
         return listAddresses.removeIf(address -> address.getId().equals(addressId));
     }
 
-    /**
-     * Obtiene todas las direcciones del sistema
-     */
     public ArrayList<Address> getListAddresses() {
         return listAddresses;
+    }
+
+    // MÉTODOS PARA ENVÍOS (NUEVO)
+    public void addEnvio(Envio envio) {
+        listEnvios.add(envio);
+    }
+
+    public void updateEnvio(Envio envio) {
+        for (int i = 0; i < listEnvios.size(); i++) {
+            if (listEnvios.get(i).getId().equals(envio.getId())) {
+                listEnvios.set(i, envio);
+                break;
+            }
+        }
+    }
+
+    public boolean deleteEnvio(String envioId) {
+        return listEnvios.removeIf(envio -> envio.getId().equals(envioId));
+    }
+
+    public ArrayList<Envio> getListEnvios() {
+        return listEnvios;
     }
 }

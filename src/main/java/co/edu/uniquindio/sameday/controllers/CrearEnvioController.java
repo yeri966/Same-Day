@@ -1,7 +1,6 @@
 package co.edu.uniquindio.sameday.controllers;
 
 import co.edu.uniquindio.sameday.models.*;
-import co.edu.uniquindio.sameday.models.entities.*;
 import co.edu.uniquindio.sameday.models.decorator.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -13,10 +12,6 @@ import javafx.scene.control.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Controlador para la gestión de envíos
- * Implementa el patrón DECORATOR para servicios adicionales
- */
 public class CrearEnvioController {
 
     private SameDay sameDay = SameDay.getInstance();
@@ -43,7 +38,6 @@ public class CrearEnvioController {
     @FXML private TableColumn<Envio, String> colPeso;
     @FXML private TableColumn<Envio, String> colServicios;
     @FXML private TableColumn<Envio, String> colCosto;
-    @FXML private TableColumn<Envio, String> colEstado;
 
     private List<ServicioAdicional> serviciosSeleccionados = new ArrayList<>();
 
@@ -59,7 +53,6 @@ public class CrearEnvioController {
     }
 
     private void configureComboBoxes() {
-        // Cargar direcciones de REMITENTE en Origen
         List<Address> direccionesRemitente = new ArrayList<>();
         for (Address address : sameDay.getListAddresses()) {
             if (address.getType() == AddressType.REMITENTE) {
@@ -68,7 +61,6 @@ public class CrearEnvioController {
         }
         cmbOrigen.setItems(FXCollections.observableArrayList(direccionesRemitente));
 
-        // Cargar direcciones de DESTINATARIO en Destino
         List<Address> direccionesDestinatario = new ArrayList<>();
         for (Address address : sameDay.getListAddresses()) {
             if (address.getType() == AddressType.DESTINATARIO) {
@@ -77,7 +69,6 @@ public class CrearEnvioController {
         }
         cmbDestino.setItems(FXCollections.observableArrayList(direccionesDestinatario));
 
-        // Cargar servicios adicionales
         cmbServiciosAdicionales.setItems(FXCollections.observableArrayList(ServicioAdicional.values()));
         cmbServiciosAdicionales.setOnAction(event -> onServicioSeleccionado());
     }
@@ -104,9 +95,6 @@ public class CrearEnvioController {
 
         colCosto.setCellValueFactory(cellData ->
                 new SimpleStringProperty(String.format("$%.0f", cellData.getValue().getCostoTotal())));
-
-        colEstado.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getEstado()));
     }
 
     private void configureTableSelection() {
@@ -153,19 +141,13 @@ public class CrearEnvioController {
 
         try {
             double peso = Double.parseDouble(txtPeso.getText().trim());
-
-            // PATRÓN DECORATOR: Crear envío básico
             EnvioComponent envio = new EnvioBasico(peso);
 
-            // PATRÓN DECORATOR: Aplicar decoradores según servicios seleccionados
             for (ServicioAdicional servicio : serviciosSeleccionados) {
                 envio = aplicarDecorador(envio, servicio);
             }
 
-            // Calcular costo total
             cotizacionActual = envio.calcularCosto();
-
-            // Mostrar cotización
             lblCotizacion.setText(String.format("💰 Costo Total: $%,.0f", cotizacionActual));
             lblCotizacion.setStyle("-fx-text-fill: #059669; -fx-font-weight: bold;");
 
@@ -181,9 +163,6 @@ public class CrearEnvioController {
         }
     }
 
-    /**
-     * PATRÓN DECORATOR: Aplica el decorador correspondiente según el servicio
-     */
     private EnvioComponent aplicarDecorador(EnvioComponent envio, ServicioAdicional servicio) {
         switch (servicio) {
             case SEGURO:
@@ -326,7 +305,7 @@ public class CrearEnvioController {
         txtVolumen.clear();
         cmbServiciosAdicionales.setValue(null);
         serviciosSeleccionados.clear();
-        lblCotizacion.setText("Presione 'Cotizar' para calcular el costo del envío");
+        lblCotizacion.setText("Presione 'Cotizar' para calcular el costo");
         lblCotizacion.setStyle("-fx-text-fill: #1e40af;");
         cotizacionActual = 0.0;
         selectedEnvio = null;

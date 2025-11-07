@@ -4,7 +4,7 @@ package co.edu.uniquindio.sameday.models.decorator;
  * Decorador concreto que añade el servicio de FIRMA REQUERIDA al envío
  * Este servicio no tiene costo adicional
  */
-class FirmaRequeridaDecorator extends ServicioDecorator {
+public class FirmaRequeridaDecorator extends ServicioDecorator {
     public FirmaRequeridaDecorator(EnvioComponent envio) {
         super(envio);
     }

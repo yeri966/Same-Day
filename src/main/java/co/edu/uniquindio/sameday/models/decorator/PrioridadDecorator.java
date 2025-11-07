@@ -3,7 +3,7 @@ package co.edu.uniquindio.sameday.models.decorator;
 /**
  * Decorador concreto que añade el servicio de PRIORIDAD al envío
  */
-class PrioridadDecorator extends ServicioDecorator {
+public class PrioridadDecorator extends ServicioDecorator {
     private static final double COSTO_PRIORIDAD = 8000.0;
 
     public PrioridadDecorator(EnvioComponent envio) {

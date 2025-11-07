@@ -1,7 +1,7 @@
 package co.edu.uniquindio.sameday.controllers;
 
 import co.edu.uniquindio.sameday.models.SameDay;
-import co.edu.uniquindio.sameday.models.entities.Address;
+import co.edu.uniquindio.sameday.models.Address;
 import co.edu.uniquindio.sameday.models.AddressType;
 import co.edu.uniquindio.sameday.models.City;
 import javafx.collections.FXCollections;

@@ -3,7 +3,7 @@ package co.edu.uniquindio.sameday.models.decorator;
 /**
  * Decorador concreto que añade el servicio de FRÁGIL al envío
  */
-class FragilDecorator extends ServicioDecorator {
+public class FragilDecorator extends ServicioDecorator {
     private static final double COSTO_FRAGIL = 3000.0;
 
     public FragilDecorator(EnvioComponent envio) {
@@ -20,4 +20,3 @@ class FragilDecorator extends ServicioDecorator {
         return envio.getDescripcion() + "\n  + Frágil ($3,000)";
     }
 }
-
