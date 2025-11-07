@@ -67,19 +67,9 @@
                     </VBox.margin>
                 </Separator>
 
-                <!-- OPCIONES DEL MENÚ -->
+                <!-- OPCIONES DEL MENÚ (SIN LA OPCIÓN "ENVÍOS") -->
                 <VBox prefHeight="400.0" prefWidth="250.0" spacing="5.0">
                     <children>
-                        <!-- Opción: Envíos -->
-                        <Button fx:id="btnEnvios" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false"
-                                onAction="#onEnvios" prefHeight="45.0" prefWidth="250.0"
-                                style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;"
-                                text="📦  Envíos">
-                            <padding>
-                                <Insets left="20.0" />
-                            </padding>
-                        </Button>
-
                         <!-- Opción: Pagos -->
                         <Button fx:id="btnPagos" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false"
                                 onAction="#onPagos" prefHeight="45.0" prefWidth="250.0"

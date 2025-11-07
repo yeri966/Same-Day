@@ -23,9 +23,6 @@ public class DashboardClienteController {
     private Button btnCrearEnvio;
 
     @FXML
-    private Button btnEnvios;
-
-    @FXML
     private Button btnPagos;
 
     @FXML
@@ -55,7 +52,6 @@ public class DashboardClienteController {
         lblNombreUsuario.setText("Cliente Demo");
 
         // Aplicar efecto hover a los botones del menú
-        aplicarEfectoHover(btnEnvios);
         aplicarEfectoHover(btnPagos);
         aplicarEfectoHover(btnHistorial);
         aplicarEfectoHover(btnDirecciones);
@@ -64,23 +60,14 @@ public class DashboardClienteController {
     }
 
     /**
-     * Crea un nuevo envío
+     * Crea un nuevo envío - AHORA CARGA LA VISTA REAL
      */
     @FXML
     void onCrearEnvio(ActionEvent event) {
         System.out.println("Crear Envío clickeado");
         cambiarEstiloBotonActivo(btnCrearEnvio);
-        cargarVistaProximamente("Crear Envío - Próximamente");
-    }
-
-    /**
-     * Muestra la vista de envíos
-     */
-    @FXML
-    void onEnvios(ActionEvent event) {
-        System.out.println("Envíos clickeado");
-        cambiarEstiloBotonActivo(btnEnvios);
-        cargarVistaProximamente("Lista de Envíos - Próximamente");
+        // Cargar el FXML de crear envío
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/CrearEnvio.fxml");
     }
 
     /**
