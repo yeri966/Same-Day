@@ -1,19 +1,21 @@
-package co.edu.uniquindio.sameday.models;
+package co.edu.uniquindio.sameday.models.creational.builder;
+
+import co.edu.uniquindio.sameday.models.UserAccount;
 
 public class Person {
     private String id;
     private String nombre;
     private String correo;
     private String telefono;
-    private User user;
+    private UserAccount userAccount;
 
 
-    public Person(String id, String nombre, String correo, String telefono,User user) {
+    public Person(String id, String nombre, String correo, String telefono, UserAccount userAccount) {
         this.id = id;
         this.nombre = nombre;
         this.correo = correo;
         this.telefono = telefono;
-        this.user=user;
+        this.userAccount = userAccount;
 
     }
 
@@ -49,11 +51,11 @@ public class Person {
         this.telefono = telefono;
     }
 
-    public User getUser() {
-        return user;
+    public UserAccount getUser() {
+        return userAccount;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(UserAccount userAccount) {
+        this.userAccount = userAccount;
     }
 }

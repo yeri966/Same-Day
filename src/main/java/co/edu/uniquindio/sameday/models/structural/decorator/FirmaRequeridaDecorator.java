@@ -1,4 +1,4 @@
-package co.edu.uniquindio.sameday.models.decorator;
+package co.edu.uniquindio.sameday.models.structural.decorator;
 
 /**
  * Decorador concreto que añade el servicio de FIRMA REQUERIDA al envío

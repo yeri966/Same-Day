@@ -1,4 +1,4 @@
-package co.edu.uniquindio.sameday.models.decorator;
+package co.edu.uniquindio.sameday.models.structural.decorator;
 
 /**
  * PATRÓN ESTRUCTURAL: DECORATOR

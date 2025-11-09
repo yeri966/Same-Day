@@ -1,6 +1,6 @@
 package co.edu.uniquindio.sameday.controllers;
 
-import co.edu.uniquindio.sameday.models.SameDay;
+import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import co.edu.uniquindio.sameday.models.Address;
 import co.edu.uniquindio.sameday.models.AddressType;
 import co.edu.uniquindio.sameday.models.City;
@@ -9,7 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.beans.property.SimpleStringProperty;
 
 

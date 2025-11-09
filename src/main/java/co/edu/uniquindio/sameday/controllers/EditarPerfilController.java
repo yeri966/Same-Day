@@ -1,6 +1,8 @@
 package co.edu.uniquindio.sameday.controllers;
 
-import co.edu.uniquindio.sameday.models.*;
+import co.edu.uniquindio.sameday.models.creational.builder.Client;
+import co.edu.uniquindio.sameday.models.creational.builder.Person;
+import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -80,7 +82,7 @@ public class EditarPerfilController {
             txtDireccion.setText(clienteActual.getDireccion());
 
             if (clienteActual.getUser() != null) {
-                txtUsuario.setText(clienteActual.getUser().getUsuario());
+                txtUsuario.setText(clienteActual.getUser().getUser());
             }
 
             // Los campos de contraseña se dejan vacíos por seguridad
@@ -113,7 +115,7 @@ public class EditarPerfilController {
             txtDireccion.setText(clienteActual.getDireccion());
 
             if (clienteActual.getUser() != null) {
-                txtUsuario.setText(clienteActual.getUser().getUsuario());
+                txtUsuario.setText(clienteActual.getUser().getUser());
             }
         }
     }
@@ -178,7 +180,7 @@ public class EditarPerfilController {
 
         // Actualizar datos del usuario
         if (clienteActual.getUser() != null) {
-            clienteActual.getUser().setUsuario(usuario);
+            clienteActual.getUser().setUser(usuario);
 
             // Solo actualizar contraseña si se ingresó una nueva
             if (!contrasenia.isEmpty()) {
@@ -282,7 +284,7 @@ public class EditarPerfilController {
         return sameDay.getListPersons().stream()
                 .filter(person -> person instanceof Client)
                 .filter(person -> !person.getId().equals(clienteActual.getId())) // Excluir al cliente actual
-                .anyMatch(person -> person.getUser().getUsuario().equalsIgnoreCase(usuario));
+                .anyMatch(person -> person.getUser().getUser().equalsIgnoreCase(usuario));
     }
 
     /**

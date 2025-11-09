@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import co.edu.uniquindio.sameday.models.*;
+import co.edu.uniquindio.sameday.models.creational.builder.Admin;
+import co.edu.uniquindio.sameday.models.creational.builder.Client;
+import co.edu.uniquindio.sameday.models.creational.builder.Dealer;
+import co.edu.uniquindio.sameday.models.creational.builder.Person;
+import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,8 +53,8 @@ public class LoginController {
         String contraseniaIngresada = txtContrasenia.getText();
 
         Person personaEncontrada = sameDay.validarUsuario(usuarioIngresado, contraseniaIngresada);
-
         if (personaEncontrada != null) {
+            sameDay.setUserActive(personaEncontrada);
             String fxml = "";
             String titulo = "";
 
@@ -62,7 +66,7 @@ public class LoginController {
                 fxml = "/co/edu/uniquindio/sameday/dashboardCliente.fxml";
                 titulo = "Dashboard Repartidor";
             } else if (personaEncontrada instanceof Admin) {
-                fxml = "/co/edu/uniquindio/sameday/dashboardCliente.fxml";
+                fxml = "/co/edu/uniquindio/sameday/dashboardAdmin.fxml";
                 titulo = "Dashboard Administrador";
             }
 

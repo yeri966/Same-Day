@@ -1,6 +1,8 @@
 package co.edu.uniquindio.sameday.controllers;
 
 import co.edu.uniquindio.sameday.models.*;
+import co.edu.uniquindio.sameday.models.creational.builder.Client;
+import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -88,17 +90,28 @@ public class CreateAccountController {
         String idCliente = generarIdCliente();
 
         // Crear el objeto User
-        User newUser = new User(usuario, contrasenia, null, TipoUsuario.CLIENTE);
+        UserAccount newUserAccount = new UserAccount(usuario, contrasenia, null, TypeUser.CLIENT);
 
         // Crear el objeto Client (por defecto todos los registros son clientes)
-        Client newClient = new Client(idCliente, nombre, correo, telefono, direccion, null);
+        Client newClient = new Client.Builder()
+                .id(idCliente)
+                .nombre(nombre)
+                .correo(correo)
+                .telefono(telefono)
+                .direccion(direccion)
+                .userAcconunt(newUserAccount)
+                .build();
 
         // Establecer las relaciones bidireccionales
-        newClient.setUser(newUser);
-        newUser.setPerson(newClient);
+        newUserAccount.setPerson(newClient);
+
+        //Establecer como usuario activo
+        sameDay.setUserActive(newClient);
+
 
         // Agregar el nuevo cliente al sistema
         sameDay.agregarPersona(newClient);
+
 
         // Mostrar mensaje de éxito
         mostrarAlerta("Registro Exitoso",
@@ -131,6 +144,7 @@ public class CreateAccountController {
 
     /**
      * Valida el formato del correo electrónico usando expresión regular
+     *
      * @param correo El correo a validar
      * @return true si el formato es válido, false en caso contrario
      */
@@ -142,16 +156,18 @@ public class CreateAccountController {
 
     /**
      * Verifica si un nombre de usuario ya existe en el sistema
+     *
      * @param usuario El nombre de usuario a verificar
      * @return true si el usuario ya existe, false en caso contrario
      */
     private boolean usuarioExiste(String usuario) {
         return sameDay.getListPersons().stream()
-                .anyMatch(person -> person.getUser().getUsuario().equalsIgnoreCase(usuario));
+                .anyMatch(person -> person.getUser().getUser().equalsIgnoreCase(usuario));
     }
 
     /**
      * Genera un ID único para el nuevo cliente
+     *
      * @return String con el ID generado
      */
     private String generarIdCliente() {
@@ -186,9 +202,10 @@ public class CreateAccountController {
 
     /**
      * Muestra un cuadro de diálogo de alerta
-     * @param titulo El título de la alerta
+     *
+     * @param titulo  El título de la alerta
      * @param mensaje El mensaje a mostrar
-     * @param tipo El tipo de alerta
+     * @param tipo    El tipo de alerta
      */
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
         Alert alerta = new Alert(tipo);

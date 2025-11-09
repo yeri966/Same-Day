@@ -1,7 +1,8 @@
 package co.edu.uniquindio.sameday.controllers;
 
 import co.edu.uniquindio.sameday.models.*;
-import co.edu.uniquindio.sameday.models.decorator.*;
+import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
+import co.edu.uniquindio.sameday.models.structural.decorator.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
