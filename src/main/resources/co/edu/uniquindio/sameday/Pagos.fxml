@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.sameday.controllers.PagosController">
+    <children>
+        <Label layoutX="30.0" layoutY="20.0" text="Gestión de Pagos" textFill="#1e293b">
+            <font>
+                <Font name="System Bold" size="28.0" />
+            </font>
+        </Label>
+
+        <Label layoutX="30.0" layoutY="60.0" text="Administra y realiza pagos de tus envíos" textFill="#64748b">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+
+        <Separator layoutX="30.0" layoutY="90.0" prefWidth="890.0" />
+
+        <VBox layoutX="30.0" layoutY="110.0" spacing="10.0">
+            <children>
+                <Label text="📋 Envíos Pendientes y Pagados" textFill="#1e293b">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+
+                <TableView fx:id="tablaEnvios" prefHeight="350.0" prefWidth="890.0" style="-fx-background-color: white;">
+                    <columns>
+                        <TableColumn fx:id="colId" prefWidth="80.0" text="ID" />
+                        <TableColumn fx:id="colOrigen" prefWidth="180.0" text="Origen" />
+                        <TableColumn fx:id="colDestino" prefWidth="180.0" text="Destino" />
+                        <TableColumn fx:id="colPeso" prefWidth="80.0" text="Peso (kg)" />
+                        <TableColumn fx:id="colServicios" prefWidth="170.0" text="Servicios" />
+                        <TableColumn fx:id="colCosto" prefWidth="100.0" text="Costo Total" />
+                        <TableColumn fx:id="colEstado" prefWidth="100.0" text="Estado" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+
+        <HBox layoutX="30.0" layoutY="485.0" spacing="15.0" alignment="CENTER_LEFT">
+            <children>
+                <Button fx:id="btnPagar" mnemonicParsing="false" onAction="#onPagar" prefHeight="45.0" prefWidth="180.0" style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-font-size: 14px;" text="💳 Pagar Envío" />
+
+                <Label text="Seleccione un envío sin pagar de la tabla" textFill="#64748b">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+
+        <Separator layoutX="30.0" layoutY="550.0" prefWidth="890.0" />
+
+        <VBox fx:id="vboxSimulador" layoutX="30.0" layoutY="570.0" prefWidth="890.0" prefHeight="110.0" spacing="15.0" alignment="CENTER" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-border-width: 2;" visible="false">
+            <padding>
+                <Insets top="20.0" bottom="20.0" />
+            </padding>
+            <children>
+                <Label fx:id="lblSimuladorTitulo" text="Procesando Pago..." textFill="#1e293b">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+
+                <ProgressIndicator fx:id="progressPago" prefWidth="50.0" prefHeight="50.0" />
+
+                <Label fx:id="lblSimuladorMensaje" text="" textFill="#64748b">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

@@ -25,7 +25,7 @@
 
         <Separator layoutX="30.0" layoutY="90.0" prefWidth="890.0" />
 
-        <VBox layoutX="30.0" layoutY="110.0" prefHeight="480.0" prefWidth="890.0" spacing="15.0"
+        <VBox layoutX="30.0" layoutY="110.0" prefHeight="520.0" prefWidth="890.0" spacing="12.0"
               style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
             <padding>
                 <Insets bottom="25.0" left="40.0" right="40.0" top="25.0" />
@@ -39,56 +39,59 @@
 
                 <Separator prefWidth="810.0" />
 
+                <!-- FILA 1: ID y Usuario -->
                 <HBox spacing="20.0">
                     <children>
-                        <VBox spacing="5.0" prefWidth="400.0">
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label text="ID Cliente:" textFill="#334155">
                                     <font>
-                                        <Font name="System Bold" size="13.0" />
+                                        <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="txtId" editable="false" prefHeight="35.0"
+                                <TextField fx:id="txtId" editable="false" prefHeight="32.0"
                                            style="-fx-background-color: #e2e8f0; -fx-opacity: 0.7;" />
                             </children>
                         </VBox>
 
-                        <VBox spacing="5.0" prefWidth="400.0">
+                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label text="Usuario (Username):" textFill="#334155">
                                     <font>
-                                        <Font name="System Bold" size="13.0" />
+                                        <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="txtUsuario" prefHeight="35.0"
+                                <TextField fx:id="txtUsuario" prefHeight="32.0"
                                            promptText="Nombre de usuario" />
                             </children>
                         </VBox>
                     </children>
                 </HBox>
 
+                <!-- FILA 2: Nombre Completo -->
                 <VBox spacing="5.0">
                     <children>
                         <Label text="Nombre Completo:" textFill="#334155">
                             <font>
-                                <Font name="System Bold" size="13.0" />
+                                <Font name="System Bold" size="12.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtNombre" prefHeight="35.0"
+                        <TextField fx:id="txtNombre" prefHeight="32.0"
                                    promptText="Ingrese su nombre completo" />
                     </children>
                 </VBox>
 
+                <!-- FILA 3: Correo y Teléfono -->
                 <HBox spacing="20.0">
                     <children>
                         <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label text="Correo Electrónico:" textFill="#334155">
                                     <font>
-                                        <Font name="System Bold" size="13.0" />
+                                        <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="txtCorreo" prefHeight="35.0"
+                                <TextField fx:id="txtCorreo" prefHeight="32.0"
                                            promptText="correo@ejemplo.com" />
                             </children>
                         </VBox>
@@ -97,24 +100,25 @@
                             <children>
                                 <Label text="Teléfono:" textFill="#334155">
                                     <font>
-                                        <Font name="System Bold" size="13.0" />
+                                        <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="txtTelefono" prefHeight="35.0"
+                                <TextField fx:id="txtTelefono" prefHeight="32.0"
                                            promptText="3001234567" />
                             </children>
                         </VBox>
                     </children>
                 </HBox>
 
+                <!-- FILA 4: Dirección -->
                 <VBox spacing="5.0">
                     <children>
                         <Label text="Dirección:" textFill="#334155">
                             <font>
-                                <Font name="System Bold" size="13.0" />
+                                <Font name="System Bold" size="12.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtDireccion" prefHeight="35.0"
+                        <TextField fx:id="txtDireccion" prefHeight="32.0"
                                    promptText="Calle 123 #45-67" />
                     </children>
                 </VBox>
@@ -124,23 +128,24 @@
                         <Font name="System Bold" size="18.0" />
                     </font>
                     <VBox.margin>
-                        <Insets top="5.0" />
+                        <Insets top="10.0" />
                     </VBox.margin>
                 </Label>
 
                 <Separator prefWidth="810.0" />
 
+                <!-- FILA 5: Contraseñas -->
                 <HBox spacing="20.0">
                     <children>
                         <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <Label text="Nueva Contraseña:" textFill="#334155">
                                     <font>
-                                        <Font name="System Bold" size="13.0" />
+                                        <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
-                                <PasswordField fx:id="txtContrasenia" prefHeight="35.0"
-                                               promptText="Dejar vacío para mantener la actual" />
+                                <PasswordField fx:id="txtContrasenia" prefHeight="32.0"
+                                               promptText="Dejar vacío para mantener" />
                             </children>
                         </VBox>
 
@@ -148,11 +153,11 @@
                             <children>
                                 <Label text="Confirmar Contraseña:" textFill="#334155">
                                     <font>
-                                        <Font name="System Bold" size="13.0" />
+                                        <Font name="System Bold" size="12.0" />
                                     </font>
                                 </Label>
-                                <PasswordField fx:id="txtConfirmarContrasenia" prefHeight="35.0"
-                                               promptText="Repetir nueva contraseña" />
+                                <PasswordField fx:id="txtConfirmarContrasenia" prefHeight="32.0"
+                                               promptText="Repetir contraseña" />
                             </children>
                         </VBox>
                     </children>
@@ -168,18 +173,25 @@
             </children>
         </VBox>
 
-        <HBox layoutX="30.0" layoutY="610.0" spacing="15.0">
+        <!-- BOTONES MÁS PEQUEÑOS Y SEPARADOS -->
+        <HBox layoutX="30.0" layoutY="645.0" spacing="12.0">
             <children>
                 <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#onGuardar"
-                        prefHeight="45.0" prefWidth="180.0"
-                        style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-font-size: 14px;"
+                        prefHeight="38.0" prefWidth="160.0"
+                        style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"
                         text="💾 Guardar Cambios">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
                 </Button>
 
                 <Button fx:id="btnCancelar" mnemonicParsing="false" onAction="#onCancelar"
-                        prefHeight="45.0" prefWidth="180.0"
-                        style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-font-size: 14px;"
+                        prefHeight="38.0" prefWidth="160.0"
+                        style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"
                         text="❌ Cancelar">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
                 </Button>
             </children>
         </HBox>

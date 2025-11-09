@@ -71,13 +71,14 @@ public class DashboardClienteController {
     }
 
     /**
-     * Muestra la vista de pagos
+     * Muestra la vista de pagos - AHORA CARGA LA VISTA REAL
      */
     @FXML
     void onPagos(ActionEvent event) {
         System.out.println("Pagos clickeado");
         cambiarEstiloBotonActivo(btnPagos);
-        cargarVistaProximamente("Pagos - Próximamente");
+        // Cargar el FXML de pagos
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/Pagos.fxml");
     }
 
     /**
