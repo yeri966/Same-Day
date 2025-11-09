@@ -11,7 +11,7 @@
             fx:controller="co.edu.uniquindio.sameday.controllers.CrearEnvioController">
 
     <content>
-        <AnchorPane prefHeight="850.0" prefWidth="950.0" style="-fx-background-color: #f8fafc;">
+        <AnchorPane prefHeight="900.0" prefWidth="950.0" style="-fx-background-color: #f8fafc;">
 
             <children>
                 <!-- TÍTULO PRINCIPAL -->
@@ -50,11 +50,11 @@
                     </children>
                 </HBox>
 
-                <!-- FORMULARIO DE ENVÍO - CON MÁS ALTURA -->
+                <!-- FORMULARIO DE ENVÍO -->
                 <HBox layoutX="30.0" layoutY="165.0" prefWidth="890.0" spacing="20.0">
                     <children>
                         <!-- COLUMNA IZQUIERDA: DIRECCIONES -->
-                        <VBox spacing="15.0" prefWidth="420.0" prefHeight="260.0"
+                        <VBox spacing="15.0" prefWidth="420.0" prefHeight="310.0"
                               style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
                             <padding>
                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -98,11 +98,24 @@
                                                   promptText="Seleccione dirección de destino" />
                                     </children>
                                 </VBox>
+
+                                <!-- NUEVO: Contenido del Paquete -->
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Contenido del Paquete:" textFill="#334155">
+                                            <font>
+                                                <Font name="System Bold" size="13.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="txtContenido" prefHeight="35.0" prefWidth="380.0"
+                                                   promptText="Ej: Ropa, Electrónicos, Documentos" />
+                                    </children>
+                                </VBox>
                             </children>
                         </VBox>
 
                         <!-- COLUMNA DERECHA: INFORMACIÓN DEL PAQUETE -->
-                        <VBox spacing="15.0" prefWidth="450.0" prefHeight="260.0"
+                        <VBox spacing="15.0" prefWidth="450.0" prefHeight="310.0"
                               style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);">
                             <padding>
                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -171,10 +184,10 @@
                 </HBox>
 
                 <!-- SEPARADOR ANTES DE LOS BOTONES -->
-                <Separator layoutX="30.0" layoutY="445.0" prefWidth="890.0" />
+                <Separator layoutX="30.0" layoutY="495.0" prefWidth="890.0" />
 
-                <!-- BOTONES DE ACCIÓN - BIEN ABAJO Y SEPARADOS -->
-                <HBox layoutX="30.0" layoutY="465.0" spacing="10.0" alignment="CENTER_LEFT">
+                <!-- BOTONES DE ACCIÓN -->
+                <HBox layoutX="30.0" layoutY="515.0" spacing="10.0" alignment="CENTER_LEFT">
                     <children>
                         <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#onAgregar"
                                 prefHeight="35.0" prefWidth="120.0"
@@ -226,25 +239,26 @@
                 </HBox>
 
                 <!-- SEPARADOR ANTES DE LA TABLA -->
-                <Separator layoutX="30.0" layoutY="515.0" prefWidth="890.0" />
+                <Separator layoutX="30.0" layoutY="565.0" prefWidth="890.0" />
 
                 <!-- LABEL PARA LA TABLA -->
-                <Label layoutX="30.0" layoutY="530.0" text="📋 Envíos Registrados" textFill="#1e293b">
+                <Label layoutX="30.0" layoutY="580.0" text="📋 Envíos Registrados" textFill="#1e293b">
                     <font>
                         <Font name="System Bold" size="16.0" />
                     </font>
                 </Label>
 
-                <!-- TABLA DE ENVÍOS - MUY ABAJO -->
-                <TableView fx:id="tablaEnvios" layoutX="30.0" layoutY="565.0" prefHeight="260.0" prefWidth="890.0"
+                <!-- TABLA DE ENVÍOS CON NUEVA COLUMNA -->
+                <TableView fx:id="tablaEnvios" layoutX="30.0" layoutY="615.0" prefHeight="260.0" prefWidth="890.0"
                            style="-fx-background-color: white;">
                     <columns>
-                        <TableColumn fx:id="colId" prefWidth="80.0" text="ID" />
-                        <TableColumn fx:id="colOrigen" prefWidth="200.0" text="Origen" />
-                        <TableColumn fx:id="colDestino" prefWidth="200.0" text="Destino" />
-                        <TableColumn fx:id="colPeso" prefWidth="90.0" text="Peso (kg)" />
-                        <TableColumn fx:id="colServicios" prefWidth="210.0" text="Servicios" />
-                        <TableColumn fx:id="colCosto" prefWidth="110.0" text="Costo Total" />
+                        <TableColumn fx:id="colId" prefWidth="70.0" text="ID" />
+                        <TableColumn fx:id="colOrigen" prefWidth="150.0" text="Origen" />
+                        <TableColumn fx:id="colDestino" prefWidth="150.0" text="Destino" />
+                        <TableColumn fx:id="colContenido" prefWidth="130.0" text="Contenido" />
+                        <TableColumn fx:id="colPeso" prefWidth="80.0" text="Peso (kg)" />
+                        <TableColumn fx:id="colServicios" prefWidth="180.0" text="Servicios" />
+                        <TableColumn fx:id="colCosto" prefWidth="130.0" text="Costo Total" />
                     </columns>
                 </TableView>
             </children>

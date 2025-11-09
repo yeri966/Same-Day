@@ -25,6 +25,7 @@ public class PagosController {
     @FXML private TableColumn<Envio, String> colId;
     @FXML private TableColumn<Envio, String> colOrigen;
     @FXML private TableColumn<Envio, String> colDestino;
+    @FXML private TableColumn<Envio, String> colContenido;
     @FXML private TableColumn<Envio, String> colPeso;
     @FXML private TableColumn<Envio, String> colServicios;
     @FXML private TableColumn<Envio, String> colCosto;
@@ -57,6 +58,11 @@ public class PagosController {
             return new SimpleStringProperty(destino != null ? destino.getAlias() : "");
         });
 
+        colContenido.setCellValueFactory(cellData -> {
+            String contenido = cellData.getValue().getContenido();
+            return new SimpleStringProperty(contenido != null ? contenido : "");
+        });
+
         colPeso.setCellValueFactory(cellData ->
                 new SimpleStringProperty(String.format("%.2f", cellData.getValue().getPeso())));
 
@@ -68,13 +74,10 @@ public class PagosController {
 
         colEstado.setCellValueFactory(cellData -> {
             String estado = cellData.getValue().getEstado();
-            // Si el estado es "SOLICITADO", significa que no está pagado
-            // Si es "PAGADO", está pagado
             String estadoPago = estado.equals("PAGADO") ? "✅ Pagado" : "⏳ Sin pagar";
             return new SimpleStringProperty(estadoPago);
         });
 
-        // Aplicar estilo a la columna de estado
         colEstado.setCellFactory(column -> new TableCell<Envio, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -99,6 +102,8 @@ public class PagosController {
                 (observable, oldValue, newValue) -> {
                     if (newValue != null) {
                         selectedEnvio = newValue;
+                        // Habilitar el botón solo si el envío no está pagado
+                        btnPagar.setDisable(newValue.getEstado().equals("PAGADO"));
                     }
                 }
         );
@@ -111,7 +116,6 @@ public class PagosController {
             return;
         }
 
-        // Verificar que el envío no esté ya pagado
         if (selectedEnvio.getEstado().equals("PAGADO")) {
             showAlert("Envío ya pagado",
                     "Este envío ya ha sido pagado anteriormente",
@@ -119,21 +123,17 @@ public class PagosController {
             return;
         }
 
-        // Mostrar diálogo de pago
         mostrarDialogoPago();
     }
 
     private void mostrarDialogoPago() {
-        // Crear el diálogo personalizado
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Realizar Pago");
         dialog.setHeaderText("Ingrese los datos para realizar el pago");
 
-        // Configurar botones
         ButtonType btnRealizarPago = new ButtonType("Realizar Pago", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(btnRealizarPago, ButtonType.CANCEL);
 
-        // Crear campos del formulario
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -157,18 +157,14 @@ public class PagosController {
         grid.add(lblCosto, 0, 2, 2, 1);
 
         dialog.getDialogPane().setContent(grid);
-
-        // Solicitar foco en el nombre
         txtNombre.requestFocus();
 
-        // Procesar resultado
         Optional<ButtonType> result = dialog.showAndWait();
 
         if (result.isPresent() && result.get() == btnRealizarPago) {
             String nombre = txtNombre.getText().trim();
             String telefono = txtTelefono.getText().trim();
 
-            // Validar campos
             if (nombre.isEmpty() || telefono.isEmpty()) {
                 showAlert("Campos Incompletos",
                         "Debe completar todos los campos",
@@ -176,7 +172,6 @@ public class PagosController {
                 return;
             }
 
-            // Obtener el teléfono del cliente actual
             Client clienteActual = obtenerClienteActual();
             if (clienteActual == null) {
                 showAlert("Error",
@@ -186,32 +181,26 @@ public class PagosController {
             }
 
             String telefonoRegistrado = clienteActual.getTelefono();
-
-            // Iniciar simulación de pago
             iniciarSimulacionPago(telefono, telefonoRegistrado);
         }
     }
 
     private void iniciarSimulacionPago(String telefonoIngresado, String telefonoRegistrado) {
-        // Mostrar el área del simulador
         vboxSimulador.setVisible(true);
         progressPago.setVisible(true);
         btnPagar.setDisable(true);
 
-        // Paso 1: Verificando pago (2 segundos)
         lblSimuladorTitulo.setText("Procesando Pago...");
         lblSimuladorMensaje.setText("🔍 Verificando pago...");
         lblSimuladorMensaje.setStyle("-fx-text-fill: #3b82f6;");
 
         PauseTransition paso1 = new PauseTransition(Duration.seconds(2.5));
         paso1.setOnFinished(e -> {
-            // Paso 2: Creando pago (2 segundos)
             lblSimuladorMensaje.setText("⚙️ Creando pago...");
             lblSimuladorMensaje.setStyle("-fx-text-fill: #f59e0b;");
 
             PauseTransition paso2 = new PauseTransition(Duration.seconds(2.5));
             paso2.setOnFinished(e2 -> {
-                // Paso 3: Resultado (aprobar o rechazar)
                 progressPago.setVisible(false);
 
                 boolean pagoAprobado = telefonoIngresado.equals(telefonoRegistrado);
@@ -221,7 +210,6 @@ public class PagosController {
                     lblSimuladorMensaje.setText("✅ El pago ha sido procesado exitosamente");
                     lblSimuladorMensaje.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
 
-                    // Actualizar estado del envío
                     selectedEnvio.setEstado("PAGADO");
                     sameDay.updateEnvio(selectedEnvio);
                     loadTable();
@@ -239,11 +227,20 @@ public class PagosController {
                             Alert.AlertType.ERROR);
                 }
 
-                // Ocultar simulador después de 3 segundos
+                // IMPORTANTE: Limpiar selección y reactivar botón después del simulador
                 PauseTransition ocultarSimulador = new PauseTransition(Duration.seconds(3));
                 ocultarSimulador.setOnFinished(e3 -> {
                     vboxSimulador.setVisible(false);
+                    progressPago.setVisible(true); // Resetear para próximo uso
+
+                    // Limpiar selección de la tabla
+                    tablaEnvios.getSelectionModel().clearSelection();
+                    selectedEnvio = null;
+
+                    // Reactivar botón
                     btnPagar.setDisable(false);
+
+                    System.out.println("Simulador ocultado - Listo para siguiente pago");
                 });
                 ocultarSimulador.play();
             });
@@ -253,7 +250,6 @@ public class PagosController {
     }
 
     private Client obtenerClienteActual() {
-        // Obtener el cliente activo del sistema
         if (sameDay.getUserActive() instanceof Client) {
             return (Client) sameDay.getUserActive();
         }

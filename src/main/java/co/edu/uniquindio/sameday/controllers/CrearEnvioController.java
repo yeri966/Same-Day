@@ -22,6 +22,7 @@ public class CrearEnvioController {
     @FXML private TextField txtId;
     @FXML private ComboBox<Address> cmbOrigen;
     @FXML private ComboBox<Address> cmbDestino;
+    @FXML private TextField txtContenido;  // NUEVO CAMPO
     @FXML private TextField txtPeso;
     @FXML private TextField txtDimensiones;
     @FXML private TextField txtVolumen;
@@ -36,6 +37,7 @@ public class CrearEnvioController {
     @FXML private TableColumn<Envio, String> colId;
     @FXML private TableColumn<Envio, String> colOrigen;
     @FXML private TableColumn<Envio, String> colDestino;
+    @FXML private TableColumn<Envio, String> colContenido;  // NUEVA COLUMNA
     @FXML private TableColumn<Envio, String> colPeso;
     @FXML private TableColumn<Envio, String> colServicios;
     @FXML private TableColumn<Envio, String> colCosto;
@@ -88,6 +90,12 @@ public class CrearEnvioController {
             return new SimpleStringProperty(destino != null ? destino.getAlias() : "");
         });
 
+        // NUEVA COLUMNA DE CONTENIDO
+        colContenido.setCellValueFactory(cellData -> {
+            String contenido = cellData.getValue().getContenido();
+            return new SimpleStringProperty(contenido != null ? contenido : "");
+        });
+
         colPeso.setCellValueFactory(cellData ->
                 new SimpleStringProperty(String.format("%.2f", cellData.getValue().getPeso())));
 
@@ -115,6 +123,7 @@ public class CrearEnvioController {
         txtId.setText(envio.getId());
         cmbOrigen.setValue(envio.getOrigen());
         cmbDestino.setValue(envio.getDestino());
+        txtContenido.setText(envio.getContenido());  // CARGAR CONTENIDO
         txtPeso.setText(String.valueOf(envio.getPeso()));
         txtDimensiones.setText(envio.getDimensiones());
         txtVolumen.setText(String.valueOf(envio.getVolumen()));
@@ -197,6 +206,7 @@ public class CrearEnvioController {
             nuevoEnvio.setId(txtId.getText().trim());
             nuevoEnvio.setOrigen(cmbOrigen.getValue());
             nuevoEnvio.setDestino(cmbDestino.getValue());
+            nuevoEnvio.setContenido(txtContenido.getText().trim());  // GUARDAR CONTENIDO
             nuevoEnvio.setPeso(Double.parseDouble(txtPeso.getText().trim()));
             nuevoEnvio.setDimensiones(txtDimensiones.getText().trim());
             nuevoEnvio.setVolumen(Double.parseDouble(txtVolumen.getText().trim()));
@@ -242,6 +252,7 @@ public class CrearEnvioController {
         try {
             selectedEnvio.setOrigen(cmbOrigen.getValue());
             selectedEnvio.setDestino(cmbDestino.getValue());
+            selectedEnvio.setContenido(txtContenido.getText().trim());  // ACTUALIZAR CONTENIDO
             selectedEnvio.setPeso(Double.parseDouble(txtPeso.getText().trim()));
             selectedEnvio.setDimensiones(txtDimensiones.getText().trim());
             selectedEnvio.setVolumen(Double.parseDouble(txtVolumen.getText().trim()));
@@ -301,6 +312,7 @@ public class CrearEnvioController {
         txtId.setText(generateEnvioId());
         cmbOrigen.setValue(null);
         cmbDestino.setValue(null);
+        txtContenido.clear();  // LIMPIAR CONTENIDO
         txtPeso.clear();
         txtDimensiones.clear();
         txtVolumen.clear();
@@ -327,6 +339,15 @@ public class CrearEnvioController {
             showAlert("Campos Incompletos",
                     "Debe seleccionar una dirección de destino",
                     Alert.AlertType.WARNING);
+            return false;
+        }
+
+        // VALIDAR CONTENIDO
+        if (txtContenido.getText().trim().isEmpty()) {
+            showAlert("Campos Incompletos",
+                    "Debe ingresar el contenido del paquete",
+                    Alert.AlertType.WARNING);
+            txtContenido.requestFocus();
             return false;
         }
 

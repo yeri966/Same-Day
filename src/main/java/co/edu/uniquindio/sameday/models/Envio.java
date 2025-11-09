@@ -14,6 +14,7 @@ public class Envio {
     private double peso;
     private String dimensiones;
     private double volumen;
+    private String contenido;  // NUEVO CAMPO
     private List<ServicioAdicional> serviciosAdicionales;
     private double costoTotal;
     private LocalDateTime fechaCreacion;
@@ -26,13 +27,14 @@ public class Envio {
     }
 
     public Envio(String id, Address origen, Address destino, double peso,
-                 String dimensiones, double volumen) {
+                 String dimensiones, double volumen, String contenido) {
         this.id = id;
         this.origen = origen;
         this.destino = destino;
         this.peso = peso;
         this.dimensiones = dimensiones;
         this.volumen = volumen;
+        this.contenido = contenido;
         this.serviciosAdicionales = new ArrayList<>();
         this.fechaCreacion = LocalDateTime.now();
         this.estado = "SOLICITADO";
@@ -56,6 +58,9 @@ public class Envio {
 
     public double getVolumen() { return volumen; }
     public void setVolumen(double volumen) { this.volumen = volumen; }
+
+    public String getContenido() { return contenido; }
+    public void setContenido(String contenido) { this.contenido = contenido; }
 
     public List<ServicioAdicional> getServiciosAdicionales() { return serviciosAdicionales; }
     public void setServiciosAdicionales(List<ServicioAdicional> serviciosAdicionales) {
@@ -101,6 +106,7 @@ public class Envio {
                 ", origen=" + (origen != null ? origen.getAlias() : "null") +
                 ", destino=" + (destino != null ? destino.getAlias() : "null") +
                 ", peso=" + peso +
+                ", contenido='" + contenido + '\'' +
                 ", costoTotal=" + costoTotal +
                 ", estado='" + estado + '\'' +
                 '}';
