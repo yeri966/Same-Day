@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import co.edu.uniquindio.sameday.models.creational.builder.Admin;
-import co.edu.uniquindio.sameday.models.creational.builder.Client;
-import co.edu.uniquindio.sameday.models.creational.builder.Dealer;
-import co.edu.uniquindio.sameday.models.creational.builder.Person;
+import co.edu.uniquindio.sameday.models.Admin;
+import co.edu.uniquindio.sameday.models.Client;
+import co.edu.uniquindio.sameday.models.Dealer;
+import co.edu.uniquindio.sameday.models.Person;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -54,7 +54,6 @@ public class LoginController {
 
         Person personaEncontrada = sameDay.validarUsuario(usuarioIngresado, contraseniaIngresada);
         if (personaEncontrada != null) {
-            sameDay.setUserActive(personaEncontrada);
             String fxml = "";
             String titulo = "";
 
@@ -116,7 +115,8 @@ public class LoginController {
 
     /**
      * Método auxiliar para abrir una nueva ventana y cerrar la actual
-     * @param fxml Ruta del archivo FXML a cargar
+     *
+     * @param fxml   Ruta del archivo FXML a cargar
      * @param titulo Título de la nueva ventana
      */
     public void abrirVentana(String fxml, String titulo) {
@@ -140,9 +140,10 @@ public class LoginController {
 
     /**
      * Método auxiliar para mostrar alertas al usuario
-     * @param titulo Título de la alerta
+     *
+     * @param titulo  Título de la alerta
      * @param mensaje Contenido del mensaje
-     * @param tipo Tipo de alerta (ERROR, WARNING, INFORMATION, etc.)
+     * @param tipo    Tipo de alerta (ERROR, WARNING, INFORMATION, etc.)
      */
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
         Alert alerta = new Alert(tipo);
@@ -151,5 +152,4 @@ public class LoginController {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
-
 }

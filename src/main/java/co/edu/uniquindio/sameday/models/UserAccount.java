@@ -1,7 +1,5 @@
 package co.edu.uniquindio.sameday.models;
 
-import co.edu.uniquindio.sameday.models.creational.builder.Person;
-
 public class UserAccount {
     private String user;
     private String contrasenia;

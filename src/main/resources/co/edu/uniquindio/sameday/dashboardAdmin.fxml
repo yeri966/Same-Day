@@ -10,9 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0"
-            prefWidth="1200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="co.edu.uniquindio.sameday.controllers.DashboardAdminController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.sameday.controllers.DashboardAdminController">
 
     <!-- MENÚ LATERAL IZQUIERDO -->
     <left>
@@ -57,21 +55,21 @@
                 <VBox prefHeight="400.0" prefWidth="250.0" spacing="5.0">
                     <children>
                         <!-- Opción: Pagos -->
-                        <Button fx:id="btnPagos" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onPagos" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="👤  Gestion Cliente">
+                        <Button fx:id="btnCliente" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onCliente" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="👤  Gestion Cliente">
                             <padding>
                                 <Insets left="20.0" />
                             </padding>
                         </Button>
 
                         <!-- Opción: Historial de Envíos -->
-                        <Button fx:id="btnHistorial" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onHistorial" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="👤  Gestion Repartidor">
+                        <Button fx:id="btnRepartidor" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onRepartidor" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="👤  Gestion Repartidor">
                             <padding>
                                 <Insets left="20.0" />
                             </padding>
                         </Button>
 
                         <!-- Opción: Direcciones -->
-                        <Button fx:id="btnDirecciones" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onDirecciones" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="📄 Generar Reporte">
+                        <Button fx:id="btnReporte" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onReporte" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="📄 Generar Reporte">
                             <padding>
                                 <Insets left="20.0" />
                             </padding>

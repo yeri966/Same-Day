@@ -1,7 +1,7 @@
 package co.edu.uniquindio.sameday.controllers;
 
 import co.edu.uniquindio.sameday.models.*;
-import co.edu.uniquindio.sameday.models.creational.builder.Client;
+import co.edu.uniquindio.sameday.models.Client;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.SimpleStringProperty;

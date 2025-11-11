@@ -1,7 +1,8 @@
 package co.edu.uniquindio.sameday.controllers;
 
 import co.edu.uniquindio.sameday.models.*;
-import co.edu.uniquindio.sameday.models.creational.builder.Client;
+import co.edu.uniquindio.sameday.models.Client;
+import co.edu.uniquindio.sameday.models.Person;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,6 +47,7 @@ public class CreateAccountController {
     @FXML
     void onRegistrar(ActionEvent event) {
         // Obtener los valores de los campos
+        String documento="";
         String nombre = txtNombre.getText().trim();
         String correo = txtCorreo.getText().trim();
         String telefono = txtTelefono.getText().trim();
@@ -93,14 +95,7 @@ public class CreateAccountController {
         UserAccount newUserAccount = new UserAccount(usuario, contrasenia, null, TypeUser.CLIENT);
 
         // Crear el objeto Client (por defecto todos los registros son clientes)
-        Client newClient = new Client.Builder()
-                .id(idCliente)
-                .nombre(nombre)
-                .correo(correo)
-                .telefono(telefono)
-                .direccion(direccion)
-                .userAcconunt(newUserAccount)
-                .build();
+        Client newClient = new Client(idCliente,documento,nombre,correo,telefono,direccion,newUserAccount);
 
         // Establecer las relaciones bidireccionales
         newUserAccount.setPerson(newClient);
@@ -162,7 +157,7 @@ public class CreateAccountController {
      */
     private boolean usuarioExiste(String usuario) {
         return sameDay.getListPersons().stream()
-                .anyMatch(person -> person.getUser().getUser().equalsIgnoreCase(usuario));
+                .anyMatch(person -> person.getUserAccount().getUser().equalsIgnoreCase(usuario));
     }
 
     /**

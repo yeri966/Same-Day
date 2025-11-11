@@ -1,10 +1,10 @@
 package co.edu.uniquindio.sameday.models.creational.singleton;
 
 import co.edu.uniquindio.sameday.models.*;
-import co.edu.uniquindio.sameday.models.creational.builder.Admin;
-import co.edu.uniquindio.sameday.models.creational.builder.Client;
-import co.edu.uniquindio.sameday.models.creational.builder.Dealer;
-import co.edu.uniquindio.sameday.models.creational.builder.Person;
+import co.edu.uniquindio.sameday.models.Admin;
+import co.edu.uniquindio.sameday.models.Client;
+import co.edu.uniquindio.sameday.models.Dealer;
+import co.edu.uniquindio.sameday.models.Person;
 
 import java.util.ArrayList;
 
@@ -30,10 +30,6 @@ public class SameDay {
         return instance;
     }
 
-    public Person getUserActive() {
-        return userActive;
-    }
-
     public void setUserActive(Person userActive) {
         this.userActive = userActive;
     }
@@ -41,40 +37,27 @@ public class SameDay {
     public void cargarDatos() {
         // Crear Cliente de prueba
         UserAccount user1 = new UserAccount("veronica", "1010", null, TypeUser.CLIENT);
-        Client client = new Client.Builder()
-                .id("0001")
-                .nombre("Veronica Mendoza")
-                .correo("veromendoza@mail.com")
-                .telefono("32010100")
-                .direccion("Centro")
-                .userAcconunt(user1)
-                .build();
-        agregarPersona(client);
+        Client client1 = new Client("0001","251000210","Veronica Mendoza", "verom@mail.com",
+                "320141011", "Centro",null);
+        client1.setUserAccount(user1);
+        user1.setPerson(client1);
+        agregarPersona(client1);
 
         // Crear Repartidor de prueba
         UserAccount user2 = new UserAccount("yerilin", "2020", null, TypeUser.DEALER);
-        Dealer dealer = new Dealer.Builder()
-                .id("0002")
-                .nombre("Yerilin Ul")
-                .correo("yeriul@mail.com")
-                .telefono("300145100")
-                .userAccount(user2)
-                .disponible(false)
-                .zonaCobertura("Cartago")
-                .build();
-        agregarPersona(dealer);
+        Dealer dealer1=new Dealer("0001" ,"12410001","Yerilin Ul", "yeriul@mail.com2",
+                "310121001",null,false,City.CALARCA);
+        dealer1.setUserAccount(user2);
+        user2.setPerson(client1);
+        agregarPersona(dealer1);
 
         // Crear Administrador de prueba
-        UserAccount user3 = new UserAccount("cristian", "3030", null, TypeUser.ADMINISTRATOR);
-        Admin admin = new Admin.Builder()
-                .id("0003")
-                .nombre("Cristian Morales")
-                .correo("cmorales@mail.com")
-                .telefono("321044112")
-                .userAccount(user3)
-                .cargo("Supervisor")
-                .build();
-        agregarPersona(admin);
+        UserAccount user3 = new UserAccount("cristian","3030", null,TypeUser.ADMINISTRATOR);
+        Admin admin1 = new Admin("0001", "10001411","Cristian M", "cristianm@mail.com",
+                "3217412369",null,"Supervisor");
+        admin1.setUserAccount(user3);
+        user3.setPerson(admin1);
+        agregarPersona(admin1);
 
         // Cargar direcciones de prueba
         Address dir1 = new Address("DIR001", "Mi Casa", "Calle 15 # 20-45",
@@ -91,7 +74,7 @@ public class SameDay {
 
     public Person validarUsuario(String usuario, String contrasenia) {
         for (Person person : listPersons) {
-            UserAccount persActive = person.getUser();
+            UserAccount persActive = person.getUserAccount();
             if (persActive != null && persActive.getUser().equals(usuario) && persActive.getContrasenia().equals(contrasenia)) {
                 userActive = person;
                 return person;
@@ -152,4 +135,7 @@ public class SameDay {
         return listEnvios;
     }
 
+    public Person getUserActive() {
+        return userActive;
+    }
 }

@@ -1,5 +1,9 @@
 package co.edu.uniquindio.sameday.controllers;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,109 +16,36 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class DashboardAdminController {
 
     @FXML
-    private Label lblNombreUsuario;
+    private ResourceBundle resources;
 
     @FXML
-    private Button btnCrearEnvio;
-
-    @FXML
-    private Button btnPagos;
-
-    @FXML
-    private Button btnHistorial;
-
-    @FXML
-    private Button btnDirecciones;
-
-    @FXML
-    private Button btnEditarPerfil;
+    private URL location;
 
     @FXML
     private Button btnCerrarSesion;
 
     @FXML
-    private AnchorPane contentArea; // Área donde se cargarán las vistas dinámicamente
+    private Button btnCliente;
 
-    private Button botonActivo = null; // Para mantener el estado del botón seleccionado
-
-    /**
-     * Inicializa el controlador
-     * Se ejecuta automáticamente después de cargar el FXML
-     */
     @FXML
-    void initialize() {
-        // Aquí puedes establecer el nombre del usuario logueado
-        lblNombreUsuario.setText("Administrador Demo");
+    private Button btnEditarPerfil;
 
-        // Aplicar efecto hover a los botones del menú
-        aplicarEfectoHover(btnPagos);
-        aplicarEfectoHover(btnHistorial);
-        aplicarEfectoHover(btnDirecciones);
-        aplicarEfectoHover(btnEditarPerfil);
-        aplicarEfectoHover(btnCerrarSesion);
-    }
-
-    /**
-     * Crea un nuevo envío - AHORA CARGA LA VISTA REAL
-     */
     @FXML
-    void onCrearEnvio(ActionEvent event) {
-        System.out.println("Crear Envío clickeado");
-        cambiarEstiloBotonActivo(btnCrearEnvio);
-        // Cargar el FXML de crear envío
-        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/CrearEnvio.fxml");
-    }
+    private Button btnRepartidor;
 
-    /**
-     * Muestra la vista de pagos
-     */
     @FXML
-    void onPagos(ActionEvent event) {
-        System.out.println("Pagos clickeado");
-        cambiarEstiloBotonActivo(btnPagos);
-        cargarVistaProximamente("Pagos - Próximamente");
-    }
+    private Button btnReporte;
 
-    /**
-     * Muestra el historial de envíos
-     */
     @FXML
-    void onHistorial(ActionEvent event) {
-        System.out.println("Historial clickeado");
-        cambiarEstiloBotonActivo(btnHistorial);
-        cargarVistaProximamente("Historial de Envíos - Próximamente");
-    }
+    private AnchorPane contentArea;
 
-    /**
-     * Muestra la vista de direcciones
-     */
     @FXML
-    void onDirecciones(ActionEvent event) {
-        System.out.println("Direcciones clickeado");
-        cambiarEstiloBotonActivo(btnDirecciones);
-        // Cargar el FXML de gestión de direcciones
-        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/GestionDirecciones.fxml");
-    }
+    private Label lblNombreUsuario;
 
-    /**
-     * Muestra la vista de editar perfil
-     */
-    @FXML
-    void onEditarPerfil(ActionEvent event) {
-        System.out.println("Editar Perfil clickeado");
-        cambiarEstiloBotonActivo(btnEditarPerfil);
-        // Cargar el FXML de editar perfil
-        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/EditarPerfil.fxml");
-    }
 
-    /**
-     * Cierra la sesión y vuelve al login
-     */
     @FXML
     void onCerrarSesion(ActionEvent event) {
         try {
@@ -134,48 +65,32 @@ public class DashboardAdminController {
         }
     }
 
-    /**
-     * Cambia el estilo del botón activo en el menú
-     * @param boton El botón que fue clickeado
-     */
-    private void cambiarEstiloBotonActivo(Button boton) {
-        // Restaurar estilo del botón anterior
-        if (botonActivo != null && botonActivo != btnCrearEnvio) {
-            botonActivo.setStyle("-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;");
-        }
+    @FXML
+    void onCliente(ActionEvent event) {
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/GestionCliente.fxml");
 
-        // Aplicar estilo al botón activo (excepto el botón de crear envío)
-        if (boton != btnCrearEnvio && boton != btnCerrarSesion) {
-            boton.setStyle("-fx-background-color: #2d3748; -fx-text-fill: white; -fx-font-size: 14px; -fx-cursor: hand;");
-            botonActivo = boton;
-        }
     }
 
-    /**
-     * Aplica efecto hover a los botones del menú
-     * @param boton El botón al que se le aplicará el efecto
-     */
-    private void aplicarEfectoHover(Button boton) {
-        String estiloOriginal = boton.getStyle();
+    @FXML
+    void onEditarPerfil(ActionEvent event) {
 
-        boton.setOnMouseEntered(e -> {
-            if (boton != botonActivo && boton != btnCrearEnvio) {
-                boton.setStyle("-fx-background-color: #2d3748; -fx-text-fill: white; -fx-font-size: 14px; -fx-cursor: hand;");
-            }
-        });
-
-        boton.setOnMouseExited(e -> {
-            if (boton != botonActivo && boton != btnCrearEnvio) {
-                boton.setStyle(estiloOriginal);
-            }
-        });
     }
 
-    /**
-     * Carga una vista FXML en el área de contenido central
-     * Este método carga el FXML dentro del AnchorPane contentArea
-     * @param fxmlPath Ruta del archivo FXML a cargar
-     */
+    @FXML
+    void onRepartidor(ActionEvent event) {
+
+    }
+
+    @FXML
+    void onReporte(ActionEvent event) {
+
+    }
+
+    @FXML
+    void initialize() {
+
+    }
+
     private void cargarVistaEnContentArea(String fxmlPath) {
         try {
             // Cargar el archivo FXML
@@ -202,27 +117,6 @@ public class DashboardAdminController {
         }
     }
 
-    /**
-     * Carga una vista temporal de "Próximamente" en el área de contenido
-     * @param mensaje El mensaje a mostrar temporalmente
-     */
-    private void cargarVistaProximamente(String mensaje) {
-        // Limpiar el área de contenido
-        contentArea.getChildren().clear();
-
-        // Crear un label con el mensaje
-        Label label = new Label(mensaje);
-        label.setStyle("-fx-font-size: 24px; -fx-text-fill: #1e293b;");
-        label.setLayoutX(300);
-        label.setLayoutY(300);
-
-        // Agregar el label al contentArea
-        contentArea.getChildren().add(label);
-    }
-
-    /**
-     * Muestra un cuadro de diálogo de alerta
-     */
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
         Alert alerta = new Alert(tipo);
         alerta.setTitle(titulo);
@@ -230,4 +124,5 @@ public class DashboardAdminController {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
+
 }
