@@ -99,7 +99,7 @@
                                     </children>
                                 </VBox>
 
-                                <!-- NUEVO: Contenido del Paquete -->
+                                <!-- Contenido del Paquete -->
                                 <VBox spacing="5.0">
                                     <children>
                                         <Label text="Contenido del Paquete:" textFill="#334155">
@@ -166,16 +166,23 @@
                                     </children>
                                 </HBox>
 
-                                <!-- Servicios Adicionales -->
-                                <VBox spacing="5.0">
+                                <!-- Servicios Adicionales con CheckBoxes -->
+                                <VBox spacing="8.0">
                                     <children>
                                         <Label text="Servicios Adicionales:" textFill="#334155">
                                             <font>
                                                 <Font name="System Bold" size="13.0" />
                                             </font>
                                         </Label>
-                                        <ComboBox fx:id="cmbServiciosAdicionales" prefHeight="35.0" prefWidth="390.0"
-                                                  promptText="Seleccione servicio" />
+
+                                        <CheckBox fx:id="chkSeguro" text="Seguro (+$5,000)"
+                                                  style="-fx-font-size: 12px; -fx-text-fill: #334155;" />
+                                        <CheckBox fx:id="chkFragil" text="Frágil (+$3,000)"
+                                                  style="-fx-font-size: 12px; -fx-text-fill: #334155;" />
+                                        <CheckBox fx:id="chkFirmaRequerida" text="Firma Requerida (Gratis)"
+                                                  style="-fx-font-size: 12px; -fx-text-fill: #334155;" />
+                                        <CheckBox fx:id="chkPrioridad" text="Prioridad (+$8,000)"
+                                                  style="-fx-font-size: 12px; -fx-text-fill: #334155;" />
                                     </children>
                                 </VBox>
                             </children>
@@ -248,7 +255,7 @@
                     </font>
                 </Label>
 
-                <!-- TABLA DE ENVÍOS CON NUEVA COLUMNA -->
+                <!-- TABLA DE ENVÍOS -->
                 <TableView fx:id="tablaEnvios" layoutX="30.0" layoutY="615.0" prefHeight="260.0" prefWidth="890.0"
                            style="-fx-background-color: white;">
                     <columns>

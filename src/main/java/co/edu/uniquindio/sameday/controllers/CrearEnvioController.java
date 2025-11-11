@@ -22,11 +22,17 @@ public class CrearEnvioController {
     @FXML private TextField txtId;
     @FXML private ComboBox<Address> cmbOrigen;
     @FXML private ComboBox<Address> cmbDestino;
-    @FXML private TextField txtContenido;  // NUEVO CAMPO
+    @FXML private TextField txtContenido;
     @FXML private TextField txtPeso;
     @FXML private TextField txtDimensiones;
     @FXML private TextField txtVolumen;
-    @FXML private ComboBox<ServicioAdicional> cmbServiciosAdicionales;
+
+    // CheckBoxes para servicios adicionales
+    @FXML private CheckBox chkSeguro;
+    @FXML private CheckBox chkFragil;
+    @FXML private CheckBox chkFirmaRequerida;
+    @FXML private CheckBox chkPrioridad;
+
     @FXML private Label lblCotizacion;
     @FXML private Button btnAgregar;
     @FXML private Button btnActualizar;
@@ -37,12 +43,10 @@ public class CrearEnvioController {
     @FXML private TableColumn<Envio, String> colId;
     @FXML private TableColumn<Envio, String> colOrigen;
     @FXML private TableColumn<Envio, String> colDestino;
-    @FXML private TableColumn<Envio, String> colContenido;  // NUEVA COLUMNA
+    @FXML private TableColumn<Envio, String> colContenido;
     @FXML private TableColumn<Envio, String> colPeso;
     @FXML private TableColumn<Envio, String> colServicios;
     @FXML private TableColumn<Envio, String> colCosto;
-
-    private List<ServicioAdicional> serviciosSeleccionados = new ArrayList<>();
 
     @FXML
     void initialize() {
@@ -71,9 +75,6 @@ public class CrearEnvioController {
             }
         }
         cmbDestino.setItems(FXCollections.observableArrayList(direccionesDestinatario));
-
-        cmbServiciosAdicionales.setItems(FXCollections.observableArrayList(ServicioAdicional.values()));
-        cmbServiciosAdicionales.setOnAction(event -> onServicioSeleccionado());
     }
 
     private void configureTable() {
@@ -90,7 +91,6 @@ public class CrearEnvioController {
             return new SimpleStringProperty(destino != null ? destino.getAlias() : "");
         });
 
-        // NUEVA COLUMNA DE CONTENIDO
         colContenido.setCellValueFactory(cellData -> {
             String contenido = cellData.getValue().getContenido();
             return new SimpleStringProperty(contenido != null ? contenido : "");
@@ -123,24 +123,41 @@ public class CrearEnvioController {
         txtId.setText(envio.getId());
         cmbOrigen.setValue(envio.getOrigen());
         cmbDestino.setValue(envio.getDestino());
-        txtContenido.setText(envio.getContenido());  // CARGAR CONTENIDO
+        txtContenido.setText(envio.getContenido());
         txtPeso.setText(String.valueOf(envio.getPeso()));
         txtDimensiones.setText(envio.getDimensiones());
         txtVolumen.setText(String.valueOf(envio.getVolumen()));
-        serviciosSeleccionados = new ArrayList<>(envio.getServiciosAdicionales());
+
+        // Cargar servicios en los checkboxes
+        chkSeguro.setSelected(envio.getServiciosAdicionales().contains(ServicioAdicional.SEGURO));
+        chkFragil.setSelected(envio.getServiciosAdicionales().contains(ServicioAdicional.FRAGIL));
+        chkFirmaRequerida.setSelected(envio.getServiciosAdicionales().contains(ServicioAdicional.FIRMA_REQUERIDA));
+        chkPrioridad.setSelected(envio.getServiciosAdicionales().contains(ServicioAdicional.PRIORIDAD));
+
         lblCotizacion.setText(String.format("Costo Total: $%.0f", envio.getCostoTotal()));
         cotizacionActual = envio.getCostoTotal();
     }
 
-    private void onServicioSeleccionado() {
-        ServicioAdicional servicio = cmbServiciosAdicionales.getValue();
-        if (servicio != null && !serviciosSeleccionados.contains(servicio)) {
-            serviciosSeleccionados.add(servicio);
-            showAlert("Servicio Agregado",
-                    "Se agregó: " + servicio.toString(),
-                    Alert.AlertType.INFORMATION);
-            cmbServiciosAdicionales.setValue(null);
+    /**
+     * Obtiene la lista de servicios seleccionados desde los checkboxes
+     */
+    private List<ServicioAdicional> getServiciosSeleccionados() {
+        List<ServicioAdicional> servicios = new ArrayList<>();
+
+        if (chkSeguro.isSelected()) {
+            servicios.add(ServicioAdicional.SEGURO);
         }
+        if (chkFragil.isSelected()) {
+            servicios.add(ServicioAdicional.FRAGIL);
+        }
+        if (chkFirmaRequerida.isSelected()) {
+            servicios.add(ServicioAdicional.FIRMA_REQUERIDA);
+        }
+        if (chkPrioridad.isSelected()) {
+            servicios.add(ServicioAdicional.PRIORIDAD);
+        }
+
+        return servicios;
     }
 
     @FXML
@@ -152,6 +169,9 @@ public class CrearEnvioController {
         try {
             double peso = Double.parseDouble(txtPeso.getText().trim());
             EnvioComponent envio = new EnvioBasico(peso);
+
+            // Obtener servicios desde los checkboxes
+            List<ServicioAdicional> serviciosSeleccionados = getServiciosSeleccionados();
 
             for (ServicioAdicional servicio : serviciosSeleccionados) {
                 envio = aplicarDecorador(envio, servicio);
@@ -206,11 +226,11 @@ public class CrearEnvioController {
             nuevoEnvio.setId(txtId.getText().trim());
             nuevoEnvio.setOrigen(cmbOrigen.getValue());
             nuevoEnvio.setDestino(cmbDestino.getValue());
-            nuevoEnvio.setContenido(txtContenido.getText().trim());  // GUARDAR CONTENIDO
+            nuevoEnvio.setContenido(txtContenido.getText().trim());
             nuevoEnvio.setPeso(Double.parseDouble(txtPeso.getText().trim()));
             nuevoEnvio.setDimensiones(txtDimensiones.getText().trim());
             nuevoEnvio.setVolumen(Double.parseDouble(txtVolumen.getText().trim()));
-            nuevoEnvio.setServiciosAdicionales(new ArrayList<>(serviciosSeleccionados));
+            nuevoEnvio.setServiciosAdicionales(getServiciosSeleccionados());
             nuevoEnvio.setCostoTotal(cotizacionActual);
 
             sameDay.addEnvio(nuevoEnvio);
@@ -252,11 +272,11 @@ public class CrearEnvioController {
         try {
             selectedEnvio.setOrigen(cmbOrigen.getValue());
             selectedEnvio.setDestino(cmbDestino.getValue());
-            selectedEnvio.setContenido(txtContenido.getText().trim());  // ACTUALIZAR CONTENIDO
+            selectedEnvio.setContenido(txtContenido.getText().trim());
             selectedEnvio.setPeso(Double.parseDouble(txtPeso.getText().trim()));
             selectedEnvio.setDimensiones(txtDimensiones.getText().trim());
             selectedEnvio.setVolumen(Double.parseDouble(txtVolumen.getText().trim()));
-            selectedEnvio.setServiciosAdicionales(new ArrayList<>(serviciosSeleccionados));
+            selectedEnvio.setServiciosAdicionales(getServiciosSeleccionados());
             selectedEnvio.setCostoTotal(cotizacionActual);
 
             sameDay.updateEnvio(selectedEnvio);
@@ -312,12 +332,17 @@ public class CrearEnvioController {
         txtId.setText(generateEnvioId());
         cmbOrigen.setValue(null);
         cmbDestino.setValue(null);
-        txtContenido.clear();  // LIMPIAR CONTENIDO
+        txtContenido.clear();
         txtPeso.clear();
         txtDimensiones.clear();
         txtVolumen.clear();
-        cmbServiciosAdicionales.setValue(null);
-        serviciosSeleccionados.clear();
+
+        // Limpiar checkboxes
+        chkSeguro.setSelected(false);
+        chkFragil.setSelected(false);
+        chkFirmaRequerida.setSelected(false);
+        chkPrioridad.setSelected(false);
+
         lblCotizacion.setText("Presione 'Cotizar' para calcular el costo");
         lblCotizacion.setStyle("-fx-text-fill: #1e40af;");
         cotizacionActual = 0.0;
@@ -342,7 +367,6 @@ public class CrearEnvioController {
             return false;
         }
 
-        // VALIDAR CONTENIDO
         if (txtContenido.getText().trim().isEmpty()) {
             showAlert("Campos Incompletos",
                     "Debe ingresar el contenido del paquete",

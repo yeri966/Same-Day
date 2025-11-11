@@ -1,9 +1,6 @@
 package co.edu.uniquindio.sameday.models;
 
-/**
- * Clase que representa una dirección en el sistema de logística
- * Almacena información de ubicaciones que pueden ser origen o destino de envíos
- */
+
 public class Address {
     private String id;
     private String alias;

@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Clase que representa un envío en el sistema de logística
- */
+
 public class Envio {
     private String id;
     private Address origen;

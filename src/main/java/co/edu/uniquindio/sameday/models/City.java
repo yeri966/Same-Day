@@ -1,6 +1,6 @@
 package co.edu.uniquindio.sameday.models;
 
-public enum     City {
+public enum City {
     ARMENIA,
     CALARCA,
     CIRCASIA,
