@@ -110,12 +110,11 @@ public class HistorialEnviosController {
         colCosto.setCellValueFactory(cellData ->
                 new SimpleStringProperty(String.format("$%,.0f", cellData.getValue().getCostoTotal())));
 
-        // Estado con estilo
+        // Estado de envío (EN_RUTA, ENTREGADO) - por ahora null
         colEstado.setCellValueFactory(cellData -> {
-            String estado = cellData.getValue().getEstado();
-            // Por ahora todos los pagados tienen estado "PAGADO"
-            // Más adelante se podrán agregar: EN_TRANSITO, ENTREGADO, etc.
-            return new SimpleStringProperty(estado != null ? estado : "PAGADO");
+            // Por ahora el estado de ruta/entrega es null
+            // Solo mostramos "-" para indicar que está pendiente
+            return new SimpleStringProperty("-");
         });
 
         // Aplicar estilo a la columna de estado
@@ -128,19 +127,8 @@ public class HistorialEnviosController {
                     setStyle("");
                 } else {
                     setText(item);
-                    switch (item) {
-                        case "PAGADO":
-                            setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
-                            break;
-                        case "EN_TRANSITO":
-                            setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;");
-                            break;
-                        case "ENTREGADO":
-                            setStyle("-fx-text-fill: #3b82f6; -fx-font-weight: bold;");
-                            break;
-                        default:
-                            setStyle("-fx-text-fill: #64748b; -fx-font-weight: bold;");
-                    }
+                    // Por ahora todos aparecen en gris como pendientes
+                    setStyle("-fx-text-fill: #64748b; -fx-font-weight: bold;");
                 }
             }
         });
@@ -150,13 +138,8 @@ public class HistorialEnviosController {
      * Configura los ComboBox de filtros
      */
     private void configurarFiltros() {
-        // ComboBox de Estado
-        ObservableList<String> estados = FXCollections.observableArrayList(
-                "Todos",
-                "PAGADO",
-                "EN_TRANSITO",
-                "ENTREGADO"
-        );
+        // ComboBox de Estado - por ahora solo "Todos" ya que no hay estados de ruta
+        ObservableList<String> estados = FXCollections.observableArrayList("Todos");
         cmbEstado.setItems(estados);
         cmbEstado.setValue("Todos");
 
@@ -241,16 +224,11 @@ public class HistorialEnviosController {
     }
 
     /**
-     * Filtra por estado
+     * Filtra por estado - por ahora siempre retorna true ya que no hay estados de ruta
      */
     private boolean filtrarPorEstado(Envio envio) {
-        String estadoSeleccionado = cmbEstado.getValue();
-
-        if (estadoSeleccionado == null || estadoSeleccionado.equals("Todos")) {
-            return true;
-        }
-
-        return estadoSeleccionado.equals(envio.getEstado());
+        // Por ahora no hay estados de ruta/entrega, así que no filtramos por esto
+        return true;
     }
 
     /**
@@ -276,13 +254,9 @@ public class HistorialEnviosController {
     private void actualizarEstadisticas() {
         int total = tablaHistorial.getItems().size();
 
-        long entregados = tablaHistorial.getItems().stream()
-                .filter(e -> "ENTREGADO".equals(e.getEstado()))
-                .count();
-
-        long pendientes = tablaHistorial.getItems().stream()
-                .filter(e -> "PAGADO".equals(e.getEstado()) || "EN_TRANSITO".equals(e.getEstado()))
-                .count();
+        // Por ahora no hay estados de ruta/entrega, todos son envíos pagados pendientes
+        long entregados = 0; // Será usado más adelante
+        long pendientes = total; // Por ahora todos están pendientes de entrega
 
         lblTotalEnvios.setText("Total: " + total);
         lblEnviosEntregados.setText("Entregados: " + entregados);

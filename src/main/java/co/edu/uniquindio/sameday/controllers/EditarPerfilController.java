@@ -52,27 +52,20 @@ public class EditarPerfilController {
     void initialize() {
         System.out.println("=== INICIALIZANDO CONTROLADOR EDITAR PERFIL ===");
 
-        // Por ahora cargaremos el primer cliente como demo
-        // TODO: Cambiar esto para obtener el cliente logueado de la sesión
-        cargarDatosCliente();
+        // Cargar datos del usuario actualmente logueado
+        cargarDatosUsuarioActivo();
     }
 
     /**
-     * Carga los datos del cliente actual en el formulario
-     * TODO: Recibir el cliente desde la sesión o parámetro
+     * Carga los datos del usuario actualmente logueado en el sistema
      */
-    private void cargarDatosCliente() {
-        // Por ahora tomamos el primer cliente de la lista como ejemplo
-        // En una implementación real, esto vendría de la sesión del usuario logueado
-        for (Person person : sameDay.getListPersons()) {
-            if (person instanceof Client) {
-                clienteActual = (Client) person;
-                break;
-            }
-        }
+    private void cargarDatosUsuarioActivo() {
+        // Obtener el usuario activo del sistema
+        Person usuarioActivo = sameDay.getUserActive();
 
-        if (clienteActual != null) {
-            System.out.println("Cargando datos del cliente: " + clienteActual.getNombre());
+        if (usuarioActivo instanceof Client) {
+            clienteActual = (Client) usuarioActivo;
+            System.out.println("Cargando datos del cliente logueado: " + clienteActual.getNombre());
 
             // Cargar datos en los campos
             txtId.setText(clienteActual.getId());
@@ -89,7 +82,9 @@ public class EditarPerfilController {
             txtContrasenia.clear();
             txtConfirmarContrasenia.clear();
         } else {
-            showAlert("Error", "No se pudo cargar la información del usuario", Alert.AlertType.ERROR);
+            showAlert("Error",
+                    "No hay un cliente activo en el sistema. Por favor inicie sesión nuevamente.",
+                    Alert.AlertType.ERROR);
         }
     }
 
@@ -213,7 +208,7 @@ public class EditarPerfilController {
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             // Recargar los datos originales
-            cargarDatosCliente();
+            cargarDatosUsuarioActivo();
 
             showAlert("Cancelado",
                     "Los cambios han sido descartados",
