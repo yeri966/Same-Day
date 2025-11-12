@@ -27,3 +27,4 @@ public class Dealer extends Person {
         this.city = city;
     }
 }
+/** falta hacer gestion repartidor 
