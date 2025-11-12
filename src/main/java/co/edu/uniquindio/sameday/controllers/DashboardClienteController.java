@@ -82,13 +82,14 @@ public class DashboardClienteController {
     }
 
     /**
-     * Muestra el historial de envíos
+     * Muestra el historial de envíos - AHORA CARGA LA VISTA REAL
      */
     @FXML
     void onHistorial(ActionEvent event) {
         System.out.println("Historial clickeado");
         cambiarEstiloBotonActivo(btnHistorial);
-        cargarVistaProximamente("Historial de Envíos - Próximamente");
+        // Cargar el FXML de historial de envíos
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/HistorialEnvios.fxml");
     }
 
     /**
