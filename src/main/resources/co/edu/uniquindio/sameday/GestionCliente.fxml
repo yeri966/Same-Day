@@ -33,7 +33,7 @@
         <Separator layoutX="30.0" layoutY="80.0" prefWidth="890.0" />
 
         <!-- FORMULARIO -->
-        <VBox layoutX="30.0" layoutY="95.0" prefHeight="146.0" prefWidth="910.0" spacing="12.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-border-width: 2;">
+        <VBox layoutX="30.0" layoutY="95.0" prefHeight="180.0" prefWidth="910.0" spacing="12.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-border-width: 2;">
             <padding>
                 <Insets bottom="12.0" left="15.0" right="15.0" top="12.0" />
             </padding>
@@ -46,11 +46,11 @@
 
                 <GridPane hgap="15.0" vgap="12.0">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="90.0" prefWidth="90.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="180.0" prefWidth="180.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="90.0" prefWidth="90.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="180.0" prefWidth="180.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="160.0" prefWidth="160.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="80.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="180.0" prefWidth="180.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="180.0" prefWidth="180.0" />
                     </columnConstraints>
                     <rowConstraints>
@@ -93,7 +93,7 @@
                         </font>
                     </TextField>
 
-                    <!-- FILA 2: Email, Teléfono y Dirección -->
+                    <!-- FILA 2: Email, Teléfono y Usuario -->
                     <Label style="-fx-alignment: center-right;" text="Email:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="1">
                         <font>
                             <Font name="System Bold" size="13.0" />
@@ -116,12 +116,24 @@
                         </font>
                     </TextField>
 
-                    <Label style="-fx-alignment: center-right;" text="Dirección:" textFill="#475569" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                    <Label style="-fx-alignment: center-right;" text="Usuario:" textFill="#475569" GridPane.columnIndex="4" GridPane.rowIndex="1">
                         <font>
                             <Font name="System Bold" size="13.0" />
                         </font>
                     </Label>
-                    <TextField fx:id="txtDireccion" promptText="Calle 123 #45-67" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                    <TextField fx:id="txtUsuario" promptText="Nombre de usuario" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                        <font>
+                            <Font size="12.0" />
+                        </font>
+                    </TextField>
+
+                    <!-- FILA 3: Dirección (ocupa todo el ancho) -->
+                    <Label style="-fx-alignment: center-right;" text="Dirección:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                        <font>
+                            <Font name="System Bold" size="13.0" />
+                        </font>
+                    </Label>
+                    <TextField fx:id="txtDireccion" promptText="Calle 123 #45-67" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="1" GridPane.columnSpan="5" GridPane.rowIndex="2">
                         <font>
                             <Font size="12.0" />
                         </font>
@@ -140,12 +152,6 @@
                 </Button>
 
                 <Button fx:id="btnActualizar" mnemonicParsing="false" onAction="#onActualizar" prefHeight="40.0" prefWidth="115.0" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="✏️ Actualizar">
-                    <font>
-                        <Font size="12.0" />
-                    </font>
-                </Button>
-
-                <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#onEliminar" prefHeight="40.0" prefWidth="115.0" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="🗑️ Eliminar">
                     <font>
                         <Font size="12.0" />
                     </font>
@@ -176,18 +182,18 @@
                     </font>
                 </Label>
 
-                <TableView fx:id="tablaClientes" prefHeight="280.0" prefWidth="890.0" style="-fx-background-color: white; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-border-width: 2;">
+                <TableView fx:id="tablaClientes" prefHeight="250.0" prefWidth="890.0" style="-fx-background-color: white; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-border-width: 2;">
                     <columns>
-                        <TableColumn fx:id="colId" prefWidth="89.60000610351562" text="ID" />
-                        <TableColumn fx:id="colNombre" prefWidth="172.79995727539062" text="Nombre" />
-                        <TableColumn fx:id="colCedula" prefWidth="117.60003662109375" text="Cédula" />
-                        <TableColumn fx:id="colEmail" prefWidth="159.199951171875" text="Email" />
-                        <TableColumn fx:id="colTelefono" prefWidth="127.20001220703125" text="Teléfono" />
-                        <TableColumn fx:id="colDireccion" prefWidth="148.0" text="Dirección" />
+                        <TableColumn fx:id="colId" prefWidth="80.0" text="ID" />
+                        <TableColumn fx:id="colNombre" prefWidth="160.0" text="Nombre" />
+                        <TableColumn fx:id="colCedula" prefWidth="110.0" text="Cédula" />
+                        <TableColumn fx:id="colEmail" prefWidth="150.0" text="Email" />
+                        <TableColumn fx:id="colTelefono" prefWidth="110.0" text="Teléfono" />
+                        <TableColumn fx:id="colDireccion" prefWidth="280.0" text="Dirección" />
                     </columns>
                 </TableView>
 
-                <!-- ESTADÍSTICAS -->
+                <!-- ESTADÍSTICAS Y BOTÓN ELIMINAR -->
                 <HBox alignment="CENTER_LEFT" spacing="25.0">
                     <padding>
                         <Insets top="2.0" />
@@ -204,6 +210,16 @@
                                 <Font name="System Bold" size="13.0" />
                             </font>
                         </Label>
+
+                        <!-- Espaciador para empujar el botón a la derecha -->
+                        <HBox HBox.hgrow="ALWAYS" />
+
+                        <!-- BOTÓN ELIMINAR EN LA ESQUINA DERECHA -->
+                        <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#onEliminar" prefHeight="38.0" prefWidth="130.0" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="🗑️ Eliminar">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Button>
                     </children>
                 </HBox>
             </children>

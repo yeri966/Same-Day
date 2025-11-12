@@ -30,7 +30,7 @@
                             </font>
                         </Label>
                         <!-- Información del usuario -->
-                        <Label fx:id="lblNombreUsuario" text="Usuario" textFill="WHITE">
+                        <Label fx:id="lblNombreUsuario" text="Administrador" textFill="WHITE">
                             <font>
                                 <Font name="System Bold" size="14.0" />
                             </font>
@@ -51,32 +51,25 @@
                     </VBox.margin>
                 </Separator>
 
-                <!-- OPCIONES DEL MENÚ (SIN LA OPCIÓN "ENVÍOS") -->
+                <!-- OPCIONES DEL MENÚ -->
                 <VBox prefHeight="400.0" prefWidth="250.0" spacing="5.0">
                     <children>
-                        <!-- Opción: Pagos -->
-                        <Button fx:id="btnCliente" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onCliente" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="👤  Gestion Cliente">
+                        <!-- Opción: Gestión Cliente -->
+                        <Button fx:id="btnCliente" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onCliente" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="👤  Gestión Cliente">
                             <padding>
                                 <Insets left="20.0" />
                             </padding>
                         </Button>
 
-                        <!-- Opción: Historial de Envíos -->
-                        <Button fx:id="btnRepartidor" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onRepartidor" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="👤  Gestion Repartidor">
+                        <!-- Opción: Gestión Repartidor -->
+                        <Button fx:id="btnRepartidor" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onRepartidor" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="🚚  Gestión Repartidor">
                             <padding>
                                 <Insets left="20.0" />
                             </padding>
                         </Button>
 
-                        <!-- Opción: Direcciones -->
-                        <Button fx:id="btnReporte" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onReporte" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="📄 Generar Reporte">
-                            <padding>
-                                <Insets left="20.0" />
-                            </padding>
-                        </Button>
-
-                        <!-- Opción: Editar Perfil -->
-                        <Button fx:id="btnEditarPerfil" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onEditarPerfil" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="👤  Editar Perfil">
+                        <!-- Opción: Generar Reporte -->
+                        <Button fx:id="btnReporte" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onReporte" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="📄  Generar Reporte">
                             <padding>
                                 <Insets left="20.0" />
                             </padding>
@@ -117,7 +110,7 @@
                 <!-- Vista de bienvenida por defecto -->
                 <VBox alignment="CENTER" prefHeight="700.0" prefWidth="950.0" spacing="20.0">
                     <children>
-                        <Label text="¡Bienvenido a SameDay!" textFill="#1e293b">
+                        <Label text="¡Bienvenido Administrador!" textFill="#1e293b">
                             <font>
                                 <Font name="System Bold" size="32.0" />
                             </font>

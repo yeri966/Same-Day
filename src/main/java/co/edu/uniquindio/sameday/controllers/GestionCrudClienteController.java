@@ -1,34 +1,26 @@
 package co.edu.uniquindio.sameday.controllers;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import co.edu.uniquindio.sameday.models.Client;
 import co.edu.uniquindio.sameday.models.Person;
+import co.edu.uniquindio.sameday.models.TypeUser;
+import co.edu.uniquindio.sameday.models.UserAccount;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
-
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class GestionCrudClienteController {
 
     private ObservableList<Client> listaClientes;
-    private List<Person> todasLasPersonas = new ArrayList<>();
     private SameDay sameDay;
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
+    private Client clienteSeleccionado = null;
 
     @FXML
     private Button btnActualizar;
@@ -88,30 +80,22 @@ public class GestionCrudClienteController {
     private TextField txtTelefono;
 
     @FXML
-    void onActualizar(ActionEvent event) {
-
-    }
-
-    @FXML
-    void onAgregar(ActionEvent event) {
-    }
-
-    @FXML
-    void onEliminar(ActionEvent event) {
-
-    }
-
-    @FXML
-    void onLimpiar(ActionEvent event) {
-        limpiarFormulario();
-
-    }
+    private TextField txtUsuario;
 
     @FXML
     void initialize() {
+        System.out.println("=== INICIALIZANDO GESTIÓN CLIENTE ===");
         sameDay = SameDay.getInstance();
+
+        // Inicializar la lista observable vacía
+        listaClientes = FXCollections.observableArrayList();
+
         configurarTabla();
         cargarClientes();
+        configurarSeleccionTabla();
+        btnActualizar.setDisable(true);
+
+        System.out.println("=== GESTIÓN CLIENTE INICIALIZADA ===");
     }
 
     private void configurarTabla() {
@@ -123,19 +107,57 @@ public class GestionCrudClienteController {
         colDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
     }
 
+    private void configurarSeleccionTabla() {
+        tablaClientes.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        clienteSeleccionado = newValue;
+                        cargarClienteEnFormulario(newValue);
+                        btnActualizar.setDisable(false);
+                        btnAgregar.setDisable(true);
+                    }
+                }
+        );
+    }
+
+    private void cargarClienteEnFormulario(Client cliente) {
+        txtId.setText(cliente.getId());
+        txtNombre.setText(cliente.getNombre());
+        txtCedula.setText(cliente.getDocumento());
+        txtEmail.setText(cliente.getCorreo());
+        txtTelefono.setText(cliente.getTelefono());
+        txtDireccion.setText(cliente.getDireccion());
+
+        // Cargar el usuario si existe
+        if (cliente.getUserAccount() != null) {
+            txtUsuario.setText(cliente.getUserAccount().getUser());
+        }
+    }
+
     private void cargarClientes() {
-        todasLasPersonas = obtenerTodasLasPersonas();
-        List<Client> soloClientes = todasLasPersonas.stream()
+        System.out.println("🔄 Recargando clientes...");
+
+        // Obtener DIRECTAMENTE la referencia a la lista de personas del Singleton
+        // NO hacer copias, trabajar con la lista original
+        List<Client> soloClientes = sameDay.getListPersons().stream()
                 .filter(persona -> persona instanceof Client)
                 .map(persona -> (Client) persona)
                 .collect(Collectors.toList());
 
-        // Cargar en la tabla
-        listaClientes = FXCollections.observableArrayList(soloClientes);
+        // Limpiar y recargar la lista observable
+        listaClientes.clear();
+        listaClientes.addAll(soloClientes);
+
+        // Establecer los items en la tabla
         tablaClientes.setItems(listaClientes);
+
+        // Forzar el refresco visual de la tabla
+        tablaClientes.refresh();
 
         // Actualizar estadísticas
         actualizarEstadisticas();
+
+        System.out.println("✅ " + soloClientes.size() + " clientes cargados");
     }
 
     private void actualizarEstadisticas() {
@@ -143,8 +165,123 @@ public class GestionCrudClienteController {
         lblClientesActivos.setText("✅ Activos: " + listaClientes.size());
     }
 
-    private List<Person> obtenerTodasLasPersonas() {
-        return SameDay.getInstance().getListPersons();
+    @FXML
+    void onAgregar(ActionEvent event) {
+        if (!validarCampos()) {
+            return;
+        }
+
+        // Generar ID único
+        String nuevoId = generarIdCliente();
+
+        // Obtener el nombre de usuario del campo o generar uno por defecto
+        String nombreUsuario = txtUsuario.getText().trim();
+        if (nombreUsuario.isEmpty()) {
+            nombreUsuario = "cliente" + nuevoId;
+        }
+
+        // Crear UserAccount para el nuevo cliente
+        UserAccount userAccount = new UserAccount(
+                nombreUsuario,
+                "1234", // Contraseña por defecto
+                null,
+                TypeUser.CLIENT
+        );
+
+        // Crear el nuevo cliente
+        Client nuevoCliente = new Client(
+                nuevoId,
+                txtCedula.getText().trim(),
+                txtNombre.getText().trim(),
+                txtEmail.getText().trim(),
+                txtTelefono.getText().trim(),
+                txtDireccion.getText().trim(),
+                userAccount
+        );
+
+        // Establecer relación bidireccional
+        userAccount.setPerson(nuevoCliente);
+
+        // Agregar al sistema
+        sameDay.agregarPersona(nuevoCliente);
+
+        mostrarAlerta(Alert.AlertType.INFORMATION,
+                "Cliente Agregado",
+                "El cliente ha sido agregado exitosamente");
+
+        cargarClientes();
+        limpiarFormulario();
+    }
+
+    @FXML
+    void onActualizar(ActionEvent event) {
+        if (clienteSeleccionado == null) {
+            mostrarAlerta(Alert.AlertType.WARNING,
+                    "Selección Requerida",
+                    "Debe seleccionar un cliente de la tabla");
+            return;
+        }
+
+        if (!validarCampos()) {
+            return;
+        }
+
+        // Actualizar datos del cliente seleccionado
+        clienteSeleccionado.setNombre(txtNombre.getText().trim());
+        clienteSeleccionado.setDocumento(txtCedula.getText().trim());
+        clienteSeleccionado.setCorreo(txtEmail.getText().trim());
+        clienteSeleccionado.setTelefono(txtTelefono.getText().trim());
+        clienteSeleccionado.setDireccion(txtDireccion.getText().trim());
+
+        // Actualizar el nombre de usuario si existe el UserAccount
+        if (clienteSeleccionado.getUserAccount() != null && !txtUsuario.getText().trim().isEmpty()) {
+            clienteSeleccionado.getUserAccount().setUser(txtUsuario.getText().trim());
+        }
+
+        mostrarAlerta(Alert.AlertType.INFORMATION,
+                "Cliente Actualizado",
+                "Los datos del cliente han sido actualizados exitosamente");
+
+        // Refrescar la tabla forzando una recarga completa
+        tablaClientes.refresh();
+        cargarClientes();
+        limpiarFormulario();
+
+        System.out.println("✅ Cliente actualizado: " + clienteSeleccionado.getNombre());
+    }
+
+    @FXML
+    void onEliminar(ActionEvent event) {
+        Client clienteAEliminar = tablaClientes.getSelectionModel().getSelectedItem();
+
+        if (clienteAEliminar == null) {
+            mostrarAlerta(Alert.AlertType.WARNING,
+                    "Selección Requerida",
+                    "Debe seleccionar un cliente de la tabla para eliminar");
+            return;
+        }
+
+        // Confirmación
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar Eliminación");
+        confirmacion.setHeaderText("¿Está seguro que desea eliminar este cliente?");
+        confirmacion.setContentText("Cliente: " + clienteAEliminar.getNombre());
+
+        if (confirmacion.showAndWait().get() == ButtonType.OK) {
+            sameDay.getListPersons().remove(clienteAEliminar);
+
+            mostrarAlerta(Alert.AlertType.INFORMATION,
+                    "Cliente Eliminado",
+                    "El cliente ha sido eliminado exitosamente");
+
+            cargarClientes();
+            limpiarFormulario();
+        }
+    }
+
+    @FXML
+    void onLimpiar(ActionEvent event) {
+        limpiarFormulario();
     }
 
     private boolean validarCampos() {
@@ -183,6 +320,13 @@ public class GestionCrudClienteController {
             errores.append("• La dirección es obligatoria\n");
         }
 
+        // Validar usuario
+        if (txtUsuario.getText() == null || txtUsuario.getText().trim().isEmpty()) {
+            errores.append("• El usuario es obligatorio\n");
+        } else if (txtUsuario.getText().trim().length() < 4) {
+            errores.append("• El usuario debe tener al menos 4 caracteres\n");
+        }
+
         // Si hay errores, mostrar alerta
         if (errores.length() > 0) {
             mostrarAlerta(Alert.AlertType.WARNING,
@@ -208,7 +352,17 @@ public class GestionCrudClienteController {
         txtEmail.clear();
         txtTelefono.clear();
         txtDireccion.clear();
+        txtUsuario.clear();
         tablaClientes.getSelectionModel().clearSelection();
+        clienteSeleccionado = null;
+        btnActualizar.setDisable(true);
+        btnAgregar.setDisable(false);
     }
 
+    private String generarIdCliente() {
+        int totalClientes = (int) sameDay.getListPersons().stream()
+                .filter(person -> person instanceof Client)
+                .count();
+        return String.format("%04d", totalClientes + 1);
+    }
 }
