@@ -12,7 +12,11 @@ public class Envio {
     private double peso;
     private String dimensiones;
     private double volumen;
-    private String contenido;  // NUEVO CAMPO
+    private String contenido;
+    // Información del destinatario - NUEVO
+    private String nombreDestinatario;
+    private String telefonoDestinatario;
+    private String cedulaDestinatario;
     private List<ServicioAdicional> serviciosAdicionales;
     private double costoTotal;
     private LocalDateTime fechaCreacion;
@@ -60,6 +64,22 @@ public class Envio {
     public String getContenido() { return contenido; }
     public void setContenido(String contenido) { this.contenido = contenido; }
 
+    // Getters y Setters para información del destinatario - NUEVO
+    public String getNombreDestinatario() { return nombreDestinatario; }
+    public void setNombreDestinatario(String nombreDestinatario) {
+        this.nombreDestinatario = nombreDestinatario;
+    }
+
+    public String getTelefonoDestinatario() { return telefonoDestinatario; }
+    public void setTelefonoDestinatario(String telefonoDestinatario) {
+        this.telefonoDestinatario = telefonoDestinatario;
+    }
+
+    public String getCedulaDestinatario() { return cedulaDestinatario; }
+    public void setCedulaDestinatario(String cedulaDestinatario) {
+        this.cedulaDestinatario = cedulaDestinatario;
+    }
+
     public List<ServicioAdicional> getServiciosAdicionales() { return serviciosAdicionales; }
     public void setServiciosAdicionales(List<ServicioAdicional> serviciosAdicionales) {
         this.serviciosAdicionales = serviciosAdicionales;
@@ -103,6 +123,7 @@ public class Envio {
                 "id='" + id + '\'' +
                 ", origen=" + (origen != null ? origen.getAlias() : "null") +
                 ", destino=" + (destino != null ? destino.getAlias() : "null") +
+                ", nombreDestinatario='" + nombreDestinatario + '\'' +
                 ", peso=" + peso +
                 ", contenido='" + contenido + '\'' +
                 ", costoTotal=" + costoTotal +

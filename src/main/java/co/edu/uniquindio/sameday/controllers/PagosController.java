@@ -25,6 +25,7 @@ public class PagosController {
     @FXML private TableColumn<Envio, String> colId;
     @FXML private TableColumn<Envio, String> colOrigen;
     @FXML private TableColumn<Envio, String> colDestino;
+    @FXML private TableColumn<Envio, String> colDestinatario; // NUEVA COLUMNA
     @FXML private TableColumn<Envio, String> colContenido;
     @FXML private TableColumn<Envio, String> colPeso;
     @FXML private TableColumn<Envio, String> colServicios;
@@ -56,6 +57,12 @@ public class PagosController {
         colDestino.setCellValueFactory(cellData -> {
             Address destino = cellData.getValue().getDestino();
             return new SimpleStringProperty(destino != null ? destino.getAlias() : "");
+        });
+
+        // NUEVA COLUMNA: Destinatario
+        colDestinatario.setCellValueFactory(cellData -> {
+            String nombreDestinatario = cellData.getValue().getNombreDestinatario();
+            return new SimpleStringProperty(nombreDestinatario != null ? nombreDestinatario : "");
         });
 
         colContenido.setCellValueFactory(cellData -> {
@@ -150,11 +157,23 @@ public class PagosController {
         Label lblCosto = new Label(String.format("Monto a pagar: $%.0f", selectedEnvio.getCostoTotal()));
         lblCosto.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #1e293b;");
 
+        // NUEVA INFORMACIÓN: Mostrar destinatario
+        Label lblDestinatario = new Label();
+        if (selectedEnvio.getNombreDestinatario() != null && !selectedEnvio.getNombreDestinatario().isEmpty()) {
+            lblDestinatario.setText("Destinatario: " + selectedEnvio.getNombreDestinatario());
+            lblDestinatario.setStyle("-fx-font-size: 12px; -fx-text-fill: #64748b;");
+        }
+
         grid.add(new Label("Nombre:"), 0, 0);
         grid.add(txtNombre, 1, 0);
         grid.add(new Label("Teléfono:"), 0, 1);
         grid.add(txtTelefono, 1, 1);
         grid.add(lblCosto, 0, 2, 2, 1);
+
+        // Agregar label del destinatario si existe
+        if (selectedEnvio.getNombreDestinatario() != null && !selectedEnvio.getNombreDestinatario().isEmpty()) {
+            grid.add(lblDestinatario, 0, 3, 2, 1);
+        }
 
         dialog.getDialogPane().setContent(grid);
         txtNombre.requestFocus();

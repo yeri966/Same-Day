@@ -25,6 +25,12 @@ public class CrearEnvioController {
     @FXML private TextField txtId;
     @FXML private ComboBox<Address> cmbOrigen;
     @FXML private ComboBox<Address> cmbDestino;
+
+    // Campos del destinatario - NUEVO
+    @FXML private TextField txtNombreDestinatario;
+    @FXML private TextField txtCedulaDestinatario;
+    @FXML private TextField txtTelefonoDestinatario;
+
     @FXML private TextField txtContenido;
     @FXML private TextField txtPeso;
     @FXML private TextField txtDimensiones;
@@ -46,6 +52,7 @@ public class CrearEnvioController {
     @FXML private TableColumn<Envio, String> colId;
     @FXML private TableColumn<Envio, String> colOrigen;
     @FXML private TableColumn<Envio, String> colDestino;
+    @FXML private TableColumn<Envio, String> colDestinatario; // NUEVA COLUMNA
     @FXML private TableColumn<Envio, String> colContenido;
     @FXML private TableColumn<Envio, String> colPeso;
     @FXML private TableColumn<Envio, String> colServicios;
@@ -94,6 +101,12 @@ public class CrearEnvioController {
             return new SimpleStringProperty(destino != null ? destino.getAlias() : "");
         });
 
+        // NUEVA COLUMNA: Destinatario
+        colDestinatario.setCellValueFactory(cellData -> {
+            String nombreDestinatario = cellData.getValue().getNombreDestinatario();
+            return new SimpleStringProperty(nombreDestinatario != null ? nombreDestinatario : "");
+        });
+
         colContenido.setCellValueFactory(cellData -> {
             String contenido = cellData.getValue().getContenido();
             return new SimpleStringProperty(contenido != null ? contenido : "");
@@ -126,6 +139,12 @@ public class CrearEnvioController {
         txtId.setText(envio.getId());
         cmbOrigen.setValue(envio.getOrigen());
         cmbDestino.setValue(envio.getDestino());
+
+        // Cargar información del destinatario - NUEVO
+        txtNombreDestinatario.setText(envio.getNombreDestinatario());
+        txtCedulaDestinatario.setText(envio.getCedulaDestinatario());
+        txtTelefonoDestinatario.setText(envio.getTelefonoDestinatario());
+
         txtContenido.setText(envio.getContenido());
         txtPeso.setText(String.valueOf(envio.getPeso()));
         txtDimensiones.setText(envio.getDimensiones());
@@ -194,6 +213,11 @@ public class CrearEnvioController {
 
     @FXML
     void onAgregar(ActionEvent event) {
+        // Validar campos del destinatario - NUEVO
+        if (!validarCamposDestinatario()) {
+            return;
+        }
+
         try {
             double peso = Double.parseDouble(txtPeso.getText().trim());
             double volumen = Double.parseDouble(txtVolumen.getText().trim());
@@ -211,6 +235,14 @@ public class CrearEnvioController {
             );
 
             if (resultado.isExitoso()) {
+                // Agregar información del destinatario - NUEVO
+                Envio envioCreado = (Envio) resultado.getDato();
+                envioCreado.setNombreDestinatario(txtNombreDestinatario.getText().trim());
+                envioCreado.setCedulaDestinatario(txtCedulaDestinatario.getText().trim());
+                envioCreado.setTelefonoDestinatario(txtTelefonoDestinatario.getText().trim());
+
+                sameDay.updateEnvio(envioCreado);
+
                 showAlert("Éxito", resultado.getMensaje(), Alert.AlertType.INFORMATION);
                 loadTable();
                 clearForm();
@@ -234,6 +266,11 @@ public class CrearEnvioController {
             return;
         }
 
+        // Validar campos del destinatario - NUEVO
+        if (!validarCamposDestinatario()) {
+            return;
+        }
+
         try {
             double peso = Double.parseDouble(txtPeso.getText().trim());
             double volumen = Double.parseDouble(txtVolumen.getText().trim());
@@ -252,6 +289,14 @@ public class CrearEnvioController {
             );
 
             if (resultado.isExitoso()) {
+                // Actualizar información del destinatario - NUEVO
+                Envio envioActualizado = (Envio) resultado.getDato();
+                envioActualizado.setNombreDestinatario(txtNombreDestinatario.getText().trim());
+                envioActualizado.setCedulaDestinatario(txtCedulaDestinatario.getText().trim());
+                envioActualizado.setTelefonoDestinatario(txtTelefonoDestinatario.getText().trim());
+
+                sameDay.updateEnvio(envioActualizado);
+
                 showAlert("Éxito", resultado.getMensaje(), Alert.AlertType.INFORMATION);
                 loadTable();
                 clearForm();
@@ -301,10 +346,66 @@ public class CrearEnvioController {
         clearForm();
     }
 
+    /**
+     * Valida los campos del destinatario - NUEVO
+     */
+    private boolean validarCamposDestinatario() {
+        if (txtNombreDestinatario.getText().trim().isEmpty()) {
+            showAlert("Campos Incompletos",
+                    "Debe ingresar el nombre del destinatario",
+                    Alert.AlertType.WARNING);
+            txtNombreDestinatario.requestFocus();
+            return false;
+        }
+
+        if (txtCedulaDestinatario.getText().trim().isEmpty()) {
+            showAlert("Campos Incompletos",
+                    "Debe ingresar la cédula del destinatario",
+                    Alert.AlertType.WARNING);
+            txtCedulaDestinatario.requestFocus();
+            return false;
+        }
+
+        if (txtTelefonoDestinatario.getText().trim().isEmpty()) {
+            showAlert("Campos Incompletos",
+                    "Debe ingresar el teléfono del destinatario",
+                    Alert.AlertType.WARNING);
+            txtTelefonoDestinatario.requestFocus();
+            return false;
+        }
+
+        // Validar que la cédula sea numérica
+        if (!txtCedulaDestinatario.getText().trim().matches("\\d+")) {
+            showAlert("Formato Inválido",
+                    "La cédula debe contener solo números",
+                    Alert.AlertType.WARNING);
+            txtCedulaDestinatario.requestFocus();
+            return false;
+        }
+
+        // Validar que el teléfono sea numérico y tenga longitud adecuada
+        String telefono = txtTelefonoDestinatario.getText().trim();
+        if (!telefono.matches("\\d{10}")) {
+            showAlert("Formato Inválido",
+                    "El teléfono debe tener 10 dígitos",
+                    Alert.AlertType.WARNING);
+            txtTelefonoDestinatario.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
     private void clearForm() {
         txtId.setText(envioFacade.generarIdEnvio());
         cmbOrigen.setValue(null);
         cmbDestino.setValue(null);
+
+        // Limpiar campos del destinatario - NUEVO
+        txtNombreDestinatario.clear();
+        txtCedulaDestinatario.clear();
+        txtTelefonoDestinatario.clear();
+
         txtContenido.clear();
         txtPeso.clear();
         txtDimensiones.clear();
