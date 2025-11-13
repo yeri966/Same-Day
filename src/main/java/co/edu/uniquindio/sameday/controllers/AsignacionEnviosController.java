@@ -13,11 +13,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador para la asignación de envíos a repartidores
+ * Permite al administrador asignar y desasignar envíos pagados a repartidores disponibles
+ */
 public class AsignacionEnviosController {
 
     private SameDay sameDay = SameDay.getInstance();
     private Envio envioSeleccionado = null;
+    private ObservableList<Envio> enviosObservableList;
+    private ObservableList<Dealer> repartidoresObservableList;
 
+    // Tabla de envíos
     @FXML private TableView<Envio> tablaEnvios;
     @FXML private TableColumn<Envio, String> colId;
     @FXML private TableColumn<Envio, String> colFecha;
@@ -28,34 +35,48 @@ public class AsignacionEnviosController {
     @FXML private TableColumn<Envio, String> colCosto;
     @FXML private TableColumn<Envio, String> colEstado;
 
+    // Tabla de repartidores
     @FXML private TableView<Dealer> tablaRepartidores;
     @FXML private TableColumn<Dealer, String> colRepartidorId;
     @FXML private TableColumn<Dealer, String> colRepartidorNombre;
     @FXML private TableColumn<Dealer, String> colRepartidorCiudad;
     @FXML private TableColumn<Dealer, String> colRepartidorDisponible;
 
+    // Estadísticas
     @FXML private Label lblEnviosPendientes;
     @FXML private Label lblEnviosAsignados;
     @FXML private Label lblRepartidoresDisponibles;
 
+    // Botones de acción
     @FXML private Button btnAsignar;
     @FXML private Button btnDesasignar;
 
+    // Filtros
     @FXML private ComboBox<City> cmbFiltrarCiudad;
 
     @FXML
     void initialize() {
-        System.out.println("=== INICIALIZANDO CONTROLADOR ASIGNACIÓN DE ENVÍOS ===");
+        enviosObservableList = FXCollections.observableArrayList();
+        repartidoresObservableList = FXCollections.observableArrayList();
+
+        tablaEnvios.setItems(enviosObservableList);
+        tablaRepartidores.setItems(repartidoresObservableList);
+
         configurarTablaEnvios();
         configurarTablaRepartidores();
         configurarFiltros();
+        configurarSeleccionEnvio();
+
         cargarEnviosPagados();
         cargarRepartidores();
-        configurarSeleccionEnvio();
         actualizarEstadisticas();
+
         btnDesasignar.setDisable(true);
     }
 
+    /**
+     * Configura las columnas de la tabla de envíos
+     */
     private void configurarTablaEnvios() {
         colId.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getId()));
@@ -63,48 +84,58 @@ public class AsignacionEnviosController {
         colFecha.setCellValueFactory(cellData -> {
             if (cellData.getValue().getFechaCreacion() != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                String fecha = cellData.getValue().getFechaCreacion().format(formatter);
-                return new SimpleStringProperty(fecha);
+                return new SimpleStringProperty(
+                        cellData.getValue().getFechaCreacion().format(formatter)
+                );
             }
             return new SimpleStringProperty("Sin fecha");
         });
 
         colOrigen.setCellValueFactory(cellData -> {
             Address origen = cellData.getValue().getOrigen();
-            if (origen != null) {
-                return new SimpleStringProperty(origen.getCity().toString());
-            }
-            return new SimpleStringProperty("");
+            return new SimpleStringProperty(
+                    origen != null ? origen.getCity().toString() : "-"
+            );
         });
 
         colDestino.setCellValueFactory(cellData -> {
             Address destino = cellData.getValue().getDestino();
-            if (destino != null) {
-                return new SimpleStringProperty(destino.getCity().toString());
-            }
-            return new SimpleStringProperty("");
+            return new SimpleStringProperty(
+                    destino != null ? destino.getCity().toString() : "-"
+            );
         });
 
-        colDestinatario.setCellValueFactory(cellData -> {
-            String nombreDestinatario = cellData.getValue().getNombreDestinatario();
-            return new SimpleStringProperty(nombreDestinatario != null ? nombreDestinatario : "");
-        });
+        colDestinatario.setCellValueFactory(cellData ->
+                new SimpleStringProperty(
+                        cellData.getValue().getNombreDestinatario() != null
+                                ? cellData.getValue().getNombreDestinatario()
+                                : "-"
+                )
+        );
 
         colPeso.setCellValueFactory(cellData ->
-                new SimpleStringProperty(String.format("%.2f kg", cellData.getValue().getPeso())));
+                new SimpleStringProperty(
+                        String.format("%.2f kg", cellData.getValue().getPeso())
+                )
+        );
 
         colCosto.setCellValueFactory(cellData ->
-                new SimpleStringProperty(String.format("$%,.0f", cellData.getValue().getCostoTotal())));
+                new SimpleStringProperty(
+                        String.format("$%,.0f", cellData.getValue().getCostoTotal())
+                )
+        );
 
         colEstado.setCellValueFactory(cellData -> {
             Envio envio = cellData.getValue();
-            String estadoTexto = envio.getRepartidorAsignado() != null
-                    ? "✅ Asignado a " + envio.getRepartidorAsignado().getNombre()
-                    : "⏳ Sin asignar";
-            return new SimpleStringProperty(estadoTexto);
+            if (envio.getRepartidorAsignado() != null) {
+                return new SimpleStringProperty(
+                        "✅ Asignado a " + envio.getRepartidorAsignado().getNombre()
+                );
+            }
+            return new SimpleStringProperty("⏳ Sin asignar");
         });
 
-        // Aplicar estilo a la columna de estado
+        // Aplicar estilo condicional a la columna de estado
         colEstado.setCellFactory(column -> new TableCell<Envio, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -124,6 +155,9 @@ public class AsignacionEnviosController {
         });
     }
 
+    /**
+     * Configura las columnas de la tabla de repartidores
+     */
     private void configurarTablaRepartidores() {
         colRepartidorId.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getId()));
@@ -136,12 +170,16 @@ public class AsignacionEnviosController {
             return new SimpleStringProperty(city != null ? city.toString() : "Sin ciudad");
         });
 
+        // Mostrar el estado CALCULADO de disponibilidad
         colRepartidorDisponible.setCellValueFactory(cellData -> {
-            String disponible = cellData.getValue().isDisponible() ? "✅ Disponible" : "❌ No disponible";
-            return new SimpleStringProperty(disponible);
+            Dealer dealer = cellData.getValue();
+            boolean disponible = dealer.isDisponible(); // Método calculado
+            return new SimpleStringProperty(
+                    disponible ? "✅ Disponible" : "❌ Ocupado"
+            );
         });
 
-        // Aplicar estilo a la columna de disponibilidad
+        // Aplicar estilo condicional
         colRepartidorDisponible.setCellFactory(column -> new TableCell<Dealer, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -161,11 +199,17 @@ public class AsignacionEnviosController {
         });
     }
 
+    /**
+     * Configura el ComboBox de filtros
+     */
     private void configurarFiltros() {
         cmbFiltrarCiudad.setItems(FXCollections.observableArrayList(City.values()));
         cmbFiltrarCiudad.setPromptText("Todas las ciudades");
     }
 
+    /**
+     * Configura el listener de selección de la tabla de envíos
+     */
     private void configurarSeleccionEnvio() {
         tablaEnvios.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
@@ -173,7 +217,7 @@ public class AsignacionEnviosController {
                         envioSeleccionado = newValue;
                         filtrarRepartidoresPorZona(newValue);
 
-                        // Habilitar/deshabilitar botones según el estado del envío
+                        // Habilitar/deshabilitar botones según el estado
                         btnAsignar.setDisable(newValue.getRepartidorAsignado() != null);
                         btnDesasignar.setDisable(newValue.getRepartidorAsignado() == null);
                     }
@@ -181,6 +225,9 @@ public class AsignacionEnviosController {
         );
     }
 
+    /**
+     * Filtra repartidores disponibles en la zona del envío seleccionado
+     */
     private void filtrarRepartidoresPorZona(Envio envio) {
         if (envio.getDestino() == null || envio.getDestino().getCity() == null) {
             cargarRepartidores();
@@ -193,15 +240,16 @@ public class AsignacionEnviosController {
                 .filter(person -> person instanceof Dealer)
                 .map(person -> (Dealer) person)
                 .filter(dealer -> dealer.getCity() == ciudadDestino)
-                .filter(Dealer::isDisponible)
+                .filter(Dealer::isDisponible) // Usa el método calculado
                 .collect(Collectors.toList());
 
-        ObservableList<Dealer> repartidoresObservable = FXCollections.observableArrayList(repartidoresFiltrados);
-        tablaRepartidores.setItems(repartidoresObservable);
-
-        System.out.println("Repartidores disponibles en " + ciudadDestino + ": " + repartidoresFiltrados.size());
+        repartidoresObservableList.clear();
+        repartidoresObservableList.addAll(repartidoresFiltrados);
     }
 
+    /**
+     * Asigna un repartidor al envío seleccionado
+     */
     @FXML
     void onAsignar(ActionEvent event) {
         if (envioSeleccionado == null) {
@@ -229,16 +277,16 @@ public class AsignacionEnviosController {
 
         if (!repartidorSeleccionado.isDisponible()) {
             mostrarAlerta("Repartidor no disponible",
-                    "El repartidor seleccionado no está disponible",
+                    "El repartidor seleccionado no está disponible para asignaciones",
                     Alert.AlertType.WARNING);
             return;
         }
 
-        // Validar que el repartidor esté en la misma zona
+        // Validar zona
         if (envioSeleccionado.getDestino() != null
                 && repartidorSeleccionado.getCity() != envioSeleccionado.getDestino().getCity()) {
             mostrarAlerta("Zona incorrecta",
-                    "El repartidor debe estar en la misma zona que el destino del envío",
+                    "El repartidor debe estar en la misma ciudad que el destino del envío",
                     Alert.AlertType.WARNING);
             return;
         }
@@ -247,16 +295,18 @@ public class AsignacionEnviosController {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmar Asignación");
         confirmacion.setHeaderText("¿Está seguro que desea asignar este envío?");
-        confirmacion.setContentText("Envío: " + envioSeleccionado.getId() + "\n" +
-                "Repartidor: " + repartidorSeleccionado.getNombre() + "\n" +
-                "Ciudad: " + repartidorSeleccionado.getCity());
+        confirmacion.setContentText(
+                "Envío: " + envioSeleccionado.getId() + "\n" +
+                        "Repartidor: " + repartidorSeleccionado.getNombre() + "\n" +
+                        "Ciudad: " + repartidorSeleccionado.getCity()
+        );
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
             // Asignar el repartidor al envío
             envioSeleccionado.setRepartidorAsignado(repartidorSeleccionado);
 
-            // Marcar al repartidor como no disponible
-            repartidorSeleccionado.setDisponible(false);
+            // Cambiar el estado del envío a ASIGNADO
+            envioSeleccionado.setEstadoEntrega(EstadoEntrega.ASIGNADO);
 
             // Actualizar en el sistema
             sameDay.updateEnvio(envioSeleccionado);
@@ -265,7 +315,9 @@ public class AsignacionEnviosController {
                     "El envío ha sido asignado correctamente al repartidor",
                     Alert.AlertType.INFORMATION);
 
-            // Recargar las tablas
+            // Refrescar tablas y recargar datos
+            tablaEnvios.refresh();
+            tablaRepartidores.refresh();
             cargarEnviosPagados();
             cargarRepartidores();
             actualizarEstadisticas();
@@ -276,6 +328,9 @@ public class AsignacionEnviosController {
         }
     }
 
+    /**
+     * Desasigna el repartidor del envío seleccionado
+     */
     @FXML
     void onDesasignar(ActionEvent event) {
         if (envioSeleccionado == null) {
@@ -296,15 +351,17 @@ public class AsignacionEnviosController {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmar Desasignación");
         confirmacion.setHeaderText("¿Está seguro que desea desasignar este envío?");
-        confirmacion.setContentText("Envío: " + envioSeleccionado.getId() + "\n" +
-                "Repartidor: " + envioSeleccionado.getRepartidorAsignado().getNombre());
+        confirmacion.setContentText(
+                "Envío: " + envioSeleccionado.getId() + "\n" +
+                        "Repartidor: " + envioSeleccionado.getRepartidorAsignado().getNombre()
+        );
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
-            // Liberar al repartidor
-            envioSeleccionado.getRepartidorAsignado().setDisponible(true);
-
-            // Desasignar el repartidor del envío
+            // Desasignar el repartidor
             envioSeleccionado.setRepartidorAsignado(null);
+
+            // Resetear el estado del envío
+            envioSeleccionado.setEstadoEntrega(null);
 
             // Actualizar en el sistema
             sameDay.updateEnvio(envioSeleccionado);
@@ -313,7 +370,9 @@ public class AsignacionEnviosController {
                     "El repartidor ha sido liberado correctamente",
                     Alert.AlertType.INFORMATION);
 
-            // Recargar las tablas
+            // Refrescar tablas y recargar datos
+            tablaEnvios.refresh();
+            tablaRepartidores.refresh();
             cargarEnviosPagados();
             cargarRepartidores();
             actualizarEstadisticas();
@@ -324,6 +383,9 @@ public class AsignacionEnviosController {
         }
     }
 
+    /**
+     * Filtra repartidores por ciudad seleccionada
+     */
     @FXML
     void onFiltrarPorCiudad(ActionEvent event) {
         City ciudadSeleccionada = cmbFiltrarCiudad.getValue();
@@ -339,46 +401,47 @@ public class AsignacionEnviosController {
                 .filter(dealer -> dealer.getCity() == ciudadSeleccionada)
                 .collect(Collectors.toList());
 
-        ObservableList<Dealer> repartidoresObservable = FXCollections.observableArrayList(repartidoresFiltrados);
-        tablaRepartidores.setItems(repartidoresObservable);
+        repartidoresObservableList.clear();
+        repartidoresObservableList.addAll(repartidoresFiltrados);
     }
 
+    /**
+     * Limpia el filtro de ciudades
+     */
     @FXML
     void onLimpiarFiltro(ActionEvent event) {
         cmbFiltrarCiudad.setValue(null);
         cargarRepartidores();
     }
 
+    /**
+     * Carga los envíos pagados en la tabla
+     */
     private void cargarEnviosPagados() {
-        System.out.println("\n=== CARGANDO ENVÍOS PAGADOS ===");
-
-        // Filtrar solo los envíos pagados
         List<Envio> enviosPagados = sameDay.getListEnvios().stream()
                 .filter(envio -> "PAGADO".equals(envio.getEstado()))
                 .collect(Collectors.toList());
 
-        ObservableList<Envio> enviosObservable = FXCollections.observableArrayList(enviosPagados);
-        tablaEnvios.setItems(enviosObservable);
-
-        System.out.println("Total envíos pagados: " + enviosPagados.size());
-        System.out.println("=== ENVÍOS CARGADOS ===\n");
+        enviosObservableList.clear();
+        enviosObservableList.addAll(enviosPagados);
     }
 
+    /**
+     * Carga todos los repartidores en la tabla
+     */
     private void cargarRepartidores() {
-        System.out.println("\n=== CARGANDO REPARTIDORES ===");
-
         List<Dealer> repartidores = sameDay.getListPersons().stream()
                 .filter(person -> person instanceof Dealer)
                 .map(person -> (Dealer) person)
                 .collect(Collectors.toList());
 
-        ObservableList<Dealer> repartidoresObservable = FXCollections.observableArrayList(repartidores);
-        tablaRepartidores.setItems(repartidoresObservable);
-
-        System.out.println("Total repartidores: " + repartidores.size());
-        System.out.println("=== REPARTIDORES CARGADOS ===\n");
+        repartidoresObservableList.clear();
+        repartidoresObservableList.addAll(repartidores);
     }
 
+    /**
+     * Actualiza las estadísticas mostradas
+     */
     private void actualizarEstadisticas() {
         long pendientes = sameDay.getListEnvios().stream()
                 .filter(envio -> "PAGADO".equals(envio.getEstado()))
@@ -393,7 +456,7 @@ public class AsignacionEnviosController {
         long repartidoresDisponibles = sameDay.getListPersons().stream()
                 .filter(person -> person instanceof Dealer)
                 .map(person -> (Dealer) person)
-                .filter(Dealer::isDisponible)
+                .filter(Dealer::isDisponible) // Usa el método calculado
                 .count();
 
         lblEnviosPendientes.setText("Pendientes: " + pendientes);
@@ -401,6 +464,9 @@ public class AsignacionEnviosController {
         lblRepartidoresDisponibles.setText("Disponibles: " + repartidoresDisponibles);
     }
 
+    /**
+     * Muestra un cuadro de diálogo de alerta
+     */
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
         Alert alerta = new Alert(tipo);
         alerta.setTitle(titulo);

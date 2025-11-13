@@ -2,107 +2,258 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox spacing="20" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.sameday.controllers.GestionCrudRepartidorController">
+<ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: #f8fafc;"
+            xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.sameday.controllers.GestionCrudRepartidorController">
 
-    <padding>
-        <Insets bottom="20" left="20" right="20" top="20" />
-    </padding>
+    <content>
+        <AnchorPane prefHeight="800.0" prefWidth="950.0" style="-fx-background-color: #f8fafc;">
+            <children>
+                <!-- ENCABEZADO -->
+                <Label layoutX="30.0" layoutY="20.0" text="Gestión de Repartidores" textFill="#1e293b">
+                    <font>
+                        <Font name="System Bold" size="26.0" />
+                    </font>
+                </Label>
 
-    <!-- Header -->
-    <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Gestión de Repartidores" />
+                <Label layoutX="30.0" layoutY="55.0" text="Administra la información de los repartidores registrados" textFill="#64748b">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Label>
 
-    <!-- Form Section -->
-    <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+                <Separator layoutX="30.0" layoutY="80.0" prefWidth="890.0" />
 
-        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Información del Repartidor" />
+                <!-- FORMULARIO -->
+                <VBox layoutX="30.0" layoutY="95.0" prefHeight="230.0" prefWidth="910.0" spacing="12.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-border-width: 2;">
+                    <padding>
+                        <Insets bottom="12.0" left="15.0" right="15.0" top="12.0" />
+                    </padding>
+                    <children>
+                        <Label text="🚚 Formulario de Repartidor" textFill="#1e293b">
+                            <font>
+                                <Font name="System Bold" size="15.0" />
+                            </font>
+                        </Label>
 
-        <GridPane hgap="15" vgap="12">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="50" />
-                <ColumnConstraints percentWidth="50" />
-            </columnConstraints>
+                        <GridPane hgap="15.0" vgap="12.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="160.0" prefWidth="160.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="80.0" prefWidth="80.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="180.0" prefWidth="180.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="180.0" prefWidth="180.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                            </rowConstraints>
 
-            <!-- Row 0: ID and Documento -->
-            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                <Label style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #555;" text="ID:" />
-                <TextField fx:id="txtId" disable="true" promptText="Generado automáticamente" style="-fx-background-radius: 4; -fx-border-radius: 4; -fx-border-color: #ddd; -fx-padding: 8;" />
-            </VBox>
+                            <!-- FILA 1: ID, Documento y Nombre -->
+                            <Label style="-fx-alignment: center-right;" text="ID:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <font>
+                                    <Font name="System Bold" size="13.0" />
+                                </font>
+                            </Label>
+                            <TextField fx:id="txtId" editable="false" promptText="Auto" style="-fx-background-color: #f1f5f9; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10; -fx-opacity: 0.7;" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </TextField>
 
-            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                <Label style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #555;" text="Documento:" />
-                <TextField fx:id="txtDocumento" promptText="Ingrese el documento" style="-fx-background-radius: 4; -fx-border-radius: 4; -fx-border-color: #ddd; -fx-padding: 8;" />
-            </VBox>
+                            <Label style="-fx-alignment: center-right;" text="Documento:" textFill="#475569" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                <font>
+                                    <Font name="System Bold" size="13.0" />
+                                </font>
+                            </Label>
+                            <TextField fx:id="txtDocumento" promptText="Cédula" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </TextField>
 
-            <!-- Row 1: Nombre and Correo -->
-            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                <Label style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #555;" text="Nombre:" />
-                <TextField fx:id="txtNombre" promptText="Ingrese el nombre completo" style="-fx-background-radius: 4; -fx-border-radius: 4; -fx-border-color: #ddd; -fx-padding: 8;" />
-            </VBox>
+                            <Label style="-fx-alignment: center-right;" text="Nombre:" textFill="#475569" GridPane.columnIndex="4" GridPane.rowIndex="0">
+                                <font>
+                                    <Font name="System Bold" size="13.0" />
+                                </font>
+                            </Label>
+                            <TextField fx:id="txtNombre" promptText="Nombre completo" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="5" GridPane.rowIndex="0">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </TextField>
 
-            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                <Label style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #555;" text="Correo:" />
-                <TextField fx:id="txtCorreo" promptText="ejemplo@correo.com" style="-fx-background-radius: 4; -fx-border-radius: 4; -fx-border-color: #ddd; -fx-padding: 8;" />
-            </VBox>
+                            <!-- FILA 2: Correo, Teléfono y Ciudad -->
+                            <Label style="-fx-alignment: center-right;" text="Correo:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <font>
+                                    <Font name="System Bold" size="13.0" />
+                                </font>
+                            </Label>
+                            <TextField fx:id="txtCorreo" promptText="email@ejemplo.com" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </TextField>
 
-            <!-- Row 2: Teléfono and Ciudad -->
-            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                <Label style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #555;" text="Teléfono:" />
-                <TextField fx:id="txtTelefono" promptText="Ingrese el teléfono" style="-fx-background-radius: 4; -fx-border-radius: 4; -fx-border-color: #ddd; -fx-padding: 8;" />
-            </VBox>
+                            <Label style="-fx-alignment: center-right;" text="Teléfono:" textFill="#475569" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                <font>
+                                    <Font name="System Bold" size="13.0" />
+                                </font>
+                            </Label>
+                            <TextField fx:id="txtTelefono" promptText="3001234567" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </TextField>
 
-            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                <Label style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #555;" text="Ciudad:" />
-                <ComboBox fx:id="cboxCity" maxWidth="Infinity" promptText="Seleccione una ciudad" style="-fx-background-radius: 4; -fx-border-radius: 4; -fx-border-color: #ddd;" />
-            </VBox>
+                            <Label style="-fx-alignment: center-right;" text="Ciudad:" textFill="#475569" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                                <font>
+                                    <Font name="System Bold" size="13.0" />
+                                </font>
+                            </Label>
+                            <ComboBox fx:id="cboxCity" maxWidth="Infinity" promptText="Seleccione ciudad" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5;" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                                <padding>
+                                    <Insets bottom="6.0" left="10.0" right="10.0" top="6.0" />
+                                </padding>
+                            </ComboBox>
 
-            <!-- Row 3: Disponibilidad -->
-            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                <Label style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #555;" text="Estado:" />
-                <CheckBox fx:id="disponibleCheckBox" style="-fx-font-size: 13px;" text="Disponible para entregas" />
-            </VBox>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
-        </GridPane>
+                            <!-- FILA 3: Usuario y Contraseña -->
+                            <Label style="-fx-alignment: center-right;" text="Usuario:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <font>
+                                    <Font name="System Bold" size="13.0" />
+                                </font>
+                            </Label>
+                            <TextField fx:id="txtUsuario" promptText="Nombre de usuario" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </TextField>
 
-        <!-- Action Buttons -->
-        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10 0 0 0;">
-            <Button fx:id="addButton" onAction="#handleAdd" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;" text="Agregar" />
-            <Button fx:id="updateButton" disable="true" onAction="#handleUpdate" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;" text="Actualizar" />
-            <Button fx:id="deleteButton" disable="true" onAction="#handleDelete" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;" text="Eliminar" />
-            <Button fx:id="clearButton" onAction="#handleClear" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 4; -fx-cursor: hand;" text="Limpiar" />
-        </HBox>
-    </VBox>
+                            <Label style="-fx-alignment: center-right;" text="Contraseña:" textFill="#475569" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                <font>
+                                    <Font name="System Bold" size="13.0" />
+                                </font>
+                            </Label>
+                            <PasswordField fx:id="txtPassword" promptText="Contraseña de acceso" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </PasswordField>
 
-    <!-- Table Section -->
-    <VBox spacing="10" VBox.vgrow="ALWAYS">
-        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Lista de Repartidores" />
+                            <!-- FILA 4: Nota informativa sobre contraseña -->
+                            <Label style="-fx-alignment: center-left; -fx-font-style: italic;" text="💡 Al actualizar, deja la contraseña vacía para mantener la actual" textFill="#64748b" GridPane.columnIndex="0" GridPane.columnSpan="6" GridPane.rowIndex="3">
+                                <font>
+                                    <Font size="11.0" />
+                                </font>
+                            </Label>
+                        </GridPane>
+                    </children>
+                </VBox>
 
-        <TableView fx:id="dealerTable" style="-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);" VBox.vgrow="ALWAYS">
-            <columns>
-                <TableColumn fx:id="colId" prefWidth="80" text="ID" />
-                <TableColumn fx:id="colDocumento" prefWidth="120" text="Documento" />
-                <TableColumn fx:id="colNombre" prefWidth="200" text="Nombre" />
-                <TableColumn fx:id="colCorreo" prefWidth="180" text="Correo" />
-                <TableColumn fx:id="colTelefono" prefWidth="120" text="Teléfono" />
-                <TableColumn fx:id="colCity" prefWidth="120" text="Ciudad" />
-                <TableColumn fx:id="colDisponible" prefWidth="100" text="Estado" />
-            </columns>
-        </TableView>
-    </VBox>
-</VBox>
+                <!-- BOTONES DE ACCIÓN -->
+                <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="340.0" spacing="12.0">
+                    <children>
+                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAdd" prefHeight="40.0" prefWidth="115.0" style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="➕ Agregar">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Button>
+
+                        <Button fx:id="updateButton" disable="true" mnemonicParsing="false" onAction="#handleUpdate" prefHeight="40.0" prefWidth="115.0" style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="✏️ Actualizar">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Button>
+
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#handleClear" prefHeight="40.0" prefWidth="115.0" style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="🧹 Limpiar">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Button>
+
+                        <Label style="-fx-font-style: italic;" text="💡 Seleccione un repartidor para editar" textFill="#64748b">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+
+                <Separator layoutX="30.0" layoutY="395.0" prefWidth="890.0" />
+
+                <!-- TABLA DE REPARTIDORES -->
+                <VBox layoutX="30.0" layoutY="410.0" prefWidth="890.0" spacing="8.0">
+                    <children>
+                        <Label text="🚚 Lista de Repartidores Registrados" textFill="#1e293b">
+                            <font>
+                                <Font name="System Bold" size="15.0" />
+                            </font>
+                        </Label>
+
+                        <TableView fx:id="dealerTable" prefHeight="300.0" prefWidth="890.0" style="-fx-background-color: white; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <columns>
+                                <TableColumn fx:id="colId" prefWidth="80.0" text="ID" />
+                                <TableColumn fx:id="colDocumento" prefWidth="120.0" text="Documento" />
+                                <TableColumn fx:id="colNombre" prefWidth="180.0" text="Nombre" />
+                                <TableColumn fx:id="colCorreo" prefWidth="160.0" text="Correo" />
+                                <TableColumn fx:id="colTelefono" prefWidth="100.0" text="Teléfono" />
+                                <TableColumn fx:id="colCity" prefWidth="80.0" text="Ciudad" />
+                                <TableColumn fx:id="colUsuario" prefWidth="90.0" text="Usuario" />
+                                <TableColumn fx:id="colDisponible" prefWidth="80.0" text="Estado" />
+                            </columns>
+                        </TableView>
+
+                        <!-- ESTADÍSTICAS Y BOTÓN ELIMINAR -->
+                        <HBox alignment="CENTER_LEFT" spacing="25.0">
+                            <padding>
+                                <Insets top="2.0" />
+                            </padding>
+                            <children>
+                                <Label fx:id="lblTotalRepartidores" text="📊 Total: 0" textFill="#475569">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+
+                                <Label fx:id="lblRepartidoresDisponibles" text="✅ Disponibles: 0" textFill="#475569">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+
+                                <!-- Espaciador para empujar el botón a la derecha -->
+                                <HBox HBox.hgrow="ALWAYS" />
+
+                                <!-- BOTÓN ELIMINAR EN LA ESQUINA DERECHA -->
+                                <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#handleDelete" prefHeight="38.0" prefWidth="130.0" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="🗑️ Eliminar">
+                                    <font>
+                                        <Font size="12.0" />
+                                    </font>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </content>
+</ScrollPane>

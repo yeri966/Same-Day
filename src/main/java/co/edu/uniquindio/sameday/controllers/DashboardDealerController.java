@@ -11,44 +11,95 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 /**
  * Controlador principal del Dashboard del Repartidor
- * Maneja la navegación del menú lateral y carga las vistas correspondientes
+ * Maneja la navegación del menú lateral, disponibilidad y carga de vistas
  */
 public class DashboardDealerController {
 
     private SameDay sameDay = SameDay.getInstance();
     private Dealer repartidorActual;
+    private boolean disponible = true;
 
     @FXML private Label lblNombreUsuario;
+    @FXML private Label lblEstadoDisponibilidad;
+    @FXML private Label lblTextoDisponibilidad;
+    @FXML private Button btnToggleDisponibilidad;
     @FXML private Button btnGestionEnvios;
+    @FXML private Button btnEditarPerfil;
     @FXML private Button btnCerrarSesion;
     @FXML private AnchorPane contentArea;
 
     @FXML
     void initialize() {
-        System.out.println("=== INICIALIZANDO DASHBOARD REPARTIDOR ===");
-
-        // Obtener el repartidor actual
         Person usuarioActivo = sameDay.getUserActive();
         if (usuarioActivo instanceof Dealer) {
             repartidorActual = (Dealer) usuarioActivo;
             lblNombreUsuario.setText(repartidorActual.getNombre());
-            System.out.println("Repartidor activo: " + repartidorActual.getNombre());
+
+            // Cargar la disponibilidad MANUAL del repartidor
+            disponible = repartidorActual.isDisponibleManual();
+            actualizarEstadoDisponibilidad();
         } else {
-            System.out.println("ERROR: Usuario activo no es un repartidor");
             lblNombreUsuario.setText("Usuario no válido");
         }
-
-        System.out.println("=== DASHBOARD REPARTIDOR INICIALIZADO ===");
     }
 
     /**
-     * Carga la vista de Gestión de Envíos cuando se hace clic en el botón del menú
+     * Alterna el estado de disponibilidad del repartidor
+     */
+    @FXML
+    void onToggleDisponibilidad(ActionEvent event) {
+        disponible = !disponible;
+
+        // Actualizar solo la disponibilidad MANUAL del repartidor
+        if (repartidorActual != null) {
+            repartidorActual.setDisponibleManual(disponible);
+        }
+
+        actualizarEstadoDisponibilidad();
+    }
+
+    /**
+     * Actualiza la interfaz según el estado de disponibilidad
+     */
+    private void actualizarEstadoDisponibilidad() {
+        if (disponible) {
+            // Estado DISPONIBLE - Verde
+            lblEstadoDisponibilidad.setTextFill(Color.web("#10b981"));
+            lblTextoDisponibilidad.setText("Disponible");
+            lblTextoDisponibilidad.setTextFill(Color.web("#10b981"));
+            btnToggleDisponibilidad.setText("Cambiar a No Disponible");
+            btnToggleDisponibilidad.setStyle(
+                    "-fx-background-color: #10b981; " +
+                            "-fx-text-fill: white; " +
+                            "-fx-background-radius: 20; " +
+                            "-fx-font-weight: bold; " +
+                            "-fx-cursor: hand;"
+            );
+        } else {
+            // Estado NO DISPONIBLE - Rojo
+            lblEstadoDisponibilidad.setTextFill(Color.web("#ef4444"));
+            lblTextoDisponibilidad.setText("No Disponible");
+            lblTextoDisponibilidad.setTextFill(Color.web("#ef4444"));
+            btnToggleDisponibilidad.setText("Cambiar a Disponible");
+            btnToggleDisponibilidad.setStyle(
+                    "-fx-background-color: #ef4444; " +
+                            "-fx-text-fill: white; " +
+                            "-fx-background-radius: 20; " +
+                            "-fx-font-weight: bold; " +
+                            "-fx-cursor: hand;"
+            );
+        }
+    }
+
+    /**
+     * Carga la vista de Gestión de Envíos
      */
     @FXML
     void onGestionEnvios(ActionEvent event) {
@@ -57,26 +108,30 @@ public class DashboardDealerController {
     }
 
     /**
+     * Carga la vista de Editar Perfil
+     */
+    @FXML
+    void onEditarPerfil(ActionEvent event) {
+        cargarVista("/co/edu/uniquindio/sameday/editarPerfilRepartidor.fxml");
+        resaltarBotonActivo(btnEditarPerfil);
+    }
+
+    /**
      * Cierra sesión y regresa al login
      */
     @FXML
     void onCerrarSesion(ActionEvent event) {
         try {
-            // Cargar la ventana de login
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/sameday/login.fxml"));
             Parent root = loader.load();
 
-            // Obtener el Stage actual y cambiar la escena
             Stage stage = (Stage) btnCerrarSesion.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("SameDay - Login");
             stage.show();
 
-            System.out.println("Sesión cerrada correctamente");
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error al cerrar sesión: " + e.getMessage());
         }
     }
 
@@ -90,24 +145,16 @@ public class DashboardDealerController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent vista = loader.load();
 
-            // Limpiar el área de contenido
             contentArea.getChildren().clear();
-
-            // Agregar la nueva vista
             contentArea.getChildren().add(vista);
 
-            // Ajustar la vista al tamaño del AnchorPane
             AnchorPane.setTopAnchor(vista, 0.0);
             AnchorPane.setBottomAnchor(vista, 0.0);
             AnchorPane.setLeftAnchor(vista, 0.0);
             AnchorPane.setRightAnchor(vista, 0.0);
 
-            System.out.println("Vista cargada: " + fxmlPath);
-
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Error al cargar la vista: " + fxmlPath);
-            System.err.println("Detalle: " + e.getMessage());
         }
     }
 
@@ -118,9 +165,27 @@ public class DashboardDealerController {
      */
     private void resaltarBotonActivo(Button botonActivo) {
         // Resetear todos los botones al estilo normal
-        btnGestionEnvios.setStyle("-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;");
+        btnGestionEnvios.setStyle(
+                "-fx-background-color: transparent; " +
+                        "-fx-text-fill: #cbd5e1; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-cursor: hand;"
+        );
+
+        btnEditarPerfil.setStyle(
+                "-fx-background-color: transparent; " +
+                        "-fx-text-fill: #cbd5e1; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-cursor: hand;"
+        );
 
         // Resaltar el botón activo
-        botonActivo.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-size: 14px; -fx-cursor: hand; -fx-font-weight: bold;");
+        botonActivo.setStyle(
+                "-fx-background-color: #3b82f6; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-cursor: hand; " +
+                        "-fx-font-weight: bold;"
+        );
     }
 }

@@ -45,8 +45,8 @@ public class SameDay {
 
         // Crear Repartidor de prueba
         UserAccount user2 = new UserAccount("yerilin", "2020", null, TypeUser.DEALER);
-        Dealer dealer1=new Dealer("0001" ,"12410001","Yerilin Ul", "yeriul@mail.com2",
-                "310121001",null,false,City.CALARCA);
+        Dealer dealer1=new Dealer("0001" ,"12410001","Yerilin Ul", "yeriul@mail.com",
+                "310121001",null,false,City.ARMENIA);
         dealer1.setUserAccount(user2);
         user2.setPerson(client1);
         agregarPersona(dealer1);

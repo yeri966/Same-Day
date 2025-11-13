@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Controlador para el Dashboard del Repartidor
+ * Controlador para la gestión de envíos del repartidor
  * Permite ver y actualizar el estado de los envíos asignados
  */
 public class GestionEnviosRepartidorController {
@@ -22,6 +22,7 @@ public class GestionEnviosRepartidorController {
     private SameDay sameDay = SameDay.getInstance();
     private Dealer repartidorActual;
     private Envio envioSeleccionado;
+    private ObservableList<Envio> enviosObservableList;
 
     // Tabla de envíos
     @FXML private TableView<Envio> tablaEnvios;
@@ -62,17 +63,15 @@ public class GestionEnviosRepartidorController {
 
     @FXML
     void initialize() {
-        System.out.println("=== INICIALIZANDO DASHBOARD REPARTIDOR ===");
-
-        // Obtener el repartidor actual
         Person usuarioActivo = sameDay.getUserActive();
         if (usuarioActivo instanceof Dealer) {
             repartidorActual = (Dealer) usuarioActivo;
-            System.out.println("Repartidor activo: " + repartidorActual.getNombre());
         } else {
-            System.out.println("ERROR: Usuario activo no es un repartidor");
             return;
         }
+
+        enviosObservableList = FXCollections.observableArrayList();
+        tablaEnvios.setItems(enviosObservableList);
 
         configurarTabla();
         configurarComboBoxEstados();
@@ -81,8 +80,6 @@ public class GestionEnviosRepartidorController {
         actualizarEstadisticas();
 
         btnActualizarEstado.setDisable(true);
-
-        System.out.println("=== DASHBOARD REPARTIDOR INICIALIZADO ===");
     }
 
     /**
@@ -117,10 +114,20 @@ public class GestionEnviosRepartidorController {
         });
 
         colDestinatario.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getNombreDestinatario()));
+                new SimpleStringProperty(
+                        cellData.getValue().getNombreDestinatario() != null
+                                ? cellData.getValue().getNombreDestinatario()
+                                : "-"
+                )
+        );
 
         colContenido.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getContenido()));
+                new SimpleStringProperty(
+                        cellData.getValue().getContenido() != null
+                                ? cellData.getValue().getContenido()
+                                : "-"
+                )
+        );
 
         colEstado.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getEstadoEntregaString()));
@@ -135,7 +142,6 @@ public class GestionEnviosRepartidorController {
                     setStyle("");
                 } else {
                     setText(item);
-                    // Aplicar colores según el estado
                     if (item.contains("Asignado")) {
                         setStyle("-fx-text-fill: #3b82f6; -fx-font-weight: bold;");
                     } else if (item.contains("Recogido")) {
@@ -156,13 +162,11 @@ public class GestionEnviosRepartidorController {
      * Configura los ComboBox de estados
      */
     private void configurarComboBoxEstados() {
-        // ComboBox para cambiar el estado
         ObservableList<EstadoEntrega> estados = FXCollections.observableArrayList(
                 EstadoEntrega.values()
         );
         cmbNuevoEstado.setItems(estados);
 
-        // ComboBox de filtro (con opción "Todos")
         ObservableList<EstadoEntrega> estadosFiltro = FXCollections.observableArrayList(
                 EstadoEntrega.values()
         );
@@ -190,58 +194,56 @@ public class GestionEnviosRepartidorController {
      * Carga los envíos asignados al repartidor actual
      */
     private void cargarEnviosAsignados() {
-        System.out.println("\n=== CARGANDO ENVÍOS ASIGNADOS ===");
-
         List<Envio> enviosAsignados = sameDay.getListEnvios().stream()
                 .filter(envio -> envio.getRepartidorAsignado() != null)
                 .filter(envio -> envio.getRepartidorAsignado().getId().equals(repartidorActual.getId()))
                 .collect(Collectors.toList());
 
-        ObservableList<Envio> enviosObservable = FXCollections.observableArrayList(enviosAsignados);
-        tablaEnvios.setItems(enviosObservable);
-
-        System.out.println("Total envíos asignados: " + enviosAsignados.size());
-
-        // DEBUG: Imprimir estados de cada envío
-        for (Envio envio : enviosAsignados) {
-            System.out.println("  - Envío " + envio.getId() +
-                    ": Estado = " + envio.getEstadoEntregaString());
-        }
-
-        System.out.println("=== ENVÍOS CARGADOS ===\n");
+        enviosObservableList.clear();
+        enviosObservableList.addAll(enviosAsignados);
     }
 
     /**
-     * Muestra el detalle del envío seleccionado en los labels
+     * Muestra el detalle del envío seleccionado
      */
     private void mostrarDetalleEnvio(Envio envio) {
         lblNumeroEnvio.setText(envio.getId());
 
         if (envio.getOrigen() != null) {
             lblOrigenDetalle.setText(envio.getOrigen().getFullAddress());
+        } else {
+            lblOrigenDetalle.setText("-");
         }
 
         if (envio.getDestino() != null) {
             lblDestinoDetalle.setText(envio.getDestino().getFullAddress());
+        } else {
+            lblDestinoDetalle.setText("-");
         }
 
-        lblDestinatarioNombre.setText(envio.getNombreDestinatario());
-        lblDestinatarioCedula.setText(envio.getCedulaDestinatario());
-        lblDestinatarioTelefono.setText(envio.getTelefonoDestinatario());
-        lblContenido.setText(envio.getContenido());
+        lblDestinatarioNombre.setText(
+                envio.getNombreDestinatario() != null ? envio.getNombreDestinatario() : "-"
+        );
+        lblDestinatarioCedula.setText(
+                envio.getCedulaDestinatario() != null ? envio.getCedulaDestinatario() : "-"
+        );
+        lblDestinatarioTelefono.setText(
+                envio.getTelefonoDestinatario() != null ? envio.getTelefonoDestinatario() : "-"
+        );
+        lblContenido.setText(
+                envio.getContenido() != null ? envio.getContenido() : "-"
+        );
         lblPeso.setText(String.format("%.2f kg", envio.getPeso()));
-        lblServicios.setText(envio.getServiciosAdicionalesString());
+        lblServicios.setText(
+                envio.getServiciosAdicionalesString() != null
+                        ? envio.getServiciosAdicionalesString()
+                        : "Ninguno"
+        );
 
-        // Establecer el estado actual en el ComboBox
         cmbNuevoEstado.setValue(envio.getEstadoEntrega());
-
-        // Mostrar observaciones existentes
         txtObservaciones.setText(
                 envio.getObservaciones() != null ? envio.getObservaciones() : ""
         );
-
-        System.out.println("Mostrando detalle de envío " + envio.getId() +
-                " - Estado actual: " + envio.getEstadoEntregaString());
     }
 
     /**
@@ -249,8 +251,6 @@ public class GestionEnviosRepartidorController {
      */
     @FXML
     void onActualizarEstado(ActionEvent event) {
-        System.out.println("\n=== ACTUALIZANDO ESTADO ===");
-
         if (envioSeleccionado == null) {
             mostrarAlerta("Selección requerida",
                     "Debe seleccionar un envío de la tabla",
@@ -267,20 +267,14 @@ public class GestionEnviosRepartidorController {
             return;
         }
 
-        System.out.println("Envío seleccionado: " + envioSeleccionado.getId());
-        System.out.println("Estado actual: " + envioSeleccionado.getEstadoEntregaString());
-        System.out.println("Nuevo estado solicitado: " + nuevoEstado.getDisplayName());
-
-        // Validar transición de estado
         if (!validarTransicionEstado(envioSeleccionado.getEstadoEntrega(), nuevoEstado)) {
             mostrarAlerta("Transición inválida",
                     "No puede cambiar de " + envioSeleccionado.getEstadoEntregaString() +
-                            " a " + nuevoEstado.toString(),
+                            " a " + nuevoEstado.getDisplayName(),
                     Alert.AlertType.WARNING);
             return;
         }
 
-        // Si el estado es CON_INCIDENCIA, las observaciones son obligatorias
         if (nuevoEstado == EstadoEntrega.CON_INCIDENCIA) {
             if (txtObservaciones.getText().trim().isEmpty()) {
                 mostrarAlerta("Observaciones requeridas",
@@ -290,46 +284,34 @@ public class GestionEnviosRepartidorController {
             }
         }
 
-        // Confirmar actualización
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmar Actualización");
         confirmacion.setHeaderText("¿Actualizar el estado del envío?");
         confirmacion.setContentText(
                 "Envío: " + envioSeleccionado.getId() + "\n" +
                         "Estado actual: " + envioSeleccionado.getEstadoEntregaString() + "\n" +
-                        "Nuevo estado: " + nuevoEstado.toString()
+                        "Nuevo estado: " + nuevoEstado.getDisplayName()
         );
 
         if (confirmacion.showAndWait().get() == ButtonType.OK) {
-            // Actualizar el envío
+            // Actualizar el estado del envío
             envioSeleccionado.setEstadoEntrega(nuevoEstado);
             envioSeleccionado.setObservaciones(txtObservaciones.getText().trim());
 
-            System.out.println("✅ Estado actualizado a: " + nuevoEstado.getDisplayName());
-            System.out.println("Observaciones: " + txtObservaciones.getText().trim());
+            // YA NO se modifica manualmente la disponibilidad
+            // El método isDisponible() del Dealer lo calculará automáticamente
 
-            // Si se entrega el envío, marcar al repartidor como disponible nuevamente
-            if (nuevoEstado == EstadoEntrega.ENTREGADO) {
-                repartidorActual.setDisponible(true);
-                System.out.println("✅ Repartidor marcado como disponible");
-            }
-
-            // Guardar cambios en el sistema
+            // Guardar cambios
             sameDay.updateEnvio(envioSeleccionado);
-            System.out.println("✅ Cambios guardados en SameDay");
 
             mostrarAlerta("Estado Actualizado",
                     "El estado del envío ha sido actualizado exitosamente a: " + nuevoEstado.getDisplayName(),
                     Alert.AlertType.INFORMATION);
 
-            // Recargar la tabla y estadísticas
-            cargarEnviosAsignados();
+            // Refrescar la tabla
+            tablaEnvios.refresh();
             actualizarEstadisticas();
             limpiarDetalles();
-
-            System.out.println("=== ACTUALIZACIÓN COMPLETADA ===\n");
-        } else {
-            System.out.println("❌ Actualización cancelada por el usuario\n");
         }
     }
 
@@ -355,7 +337,7 @@ public class GestionEnviosRepartidorController {
                         nuevoEstado == EstadoEntrega.CON_INCIDENCIA;
 
             case ENTREGADO:
-                return false; // No se puede cambiar de ENTREGADO
+                return false; // No se puede cambiar
 
             case CON_INCIDENCIA:
                 return nuevoEstado == EstadoEntrega.RECOGIDO ||
@@ -367,7 +349,7 @@ public class GestionEnviosRepartidorController {
     }
 
     /**
-     * Aplica el filtro por estado seleccionado
+     * Aplica el filtro por estado
      */
     @FXML
     void onFiltrar(ActionEvent event) {
@@ -384,12 +366,12 @@ public class GestionEnviosRepartidorController {
                 .filter(envio -> envio.getEstadoEntrega() == estadoFiltro)
                 .collect(Collectors.toList());
 
-        ObservableList<Envio> enviosObservable = FXCollections.observableArrayList(enviosFiltrados);
-        tablaEnvios.setItems(enviosObservable);
+        enviosObservableList.clear();
+        enviosObservableList.addAll(enviosFiltrados);
     }
 
     /**
-     * Limpia el filtro y muestra todos los envíos
+     * Limpia el filtro
      */
     @FXML
     void onLimpiarFiltro(ActionEvent event) {
@@ -398,7 +380,7 @@ public class GestionEnviosRepartidorController {
     }
 
     /**
-     * Actualiza las estadísticas mostradas
+     * Actualiza las estadísticas
      */
     private void actualizarEstadisticas() {
         List<Envio> misEnvios = sameDay.getListEnvios().stream()
@@ -448,7 +430,7 @@ public class GestionEnviosRepartidorController {
     }
 
     /**
-     * Muestra un cuadro de diálogo de alerta
+     * Muestra un cuadro de diálogo
      */
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
         Alert alerta = new Alert(tipo);
