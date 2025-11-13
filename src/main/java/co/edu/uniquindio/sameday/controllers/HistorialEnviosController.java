@@ -28,7 +28,7 @@ public class HistorialEnviosController {
     @FXML private TableColumn<Envio, String> colContenido;
     @FXML private TableColumn<Envio, String> colPeso;
     @FXML private TableColumn<Envio, String> colCosto;
-    @FXML private TableColumn<Envio, String> colRepartidor; // NUEVA COLUMNA
+    @FXML private TableColumn<Envio, String> colRepartidor;
     @FXML private TableColumn<Envio, String> colEstado;
 
     // Filtros
@@ -111,7 +111,7 @@ public class HistorialEnviosController {
         colCosto.setCellValueFactory(cellData ->
                 new SimpleStringProperty(String.format("$%,.0f", cellData.getValue().getCostoTotal())));
 
-        // Repartidor - NUEVO
+        // Repartidor
         colRepartidor.setCellValueFactory(cellData -> {
             Dealer repartidor = cellData.getValue().getRepartidorAsignado();
             if (repartidor != null) {
@@ -139,14 +139,25 @@ public class HistorialEnviosController {
             }
         });
 
-        // Estado de envío (EN_RUTA, ENTREGADO) - por ahora null
+        // Estado de envío - AHORA MUESTRA EL ESTADO REAL DE ENTREGA
         colEstado.setCellValueFactory(cellData -> {
-            // Por ahora el estado de ruta/entrega es null
-            // Solo mostramos "-" para indicar que está pendiente
-            return new SimpleStringProperty("-");
+            Envio envio = cellData.getValue();
+
+            // Si tiene repartidor asignado y estado de entrega, mostrarlo
+            if (envio.getRepartidorAsignado() != null && envio.getEstadoEntrega() != null) {
+                return new SimpleStringProperty(envio.getEstadoEntregaString());
+            }
+
+            // Si tiene repartidor pero no estado, está asignado
+            if (envio.getRepartidorAsignado() != null) {
+                return new SimpleStringProperty("📋 Asignado");
+            }
+
+            // Si no tiene repartidor, está pendiente de asignación
+            return new SimpleStringProperty("⏳ Sin asignar");
         });
 
-        // Aplicar estilo a la columna de estado
+        // Aplicar estilo a la columna de estado según el estado de entrega
         colEstado.setCellFactory(column -> new TableCell<Envio, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -156,8 +167,23 @@ public class HistorialEnviosController {
                     setStyle("");
                 } else {
                     setText(item);
-                    // Por ahora todos aparecen en gris como pendientes
-                    setStyle("-fx-text-fill: #64748b; -fx-font-weight: bold;");
+
+                    // Aplicar colores según el estado
+                    if (item.contains("Sin asignar")) {
+                        setStyle("-fx-text-fill: #94a3b8; -fx-font-weight: bold;");
+                    } else if (item.contains("Asignado")) {
+                        setStyle("-fx-text-fill: #3b82f6; -fx-font-weight: bold;");
+                    } else if (item.contains("Recogido")) {
+                        setStyle("-fx-text-fill: #8b5cf6; -fx-font-weight: bold;");
+                    } else if (item.contains("En Ruta")) {
+                        setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;");
+                    } else if (item.contains("Entregado")) {
+                        setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
+                    } else if (item.contains("Incidencia")) {
+                        setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold;");
+                    } else {
+                        setStyle("-fx-text-fill: #64748b; -fx-font-weight: bold;");
+                    }
                 }
             }
         });
@@ -167,8 +193,16 @@ public class HistorialEnviosController {
      * Configura los ComboBox de filtros
      */
     private void configurarFiltros() {
-        // ComboBox de Estado - por ahora solo "Todos" ya que no hay estados de ruta
-        ObservableList<String> estados = FXCollections.observableArrayList("Todos");
+        // ComboBox de Estado - ahora con estados reales
+        ObservableList<String> estados = FXCollections.observableArrayList(
+                "Todos",
+                "Sin asignar",
+                "Asignado",
+                "Recogido",
+                "En Ruta",
+                "Entregado",
+                "Con Incidencia"
+        );
         cmbEstado.setItems(estados);
         cmbEstado.setValue("Todos");
 
@@ -253,11 +287,27 @@ public class HistorialEnviosController {
     }
 
     /**
-     * Filtra por estado - por ahora siempre retorna true ya que no hay estados de ruta
+     * Filtra por estado - ACTUALIZADO para estados reales
      */
     private boolean filtrarPorEstado(Envio envio) {
-        // Por ahora no hay estados de ruta/entrega, así que no filtramos por esto
-        return true;
+        String estadoSeleccionado = cmbEstado.getValue();
+
+        if (estadoSeleccionado == null || estadoSeleccionado.equals("Todos")) {
+            return true;
+        }
+
+        // Obtener el estado actual del envío
+        String estadoEnvio = "";
+
+        if (envio.getRepartidorAsignado() != null && envio.getEstadoEntrega() != null) {
+            estadoEnvio = envio.getEstadoEntrega().getDisplayName();
+        } else if (envio.getRepartidorAsignado() != null) {
+            estadoEnvio = "Asignado";
+        } else {
+            estadoEnvio = "Sin asignar";
+        }
+
+        return estadoEnvio.equals(estadoSeleccionado);
     }
 
     /**
@@ -278,14 +328,26 @@ public class HistorialEnviosController {
     }
 
     /**
-     * Actualiza las estadísticas mostradas
+     * Actualiza las estadísticas mostradas - ACTUALIZADO
      */
     private void actualizarEstadisticas() {
         int total = tablaHistorial.getItems().size();
 
-        // Por ahora no hay estados de ruta/entrega, todos son envíos pagados pendientes
-        long entregados = 0; // Será usado más adelante
-        long pendientes = total; // Por ahora todos están pendientes de entrega
+        // Contar envíos entregados (con estado ENTREGADO)
+        long entregados = tablaHistorial.getItems().stream()
+                .filter(envio -> envio.getEstadoEntrega() == EstadoEntrega.ENTREGADO)
+                .count();
+
+        // Contar pendientes (sin repartidor o con estados ASIGNADO, RECOGIDO, EN_RUTA)
+        long pendientes = tablaHistorial.getItems().stream()
+                .filter(envio ->
+                        envio.getRepartidorAsignado() == null ||
+                                envio.getEstadoEntrega() == EstadoEntrega.ASIGNADO ||
+                                envio.getEstadoEntrega() == EstadoEntrega.RECOGIDO ||
+                                envio.getEstadoEntrega() == EstadoEntrega.EN_RUTA ||
+                                envio.getEstadoEntrega() == EstadoEntrega.CON_INCIDENCIA
+                )
+                .count();
 
         lblTotalEnvios.setText("Total: " + total);
         lblEnviosEntregados.setText("Entregados: " + entregados);
@@ -310,7 +372,7 @@ public class HistorialEnviosController {
     }
 
     /**
-     * Muestra un diálogo con el detalle completo del envío
+     * Muestra un diálogo con el detalle completo del envío - ACTUALIZADO
      */
     private void mostrarDetalleEnvio(Envio envio) {
         StringBuilder detalle = new StringBuilder();
@@ -340,7 +402,7 @@ public class HistorialEnviosController {
         detalle.append("  • Cédula: ").append(envio.getCedulaDestinatario()).append("\n");
         detalle.append("  • Teléfono: ").append(envio.getTelefonoDestinatario()).append("\n\n");
 
-        // NUEVO: Información del repartidor
+        // INFORMACIÓN DEL REPARTIDOR
         detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
         detalle.append("REPARTIDOR ASIGNADO:\n");
         if (envio.getRepartidorAsignado() != null) {
@@ -350,6 +412,28 @@ public class HistorialEnviosController {
             detalle.append("  • Ciudad: ").append(repartidor.getCity()).append("\n");
         } else {
             detalle.append("  • Sin repartidor asignado\n");
+        }
+        detalle.append("\n");
+
+        // ESTADO DE ENTREGA - NUEVO
+        detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        detalle.append("ESTADO DE ENTREGA:\n");
+        if (envio.getRepartidorAsignado() != null && envio.getEstadoEntrega() != null) {
+            detalle.append("  • Estado: ").append(envio.getEstadoEntregaString()).append("\n");
+
+            if (envio.getFechaActualizacionEstado() != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                detalle.append("  • Última actualización: ")
+                        .append(envio.getFechaActualizacionEstado().format(formatter)).append("\n");
+            }
+
+            if (envio.getObservaciones() != null && !envio.getObservaciones().trim().isEmpty()) {
+                detalle.append("  • Observaciones: ").append(envio.getObservaciones()).append("\n");
+            }
+        } else if (envio.getRepartidorAsignado() != null) {
+            detalle.append("  • Estado: Asignado (pendiente de actualización)\n");
+        } else {
+            detalle.append("  • Estado: Sin repartidor asignado\n");
         }
         detalle.append("\n");
 
@@ -363,13 +447,13 @@ public class HistorialEnviosController {
 
         detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
         detalle.append("Costo Total: $").append(String.format("%,.0f", envio.getCostoTotal())).append("\n");
-        detalle.append("Estado: ").append(envio.getEstado()).append("\n");
+        detalle.append("Estado de Pago: ").append(envio.getEstado()).append("\n");
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Detalle del Envío");
         alert.setHeaderText(null);
         alert.setContentText(detalle.toString());
-        alert.getDialogPane().setPrefWidth(500);
+        alert.getDialogPane().setPrefWidth(550);
         alert.showAndWait();
     }
 

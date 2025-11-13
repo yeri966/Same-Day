@@ -29,7 +29,7 @@ public class Envio {
     // Asignación de repartidor
     private Dealer repartidorAsignado;
 
-    // NUEVO: Estado de la entrega (para el flujo del repartidor)
+    // Estado de la entrega (para el flujo del repartidor)
     private EstadoEntrega estadoEntrega; // ASIGNADO, RECOGIDO, EN_RUTA, ENTREGADO, CON_INCIDENCIA
     private String observaciones; // Notas del repartidor sobre el envío o incidencias
     private LocalDateTime fechaActualizacionEstado; // Última vez que se actualizó el estado
@@ -118,17 +118,19 @@ public class Envio {
 
     // Getters y Setters para repartidor asignado
     public Dealer getRepartidorAsignado() { return repartidorAsignado; }
+
     public void setRepartidorAsignado(Dealer repartidorAsignado) {
         this.repartidorAsignado = repartidorAsignado;
-        // Cuando se asigna un repartidor, el estadoEntrega pasa a ASIGNADO
+        // CORREGIDO: Solo establecer ASIGNADO si no hay estado previo
         if (repartidorAsignado != null && this.estadoEntrega == null) {
             this.estadoEntrega = EstadoEntrega.ASIGNADO;
             this.fechaActualizacionEstado = LocalDateTime.now();
         }
     }
 
-    // NUEVO: Getters y Setters para el estado de entrega
+    // Getters y Setters para el estado de entrega
     public EstadoEntrega getEstadoEntrega() { return estadoEntrega; }
+
     public void setEstadoEntrega(EstadoEntrega estadoEntrega) {
         this.estadoEntrega = estadoEntrega;
         this.fechaActualizacionEstado = LocalDateTime.now();

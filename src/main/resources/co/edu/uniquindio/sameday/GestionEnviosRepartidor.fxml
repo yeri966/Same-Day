@@ -5,200 +5,255 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="co.edu.uniquindio.sameday.controllers.GestionEnviosRepartidorController"
-      style="-fx-background-color: #f8fafc;" spacing="15" prefHeight="700.0" prefWidth="950.0">
+<ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: #f8fafc;"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.sameday.controllers.GestionEnviosRepartidorController">
 
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
+    <content>
+        <VBox style="-fx-background-color: #f8fafc;" spacing="15" prefHeight="900.0" prefWidth="950.0">
 
-    <!-- Encabezado con estadísticas -->
-    <VBox style="-fx-background-color: #1e293b; -fx-padding: 20; -fx-background-radius: 10;">
-        <HBox alignment="CENTER_LEFT" spacing="15">
-            <Label text="📦 Mis Envíos Asignados" textFill="WHITE">
-                <font>
-                    <Font name="System Bold" size="24"/>
-                </font>
-            </Label>
-        </HBox>
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
 
-        <!-- Estadísticas -->
-        <HBox spacing="15" style="-fx-padding: 15 0 0 0;">
-            <VBox alignment="CENTER" spacing="5"
-                  style="-fx-background-color: #3b82f6; -fx-padding: 15; -fx-background-radius: 8;">
-                <Label fx:id="lblTotalAsignados" text="Total: 0" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold" size="16"/>
-                    </font>
-                </Label>
-                <Label text="Envíos Asignados" textFill="WHITE">
-                    <font>
-                        <Font size="12"/>
-                    </font>
-                </Label>
-            </VBox>
-
-            <VBox alignment="CENTER" spacing="5"
-                  style="-fx-background-color: #f59e0b; -fx-padding: 15; -fx-background-radius: 8;">
-                <Label fx:id="lblEnRuta" text="En Ruta: 0" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold" size="16"/>
-                    </font>
-                </Label>
-                <Label text="En Camino" textFill="WHITE">
-                    <font>
-                        <Font size="12"/>
-                    </font>
-                </Label>
-            </VBox>
-
-            <VBox alignment="CENTER" spacing="5"
-                  style="-fx-background-color: #10b981; -fx-padding: 15; -fx-background-radius: 8;">
-                <Label fx:id="lblEntregados" text="Entregados: 0" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold" size="16"/>
-                    </font>
-                </Label>
-                <Label text="Completados" textFill="WHITE">
-                    <font>
-                        <Font size="12"/>
-                    </font>
-                </Label>
-            </VBox>
-
-            <VBox alignment="CENTER" spacing="5"
-                  style="-fx-background-color: #8b5cf6; -fx-padding: 15; -fx-background-radius: 8;">
-                <Label fx:id="lblPendientes" text="Pendientes: 0" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold" size="16"/>
-                    </font>
-                </Label>
-                <Label text="Por Recoger/Entregar" textFill="WHITE">
-                    <font>
-                        <Font size="12"/>
-                    </font>
-                </Label>
-            </VBox>
-        </HBox>
-    </VBox>
-
-    <!-- Contenido principal -->
-    <HBox spacing="15" VBox.vgrow="ALWAYS">
-        <!-- Panel izquierdo: Lista de envíos -->
-        <VBox spacing="15" HBox.hgrow="ALWAYS"
-              style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
-
-            <!-- Filtros -->
-            <HBox alignment="CENTER_LEFT" spacing="15">
-                <Label text="Filtrar por estado:"/>
-                <ComboBox fx:id="cmbFiltroEstado" promptText="Todos los estados" prefWidth="180"/>
-                <Button fx:id="btnFiltrar" text="Filtrar" onAction="#onFiltrar"
-                        style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-cursor: hand;"/>
-                <Button fx:id="btnLimpiarFiltro" text="Limpiar" onAction="#onLimpiarFiltro"
-                        style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-cursor: hand;"/>
-            </HBox>
-
-            <!-- Tabla de envíos -->
-            <TableView fx:id="tablaEnvios" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="colId" text="N° Envío" prefWidth="100"/>
-                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="130"/>
-                    <TableColumn fx:id="colOrigen" text="Origen" prefWidth="100"/>
-                    <TableColumn fx:id="colDestino" text="Destino" prefWidth="100"/>
-                    <TableColumn fx:id="colDestinatario" text="Destinatario" prefWidth="150"/>
-                    <TableColumn fx:id="colContenido" text="Contenido" prefWidth="150"/>
-                    <TableColumn fx:id="colEstado" text="Estado" prefWidth="150"/>
-                </columns>
-                <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                </columnResizePolicy>
-            </TableView>
-        </VBox>
-
-        <!-- Panel derecho: Detalles y gestión del envío -->
-        <VBox spacing="15" prefWidth="380"
-              style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
-
-            <Label text="📋 Detalles del Envío">
-                <font>
-                    <Font name="System Bold" size="18"/>
-                </font>
-            </Label>
-
-            <Separator/>
-
-            <!-- Información del envío -->
-            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
-                <VBox spacing="10">
-                    <HBox spacing="10">
-                        <Label text="N° Envío:" style="-fx-font-weight: bold;" prefWidth="120"/>
-                        <Label fx:id="lblNumeroEnvio" text="-"/>
-                    </HBox>
-
-                    <Label text="📍 Origen:" style="-fx-font-weight: bold; -fx-text-fill: #3b82f6;"/>
-                    <Label fx:id="lblOrigenDetalle" text="-" wrapText="true" style="-fx-padding: 0 0 0 15;"/>
-
-                    <Label text="📍 Destino:" style="-fx-font-weight: bold; -fx-text-fill: #10b981;"/>
-                    <Label fx:id="lblDestinoDetalle" text="-" wrapText="true" style="-fx-padding: 0 0 0 15;"/>
-
-                    <Separator/>
-
-                    <Label text="👤 Destinatario:" style="-fx-font-weight: bold;"/>
-                    <HBox spacing="10" style="-fx-padding: 0 0 0 15;">
-                        <Label text="Nombre:" style="-fx-font-weight: bold;" prefWidth="80"/>
-                        <Label fx:id="lblDestinatarioNombre" text="-" wrapText="true"/>
-                    </HBox>
-                    <HBox spacing="10" style="-fx-padding: 0 0 0 15;">
-                        <Label text="Cédula:" style="-fx-font-weight: bold;" prefWidth="80"/>
-                        <Label fx:id="lblDestinatarioCedula" text="-"/>
-                    </HBox>
-                    <HBox spacing="10" style="-fx-padding: 0 0 0 15;">
-                        <Label text="Teléfono:" style="-fx-font-weight: bold;" prefWidth="80"/>
-                        <Label fx:id="lblDestinatarioTelefono" text="-"/>
-                    </HBox>
-
-                    <Separator/>
-
-                    <Label text="📦 Información del Paquete:" style="-fx-font-weight: bold;"/>
-                    <HBox spacing="10" style="-fx-padding: 0 0 0 15;">
-                        <Label text="Contenido:" style="-fx-font-weight: bold;" prefWidth="80"/>
-                        <Label fx:id="lblContenido" text="-" wrapText="true"/>
-                    </HBox>
-                    <HBox spacing="10" style="-fx-padding: 0 0 0 15;">
-                        <Label text="Peso:" style="-fx-font-weight: bold;" prefWidth="80"/>
-                        <Label fx:id="lblPeso" text="-"/>
-                    </HBox>
-                    <HBox spacing="10" style="-fx-padding: 0 0 0 15;">
-                        <Label text="Servicios:" style="-fx-font-weight: bold;" prefWidth="80"/>
-                        <Label fx:id="lblServicios" text="-" wrapText="true"/>
-                    </HBox>
-
-                    <Separator/>
-
-                    <!-- Actualizar estado -->
-                    <Label text="🔄 Actualizar Estado">
+            <!-- Encabezado con estadísticas -->
+            <VBox style="-fx-background-color: #1e293b; -fx-padding: 20; -fx-background-radius: 10;">
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Label text="📦 Mis Envíos Asignados" textFill="WHITE">
                         <font>
-                            <Font name="System Bold" size="14"/>
+                            <Font name="System Bold" size="24"/>
                         </font>
                     </Label>
+                </HBox>
 
-                    <Label text="Nuevo Estado:"/>
-                    <ComboBox fx:id="cmbNuevoEstado" promptText="Seleccione un estado" maxWidth="Infinity"/>
+                <!-- Estadísticas -->
+                <HBox spacing="15" style="-fx-padding: 15 0 0 0;">
+                    <VBox alignment="CENTER" spacing="5"
+                          style="-fx-background-color: #3b82f6; -fx-padding: 15; -fx-background-radius: 8;">
+                        <Label fx:id="lblTotalAsignados" text="Total: 0" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="16"/>
+                            </font>
+                        </Label>
+                        <Label text="Envíos Asignados" textFill="WHITE">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Label>
+                    </VBox>
 
-                    <Label text="Observaciones / Incidencias:"/>
-                    <TextArea fx:id="txtObservaciones" promptText="Ingrese observaciones sobre el envío o detalles de incidencias..."
-                              wrapText="true" prefRowCount="3"/>
+                    <VBox alignment="CENTER" spacing="5"
+                          style="-fx-background-color: #f59e0b; -fx-padding: 15; -fx-background-radius: 8;">
+                        <Label fx:id="lblEnRuta" text="En Ruta: 0" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="16"/>
+                            </font>
+                        </Label>
+                        <Label text="En Camino" textFill="WHITE">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Label>
+                    </VBox>
 
-                    <Button fx:id="btnActualizarEstado" text="✅ Actualizar Estado" onAction="#onActualizarEstado"
-                            maxWidth="Infinity"
-                            style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 10;">
-                        <font>
-                            <Font size="14"/>
-                        </font>
-                    </Button>
+                    <VBox alignment="CENTER" spacing="5"
+                          style="-fx-background-color: #10b981; -fx-padding: 15; -fx-background-radius: 8;">
+                        <Label fx:id="lblEntregados" text="Entregados: 0" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="16"/>
+                            </font>
+                        </Label>
+                        <Label text="Completados" textFill="WHITE">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Label>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="5"
+                          style="-fx-background-color: #8b5cf6; -fx-padding: 15; -fx-background-radius: 8;">
+                        <Label fx:id="lblPendientes" text="Pendientes: 0" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="16"/>
+                            </font>
+                        </Label>
+                        <Label text="Por Recoger/Entregar" textFill="WHITE">
+                            <font>
+                                <Font size="12"/>
+                            </font>
+                        </Label>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- SECCIÓN SUPERIOR: Tabla de envíos y Detalles lado a lado -->
+            <HBox spacing="15" prefHeight="320">
+
+                <!-- Panel izquierdo: Lista de envíos -->
+                <VBox spacing="12" HBox.hgrow="ALWAYS"
+                      style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+
+                    <Label text="📋 Lista de Envíos" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                    <!-- Filtros -->
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Filtrar:" style="-fx-font-size: 12px;"/>
+                        <ComboBox fx:id="cmbFiltroEstado" promptText="Todos los estados" prefWidth="160"/>
+                        <Button fx:id="btnFiltrar" text="Filtrar" onAction="#onFiltrar"
+                                style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11px; -fx-pref-height: 28px;"/>
+                        <Button fx:id="btnLimpiarFiltro" text="Limpiar" onAction="#onLimpiarFiltro"
+                                style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 11px; -fx-pref-height: 28px;"/>
+                    </HBox>
+
+                    <!-- Tabla de envíos con scroll interno -->
+                    <TableView fx:id="tablaEnvios" VBox.vgrow="ALWAYS" prefHeight="240" style="-fx-font-size: 12px;">
+                        <columns>
+                            <TableColumn fx:id="colId" text="N° Envío" prefWidth="90"/>
+                            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="120"/>
+                            <TableColumn fx:id="colOrigen" text="Origen" prefWidth="90"/>
+                            <TableColumn fx:id="colDestino" text="Destino" prefWidth="90"/>
+                            <TableColumn fx:id="colDestinatario" text="Destinatario" prefWidth="130"/>
+                            <TableColumn fx:id="colContenido" text="Contenido" prefWidth="130"/>
+                            <TableColumn fx:id="colEstado" text="Estado" prefWidth="150"/>
+                        </columns>
+                    </TableView>
                 </VBox>
-            </ScrollPane>
+
+                <!-- Panel derecho: Detalles del envío -->
+                <VBox spacing="10" prefWidth="320"
+                      style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+
+                    <Label text="📋 Detalles del Envío" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                    <Separator/>
+
+                    <!-- Scroll para detalles -->
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" prefHeight="260"
+                                style="-fx-background-color: transparent;">
+                        <VBox spacing="8">
+                            <HBox spacing="8">
+                                <Label text="N° Envío:" style="-fx-font-weight: bold; -fx-font-size: 12px;" prefWidth="90"/>
+                                <Label fx:id="lblNumeroEnvio" text="-" style="-fx-font-size: 12px;"/>
+                            </HBox>
+
+                            <Separator/>
+
+                            <Label text="📍 Origen:" style="-fx-font-weight: bold; -fx-text-fill: #3b82f6; -fx-font-size: 12px;"/>
+                            <Label fx:id="lblOrigenDetalle" text="-" wrapText="true" style="-fx-padding: 0 0 0 10; -fx-font-size: 11px;"/>
+
+                            <Label text="📍 Destino:" style="-fx-font-weight: bold; -fx-text-fill: #10b981; -fx-font-size: 12px;"/>
+                            <Label fx:id="lblDestinoDetalle" text="-" wrapText="true" style="-fx-padding: 0 0 0 10; -fx-font-size: 11px;"/>
+
+                            <Separator/>
+
+                            <Label text="👤 Destinatario:" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                            <VBox spacing="4" style="-fx-padding: 0 0 0 10;">
+                                <HBox spacing="8">
+                                    <Label text="Nombre:" style="-fx-font-weight: bold; -fx-font-size: 11px;" prefWidth="70"/>
+                                    <Label fx:id="lblDestinatarioNombre" text="-" wrapText="true" style="-fx-font-size: 11px;"/>
+                                </HBox>
+                                <HBox spacing="8">
+                                    <Label text="Cédula:" style="-fx-font-weight: bold; -fx-font-size: 11px;" prefWidth="70"/>
+                                    <Label fx:id="lblDestinatarioCedula" text="-" style="-fx-font-size: 11px;"/>
+                                </HBox>
+                                <HBox spacing="8">
+                                    <Label text="Teléfono:" style="-fx-font-weight: bold; -fx-font-size: 11px;" prefWidth="70"/>
+                                    <Label fx:id="lblDestinatarioTelefono" text="-" style="-fx-font-size: 11px;"/>
+                                </HBox>
+                            </VBox>
+
+                            <Separator/>
+
+                            <Label text="📦 Paquete:" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                            <VBox spacing="4" style="-fx-padding: 0 0 0 10;">
+                                <HBox spacing="8">
+                                    <Label text="Contenido:" style="-fx-font-weight: bold; -fx-font-size: 11px;" prefWidth="70"/>
+                                    <Label fx:id="lblContenido" text="-" wrapText="true" style="-fx-font-size: 11px;"/>
+                                </HBox>
+                                <HBox spacing="8">
+                                    <Label text="Peso:" style="-fx-font-weight: bold; -fx-font-size: 11px;" prefWidth="70"/>
+                                    <Label fx:id="lblPeso" text="-" style="-fx-font-size: 11px;"/>
+                                </HBox>
+                                <HBox spacing="8">
+                                    <Label text="Servicios:" style="-fx-font-weight: bold; -fx-font-size: 11px;" prefWidth="70"/>
+                                    <Label fx:id="lblServicios" text="-" wrapText="true" style="-fx-font-size: 11px;"/>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+            </HBox>
+
+            <!-- SECCIÓN INFERIOR: Actualizar estado - A LO ANCHO -->
+            <VBox spacing="15" prefHeight="200"
+                  style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+
+                <Label text="🔄 Actualizar Estado del Envío">
+                    <font>
+                        <Font name="System Bold" size="16"/>
+                    </font>
+                </Label>
+
+                <Separator/>
+
+                <HBox spacing="20" alignment="TOP_LEFT">
+
+                    <!-- Columna 1: Selector de estado con guía visual -->
+                    <VBox spacing="10" prefWidth="300">
+                        <Label text="Selecciona el nuevo estado:" style="-fx-font-weight: bold; -fx-text-fill: #475569; -fx-font-size: 13px;"/>
+                        <ComboBox fx:id="cmbNuevoEstado" promptText="Seleccione un estado" maxWidth="Infinity"
+                                  style="-fx-font-size: 13px; -fx-pref-height: 40px;"/>
+
+                        <!-- Guía de estados en formato compacto -->
+                        <HBox spacing="15" style="-fx-padding: 10 0 0 0;">
+                            <VBox spacing="3">
+                                <Label text="Estados:" style="-fx-font-size: 10px; -fx-text-fill: #64748b; -fx-font-weight: bold;"/>
+                                <HBox spacing="4">
+                                    <Label text="📋 Asignado" style="-fx-font-size: 9px; -fx-text-fill: #3b82f6;"/>
+                                </HBox>
+                                <HBox spacing="4">
+                                    <Label text="📦 Recogido" style="-fx-font-size: 9px; -fx-text-fill: #8b5cf6;"/>
+                                </HBox>
+                                <HBox spacing="4">
+                                    <Label text="🚚 En Ruta" style="-fx-font-size: 9px; -fx-text-fill: #f59e0b;"/>
+                                </HBox>
+                            </VBox>
+                            <VBox spacing="3">
+                                <Label text=" " style="-fx-font-size: 10px;"/>
+                                <HBox spacing="4">
+                                    <Label text="✅ Entregado" style="-fx-font-size: 9px; -fx-text-fill: #10b981;"/>
+                                </HBox>
+                                <HBox spacing="4">
+                                    <Label text="⚠️ Incidencia" style="-fx-font-size: 9px; -fx-text-fill: #ef4444;"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Columna 2: Observaciones -->
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+                        <Label text="Observaciones / Notas:" style="-fx-font-weight: bold; -fx-text-fill: #475569; -fx-font-size: 13px;"/>
+                        <TextArea fx:id="txtObservaciones"
+                                  promptText="Ingrese detalles sobre el envío, dirección específica, incidencias, etc..."
+                                  wrapText="true" prefRowCount="3" prefHeight="80"
+                                  style="-fx-font-size: 12px;"/>
+                        <Label text="💡 Requerido para reportar 'Con Incidencia'"
+                               style="-fx-font-size: 10px; -fx-text-fill: #64748b; -fx-font-style: italic;"/>
+                    </VBox>
+
+                    <!-- Columna 3: Botón de acción -->
+                    <VBox spacing="10" alignment="CENTER" prefWidth="180">
+                        <Label text=" " style="-fx-font-size: 13px;"/>
+                        <Button fx:id="btnActualizarEstado" text="✅ Actualizar Estado" onAction="#onActualizarEstado"
+                                maxWidth="Infinity" prefHeight="80"
+                                style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 8;">
+                            <font>
+                                <Font name="System Bold" size="14"/>
+                            </font>
+                        </Button>
+                    </VBox>
+                </HBox>
+            </VBox>
         </VBox>
-    </HBox>
-</VBox>
+    </content>
+</ScrollPane>

@@ -105,14 +105,14 @@ public class GestionEnviosRepartidorController {
         colOrigen.setCellValueFactory(cellData -> {
             Address origen = cellData.getValue().getOrigen();
             return new SimpleStringProperty(
-                    origen != null ? origen.getCity().name() : "-"  // CORREGIDO: usar name()
+                    origen != null ? origen.getCity().name() : "-"
             );
         });
 
         colDestino.setCellValueFactory(cellData -> {
             Address destino = cellData.getValue().getDestino();
             return new SimpleStringProperty(
-                    destino != null ? destino.getCity().name() : "-"  // CORREGIDO: usar name()
+                    destino != null ? destino.getCity().name() : "-"
             );
         });
 
@@ -201,6 +201,13 @@ public class GestionEnviosRepartidorController {
         tablaEnvios.setItems(enviosObservable);
 
         System.out.println("Total envíos asignados: " + enviosAsignados.size());
+
+        // DEBUG: Imprimir estados de cada envío
+        for (Envio envio : enviosAsignados) {
+            System.out.println("  - Envío " + envio.getId() +
+                    ": Estado = " + envio.getEstadoEntregaString());
+        }
+
         System.out.println("=== ENVÍOS CARGADOS ===\n");
     }
 
@@ -232,6 +239,9 @@ public class GestionEnviosRepartidorController {
         txtObservaciones.setText(
                 envio.getObservaciones() != null ? envio.getObservaciones() : ""
         );
+
+        System.out.println("Mostrando detalle de envío " + envio.getId() +
+                " - Estado actual: " + envio.getEstadoEntregaString());
     }
 
     /**
@@ -239,6 +249,8 @@ public class GestionEnviosRepartidorController {
      */
     @FXML
     void onActualizarEstado(ActionEvent event) {
+        System.out.println("\n=== ACTUALIZANDO ESTADO ===");
+
         if (envioSeleccionado == null) {
             mostrarAlerta("Selección requerida",
                     "Debe seleccionar un envío de la tabla",
@@ -254,6 +266,10 @@ public class GestionEnviosRepartidorController {
                     Alert.AlertType.WARNING);
             return;
         }
+
+        System.out.println("Envío seleccionado: " + envioSeleccionado.getId());
+        System.out.println("Estado actual: " + envioSeleccionado.getEstadoEntregaString());
+        System.out.println("Nuevo estado solicitado: " + nuevoEstado.getDisplayName());
 
         // Validar transición de estado
         if (!validarTransicionEstado(envioSeleccionado.getEstadoEntrega(), nuevoEstado)) {
@@ -289,22 +305,31 @@ public class GestionEnviosRepartidorController {
             envioSeleccionado.setEstadoEntrega(nuevoEstado);
             envioSeleccionado.setObservaciones(txtObservaciones.getText().trim());
 
+            System.out.println("✅ Estado actualizado a: " + nuevoEstado.getDisplayName());
+            System.out.println("Observaciones: " + txtObservaciones.getText().trim());
+
             // Si se entrega el envío, marcar al repartidor como disponible nuevamente
             if (nuevoEstado == EstadoEntrega.ENTREGADO) {
                 repartidorActual.setDisponible(true);
+                System.out.println("✅ Repartidor marcado como disponible");
             }
 
             // Guardar cambios en el sistema
             sameDay.updateEnvio(envioSeleccionado);
+            System.out.println("✅ Cambios guardados en SameDay");
 
             mostrarAlerta("Estado Actualizado",
-                    "El estado del envío ha sido actualizado exitosamente",
+                    "El estado del envío ha sido actualizado exitosamente a: " + nuevoEstado.getDisplayName(),
                     Alert.AlertType.INFORMATION);
 
             // Recargar la tabla y estadísticas
             cargarEnviosAsignados();
             actualizarEstadisticas();
             limpiarDetalles();
+
+            System.out.println("=== ACTUALIZACIÓN COMPLETADA ===\n");
+        } else {
+            System.out.println("❌ Actualización cancelada por el usuario\n");
         }
     }
 
