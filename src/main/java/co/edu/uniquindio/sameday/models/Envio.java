@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Clase que representa un envío en el sistema SameDay
+ */
 public class Envio {
     private String id;
     private Address origen;
@@ -13,20 +15,31 @@ public class Envio {
     private String dimensiones;
     private double volumen;
     private String contenido;
-    // Información del destinatario - NUEVO
+
+    // Información del destinatario
     private String nombreDestinatario;
     private String telefonoDestinatario;
     private String cedulaDestinatario;
+
     private List<ServicioAdicional> serviciosAdicionales;
     private double costoTotal;
     private LocalDateTime fechaCreacion;
-    private String estado;
-    private Dealer repartidorAsignado; // NUEVO: Repartidor asignado al envío
+    private String estado; // Estado del pago: SOLICITADO, PAGADO
+
+    // Asignación de repartidor
+    private Dealer repartidorAsignado;
+
+    // NUEVO: Estado de la entrega (para el flujo del repartidor)
+    private EstadoEntrega estadoEntrega; // ASIGNADO, RECOGIDO, EN_RUTA, ENTREGADO, CON_INCIDENCIA
+    private String observaciones; // Notas del repartidor sobre el envío o incidencias
+    private LocalDateTime fechaActualizacionEstado; // Última vez que se actualizó el estado
 
     public Envio() {
         this.serviciosAdicionales = new ArrayList<>();
         this.fechaCreacion = LocalDateTime.now();
         this.estado = "SOLICITADO";
+        this.estadoEntrega = null; // Se asigna cuando se le asigna un repartidor
+        this.observaciones = "";
     }
 
     public Envio(String id, Address origen, Address destino, double peso,
@@ -41,9 +54,11 @@ public class Envio {
         this.serviciosAdicionales = new ArrayList<>();
         this.fechaCreacion = LocalDateTime.now();
         this.estado = "SOLICITADO";
+        this.estadoEntrega = null;
+        this.observaciones = "";
     }
 
-    // Getters y Setters
+    // Getters y Setters básicos
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -65,7 +80,7 @@ public class Envio {
     public String getContenido() { return contenido; }
     public void setContenido(String contenido) { this.contenido = contenido; }
 
-    // Getters y Setters para información del destinatario - NUEVO
+    // Getters y Setters para información del destinatario
     public String getNombreDestinatario() { return nombreDestinatario; }
     public void setNombreDestinatario(String nombreDestinatario) {
         this.nombreDestinatario = nombreDestinatario;
@@ -101,10 +116,30 @@ public class Envio {
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
 
-    // NUEVO: Getters y Setters para repartidor asignado
+    // Getters y Setters para repartidor asignado
     public Dealer getRepartidorAsignado() { return repartidorAsignado; }
     public void setRepartidorAsignado(Dealer repartidorAsignado) {
         this.repartidorAsignado = repartidorAsignado;
+        // Cuando se asigna un repartidor, el estadoEntrega pasa a ASIGNADO
+        if (repartidorAsignado != null && this.estadoEntrega == null) {
+            this.estadoEntrega = EstadoEntrega.ASIGNADO;
+            this.fechaActualizacionEstado = LocalDateTime.now();
+        }
+    }
+
+    // NUEVO: Getters y Setters para el estado de entrega
+    public EstadoEntrega getEstadoEntrega() { return estadoEntrega; }
+    public void setEstadoEntrega(EstadoEntrega estadoEntrega) {
+        this.estadoEntrega = estadoEntrega;
+        this.fechaActualizacionEstado = LocalDateTime.now();
+    }
+
+    public String getObservaciones() { return observaciones; }
+    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
+
+    public LocalDateTime getFechaActualizacionEstado() { return fechaActualizacionEstado; }
+    public void setFechaActualizacionEstado(LocalDateTime fechaActualizacionEstado) {
+        this.fechaActualizacionEstado = fechaActualizacionEstado;
     }
 
     /**
@@ -124,6 +159,16 @@ public class Envio {
         return sb.toString();
     }
 
+    /**
+     * Obtiene el estado de entrega como String para mostrar en la UI
+     */
+    public String getEstadoEntregaString() {
+        if (estadoEntrega == null) {
+            return "Sin asignar";
+        }
+        return estadoEntrega.toString();
+    }
+
     @Override
     public String toString() {
         return "Envio{" +
@@ -135,6 +180,7 @@ public class Envio {
                 ", contenido='" + contenido + '\'' +
                 ", costoTotal=" + costoTotal +
                 ", estado='" + estado + '\'' +
+                ", estadoEntrega=" + (estadoEntrega != null ? estadoEntrega.getDisplayName() : "null") +
                 ", repartidorAsignado=" + (repartidorAsignado != null ? repartidorAsignado.getNombre() : "null") +
                 '}';
     }

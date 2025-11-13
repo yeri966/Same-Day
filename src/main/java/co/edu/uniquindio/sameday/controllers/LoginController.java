@@ -62,7 +62,7 @@ public class LoginController {
                 fxml = "/co/edu/uniquindio/sameday/dashboardCliente.fxml";
                 titulo = "Dashboard Cliente";
             } else if (personaEncontrada instanceof Dealer) {
-                fxml = "/co/edu/uniquindio/sameday/dashboardCliente.fxml";
+                fxml = "/co/edu/uniquindio/sameday/DashboardDealer.fxml";
                 titulo = "Dashboard Repartidor";
             } else if (personaEncontrada instanceof Admin) {
                 fxml = "/co/edu/uniquindio/sameday/dashboardAdmin.fxml";
