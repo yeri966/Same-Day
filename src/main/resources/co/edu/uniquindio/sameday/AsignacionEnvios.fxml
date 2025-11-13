@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #f8fafc;"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.sameday.controllers.AsignacionEnviosController">
+
+    <children>
+        <!-- TÍTULO PRINCIPAL -->
+        <Label layoutX="30.0" layoutY="20.0" text="Asignación de Envíos" textFill="#1e293b">
+            <font>
+                <Font name="System Bold" size="28.0" />
+            </font>
+        </Label>
+
+        <Label layoutX="30.0" layoutY="60.0" text="Asigna repartidores a los envíos pagados según su zona" textFill="#64748b">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </Label>
+
+        <Separator layoutX="30.0" layoutY="90.0" prefWidth="890.0" />
+
+        <!-- ESTADÍSTICAS -->
+        <HBox layoutX="30.0" layoutY="105.0" spacing="15.0" alignment="CENTER_LEFT">
+            <children>
+                <VBox spacing="5.0" prefWidth="280.0" prefHeight="55.0" alignment="CENTER"
+                      style="-fx-background-color: #fef3c7; -fx-background-radius: 8; -fx-border-color: #f59e0b; -fx-border-radius: 8; -fx-border-width: 2;">
+                    <children>
+                        <Label text="⏳ ENVÍOS SIN ASIGNAR" textFill="#92400e">
+                            <font>
+                                <Font name="System Bold" size="11.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblEnviosPendientes" text="Pendientes: 0" textFill="#92400e">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+
+                <VBox spacing="5.0" prefWidth="280.0" prefHeight="55.0" alignment="CENTER"
+                      style="-fx-background-color: #d1fae5; -fx-background-radius: 8; -fx-border-color: #10b981; -fx-border-radius: 8; -fx-border-width: 2;">
+                    <children>
+                        <Label text="✅ ENVÍOS ASIGNADOS" textFill="#065f46">
+                            <font>
+                                <Font name="System Bold" size="11.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblEnviosAsignados" text="Asignados: 0" textFill="#065f46">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+
+                <VBox spacing="5.0" prefWidth="280.0" prefHeight="55.0" alignment="CENTER"
+                      style="-fx-background-color: #dbeafe; -fx-background-radius: 8; -fx-border-color: #3b82f6; -fx-border-radius: 8; -fx-border-width: 2;">
+                    <children>
+                        <Label text="🚚 REPARTIDORES DISPONIBLES" textFill="#1e40af">
+                            <font>
+                                <Font name="System Bold" size="11.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblRepartidoresDisponibles" text="Disponibles: 0" textFill="#1e40af">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <Separator layoutX="30.0" layoutY="180.0" prefWidth="890.0" />
+
+        <!-- TABLA DE ENVÍOS -->
+        <VBox layoutX="30.0" layoutY="195.0" spacing="8.0">
+            <children>
+                <Label text="📦 Envíos Pagados" textFill="#1e293b">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Label>
+
+                <TableView fx:id="tablaEnvios" prefHeight="185.0" prefWidth="890.0"
+                           style="-fx-background-color: white;">
+                    <columns>
+                        <TableColumn fx:id="colId" prefWidth="60.0" text="ID" />
+                        <TableColumn fx:id="colFecha" prefWidth="115.0" text="Fecha" />
+                        <TableColumn fx:id="colOrigen" prefWidth="90.0" text="Origen" />
+                        <TableColumn fx:id="colDestino" prefWidth="90.0" text="Destino" />
+                        <TableColumn fx:id="colDestinatario" prefWidth="130.0" text="Destinatario" />
+                        <TableColumn fx:id="colPeso" prefWidth="70.0" text="Peso" />
+                        <TableColumn fx:id="colCosto" prefWidth="85.0" text="Costo" />
+                        <TableColumn fx:id="colEstado" prefWidth="250.0" text="Estado de Asignación" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+
+        <Separator layoutX="30.0" layoutY="405.0" prefWidth="890.0" />
+
+        <!-- PANEL DE REPARTIDORES -->
+        <VBox layoutX="30.0" layoutY="420.0" spacing="8.0">
+            <children>
+                <HBox spacing="15.0" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="🚚 Repartidores Disponibles" textFill="#1e293b">
+                            <font>
+                                <Font name="System Bold" size="15.0" />
+                            </font>
+                        </Label>
+
+                        <Label text="Filtrar por ciudad:" textFill="#64748b">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Label>
+
+                        <ComboBox fx:id="cmbFiltrarCiudad" prefHeight="28.0" prefWidth="150.0"
+                                  promptText="Todas" />
+
+                        <Button mnemonicParsing="false" onAction="#onFiltrarPorCiudad"
+                                prefHeight="28.0" prefWidth="80.0"
+                                style="-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;"
+                                text="Filtrar">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Button>
+
+                        <Button mnemonicParsing="false" onAction="#onLimpiarFiltro"
+                                prefHeight="28.0" prefWidth="80.0"
+                                style="-fx-background-color: #64748b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;"
+                                text="Limpiar">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </HBox>
+
+                <TableView fx:id="tablaRepartidores" prefHeight="160.0" prefWidth="890.0"
+                           style="-fx-background-color: white;">
+                    <columns>
+                        <TableColumn fx:id="colRepartidorId" prefWidth="80.0" text="ID" />
+                        <TableColumn fx:id="colRepartidorNombre" prefWidth="300.0" text="Nombre" />
+                        <TableColumn fx:id="colRepartidorCiudad" prefWidth="360.0" text="Ciudad" />
+                        <TableColumn fx:id="colRepartidorDisponible" prefWidth="150.0" text="Estado" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <HBox layoutX="30.0" layoutY="615.0" spacing="12.0" alignment="CENTER_LEFT">
+            <children>
+                <Button fx:id="btnAsignar" mnemonicParsing="false" onAction="#onAsignar"
+                        prefHeight="40.0" prefWidth="180.0"
+                        style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"
+                        text="✅ Asignar Repartidor">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Button>
+
+                <Button fx:id="btnDesasignar" mnemonicParsing="false" onAction="#onDesasignar"
+                        prefHeight="40.0" prefWidth="180.0"
+                        style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;"
+                        text="❌ Desasignar">
+                    <font>
+                        <Font size="13.0" />
+                    </font>
+                </Button>
+
+                <Label text="💡 Seleccione un envío y luego un repartidor de la misma zona" textFill="#64748b"
+                       wrapText="true" prefWidth="400.0">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>

@@ -3,7 +3,6 @@ package co.edu.uniquindio.sameday.controllers;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 import co.edu.uniquindio.sameday.models.City;
 import co.edu.uniquindio.sameday.models.Client;
@@ -91,7 +90,8 @@ public class GestionCrudRepartidorController {
             return;
         }
 
-        String id = UUID.randomUUID().toString();
+        // Generar ID secuencial en lugar de UUID
+        String id = generarIdRepartidor();
 
         Dealer newDealer = new Dealer(
                 id,
@@ -111,6 +111,7 @@ public class GestionCrudRepartidorController {
         listDealer.add(newDealer);
 
         showAlert(Alert.AlertType.INFORMATION, "Éxito", "Repartidor agregado correctamente");
+        handleClear(event);
     }
 
     @FXML
@@ -149,6 +150,7 @@ public class GestionCrudRepartidorController {
             sameDay.eliminarPersona(selecionadoDealer);
             listDealer.remove(selecionadoDealer);
             showAlert(Alert.AlertType.INFORMATION, "Éxito", "Repartidor eliminado correctamente");
+            handleClear(event);
         }
 
     }
@@ -177,6 +179,7 @@ public class GestionCrudRepartidorController {
 
             dealerTable.refresh();
             showAlert(Alert.AlertType.INFORMATION, "Éxito", "Repartidor actualizado correctamente");
+            handleClear(event);
         }
 
     }
@@ -287,6 +290,22 @@ public class GestionCrudRepartidorController {
         }
 
         return true;
+    }
+
+    /**
+     * Genera un ID único para un nuevo repartidor
+     * Formato: R0001, R0002, R0003, etc.
+     *
+     * @return String con el ID generado
+     */
+    private String generarIdRepartidor() {
+        // Contar cuántos repartidores existen actualmente
+        int numeroRepartidores = (int) sameDay.getListPersons().stream()
+                .filter(person -> person instanceof Dealer)
+                .count();
+
+        // Generar ID con formato R0001, R0002, etc.
+        return String.format("R%04d", numeroRepartidores + 1);
     }
 
     private void showAlert(Alert.AlertType type, String title, String content) {

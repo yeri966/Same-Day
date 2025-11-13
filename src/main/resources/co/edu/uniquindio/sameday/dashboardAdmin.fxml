@@ -68,6 +68,13 @@
                             </padding>
                         </Button>
 
+                        <!-- NUEVO: Opción Asignar Envíos -->
+                        <Button fx:id="btnAsignarEnvios" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onAsignarEnvios" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="📦  Asignar Envíos">
+                            <padding>
+                                <Insets left="20.0" />
+                            </padding>
+                        </Button>
+
                         <!-- Opción: Generar Reporte -->
                         <Button fx:id="btnReporte" alignment="CENTER_LEFT" graphicTextGap="15.0" mnemonicParsing="false" onAction="#onReporte" prefHeight="45.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #cbd5e1; -fx-font-size: 14px; -fx-cursor: hand;" text="📄  Generar Reporte">
                             <padding>

@@ -21,6 +21,7 @@ public class Envio {
     private double costoTotal;
     private LocalDateTime fechaCreacion;
     private String estado;
+    private Dealer repartidorAsignado; // NUEVO: Repartidor asignado al envío
 
     public Envio() {
         this.serviciosAdicionales = new ArrayList<>();
@@ -100,6 +101,12 @@ public class Envio {
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
 
+    // NUEVO: Getters y Setters para repartidor asignado
+    public Dealer getRepartidorAsignado() { return repartidorAsignado; }
+    public void setRepartidorAsignado(Dealer repartidorAsignado) {
+        this.repartidorAsignado = repartidorAsignado;
+    }
+
     /**
      * Obtiene una representación de los servicios adicionales como String
      */
@@ -128,6 +135,7 @@ public class Envio {
                 ", contenido='" + contenido + '\'' +
                 ", costoTotal=" + costoTotal +
                 ", estado='" + estado + '\'' +
+                ", repartidorAsignado=" + (repartidorAsignado != null ? repartidorAsignado.getNombre() : "null") +
                 '}';
     }
 }

@@ -26,6 +26,9 @@ public class DashboardAdminController {
     private Button btnRepartidor;
 
     @FXML
+    private Button btnAsignarEnvios; // NUEVO
+
+    @FXML
     private Button btnReporte;
 
     @FXML
@@ -69,6 +72,13 @@ public class DashboardAdminController {
     void onRepartidor(ActionEvent event) {
         System.out.println("Gestión Repartidor clickeado");
         cargarVistaEnContentArea("/co/edu/uniquindio/sameday/GestionRepartidor.fxml");
+    }
+
+    // NUEVO MÉTODO
+    @FXML
+    void onAsignarEnvios(ActionEvent event) {
+        System.out.println("Asignación de Envíos clickeado");
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/AsignacionEnvios.fxml");
     }
 
     @FXML
