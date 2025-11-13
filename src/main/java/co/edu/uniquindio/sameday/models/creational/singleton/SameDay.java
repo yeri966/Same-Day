@@ -180,6 +180,10 @@ public class SameDay {
         listPersons.add(person);
     }
 
+    public void eliminarPersona(Person persona){
+        listPersons.remove(persona);
+    }
+
     public Person validarUsuario(String usuario, String contrasenia) {
         for (Person person : listPersons) {
             UserAccount persActive = person.getUserAccount();

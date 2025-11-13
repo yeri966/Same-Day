@@ -68,8 +68,7 @@ public class DashboardAdminController {
     @FXML
     void onRepartidor(ActionEvent event) {
         System.out.println("Gestión Repartidor clickeado");
-        // Por ahora mostrar mensaje temporal
-        cargarVistaProximamente("Gestión de Repartidores - Próximamente");
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/GestionRepartidor.fxml");
     }
 
     @FXML

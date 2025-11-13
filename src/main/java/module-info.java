@@ -4,6 +4,7 @@ module co.edu.uniquindio.sameday {
     requires javafx.graphics;
 
 
+
     opens co.edu.uniquindio.sameday to javafx.fxml;
     exports co.edu.uniquindio.sameday.app;
     opens co.edu.uniquindio.sameday.app to javafx.fxml;
