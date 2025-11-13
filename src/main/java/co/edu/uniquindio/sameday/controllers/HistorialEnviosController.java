@@ -28,6 +28,7 @@ public class HistorialEnviosController {
     @FXML private TableColumn<Envio, String> colContenido;
     @FXML private TableColumn<Envio, String> colPeso;
     @FXML private TableColumn<Envio, String> colCosto;
+    @FXML private TableColumn<Envio, String> colRepartidor; // NUEVA COLUMNA
     @FXML private TableColumn<Envio, String> colEstado;
 
     // Filtros
@@ -109,6 +110,34 @@ public class HistorialEnviosController {
         // Costo
         colCosto.setCellValueFactory(cellData ->
                 new SimpleStringProperty(String.format("$%,.0f", cellData.getValue().getCostoTotal())));
+
+        // Repartidor - NUEVO
+        colRepartidor.setCellValueFactory(cellData -> {
+            Dealer repartidor = cellData.getValue().getRepartidorAsignado();
+            if (repartidor != null) {
+                return new SimpleStringProperty(repartidor.getNombre());
+            }
+            return new SimpleStringProperty("-");
+        });
+
+        // Aplicar estilo a la columna de repartidor
+        colRepartidor.setCellFactory(column -> new TableCell<Envio, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    if (item.equals("-")) {
+                        setStyle("-fx-text-fill: #94a3b8; -fx-font-style: italic;");
+                    } else {
+                        setStyle("-fx-text-fill: #059669; -fx-font-weight: bold;");
+                    }
+                }
+            }
+        });
 
         // Estado de envío (EN_RUTA, ENTREGADO) - por ahora null
         colEstado.setCellValueFactory(cellData -> {
@@ -310,6 +339,19 @@ public class HistorialEnviosController {
         detalle.append("  • Nombre: ").append(envio.getNombreDestinatario()).append("\n");
         detalle.append("  • Cédula: ").append(envio.getCedulaDestinatario()).append("\n");
         detalle.append("  • Teléfono: ").append(envio.getTelefonoDestinatario()).append("\n\n");
+
+        // NUEVO: Información del repartidor
+        detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
+        detalle.append("REPARTIDOR ASIGNADO:\n");
+        if (envio.getRepartidorAsignado() != null) {
+            Dealer repartidor = envio.getRepartidorAsignado();
+            detalle.append("  • Nombre: ").append(repartidor.getNombre()).append("\n");
+            detalle.append("  • ID: ").append(repartidor.getId()).append("\n");
+            detalle.append("  • Ciudad: ").append(repartidor.getCity()).append("\n");
+        } else {
+            detalle.append("  • Sin repartidor asignado\n");
+        }
+        detalle.append("\n");
 
         detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
         detalle.append("INFORMACIÓN DEL PAQUETE:\n");
