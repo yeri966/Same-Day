@@ -2,6 +2,8 @@ package co.edu.uniquindio.sameday.controllers;
 
 import co.edu.uniquindio.sameday.models.*;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
+import co.edu.uniquindio.sameday.models.structural.adapter.PdfGenerator;
+import co.edu.uniquindio.sameday.models.structural.adapter.EnvioPdfAdapter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,15 +11,25 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controlador para el historial de envíos del cliente
+ * Permite consultar, filtrar y descargar comprobantes de envíos en PDF
+ * PATRÓN ESTRUCTURAL: ADAPTER - Usa EnvioPdfAdapter para generar PDFs
+ */
 public class HistorialEnviosController {
 
     private SameDay sameDay = SameDay.getInstance();
     private ObservableList<Envio> todosLosEnvios = FXCollections.observableArrayList();
+
+    // PATRÓN ADAPTER: Generador de PDFs
+    private PdfGenerator pdfGenerator = new EnvioPdfAdapter();
 
     @FXML private TableView<Envio> tablaHistorial;
     @FXML private TableColumn<Envio, String> colNumeroRastreo;
@@ -139,7 +151,7 @@ public class HistorialEnviosController {
             }
         });
 
-        // Estado de envío - AHORA MUESTRA EL ESTADO REAL DE ENTREGA
+        // Estado de envío - MUESTRA EL ESTADO REAL DE ENTREGA
         colEstado.setCellValueFactory(cellData -> {
             Envio envio = cellData.getValue();
 
@@ -355,7 +367,7 @@ public class HistorialEnviosController {
     }
 
     /**
-     * Muestra el detalle completo de un envío
+     * NUEVO: Descarga el comprobante del envío en PDF usando el patrón ADAPTER
      */
     @FXML
     void onVerDetalle(ActionEvent event) {
@@ -368,93 +380,65 @@ public class HistorialEnviosController {
             return;
         }
 
-        mostrarDetalleEnvio(envioSeleccionado);
-    }
+        // Confirmar descarga
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Descargar Comprobante PDF");
+        confirmacion.setHeaderText("¿Desea descargar el comprobante en PDF?");
+        confirmacion.setContentText(
+                "Envío: " + envioSeleccionado.getId() + "\n" +
+                        "Destinatario: " + envioSeleccionado.getNombreDestinatario() + "\n" +
+                        "Estado: " + envioSeleccionado.getEstadoEntregaString()
+        );
 
-    /**
-     * Muestra un diálogo con el detalle completo del envío - ACTUALIZADO
-     */
-    private void mostrarDetalleEnvio(Envio envio) {
-        StringBuilder detalle = new StringBuilder();
-        detalle.append("📦 DETALLE DEL ENVÍO\n\n");
-        detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-        detalle.append("Número de Rastreo: ").append(envio.getId()).append("\n\n");
+        if (confirmacion.showAndWait().get() == ButtonType.OK) {
+            try {
+                // Definir ruta de salida en la carpeta de Descargas del usuario
+                String fileName = "Comprobante_Envio_" + envioSeleccionado.getId() + "_" +
+                        System.currentTimeMillis() + ".pdf";
+                String outputPath = System.getProperty("user.home") + "/Downloads/" + fileName;
 
-        if (envio.getFechaCreacion() != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            detalle.append("Fecha de Creación: ").append(envio.getFechaCreacion().format(formatter)).append("\n\n");
-        }
+                System.out.println("🔄 Generando PDF: " + outputPath);
 
-        detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-        detalle.append("ORIGEN:\n");
-        if (envio.getOrigen() != null) {
-            detalle.append("  • ").append(envio.getOrigen().getFullAddress()).append("\n\n");
-        }
+                // USAR EL PATRÓN ADAPTER para generar el PDF
+                File pdfFile = pdfGenerator.generateEnvioPdf(envioSeleccionado, outputPath);
 
-        detalle.append("DESTINO:\n");
-        if (envio.getDestino() != null) {
-            detalle.append("  • ").append(envio.getDestino().getFullAddress()).append("\n\n");
-        }
+                if (pdfFile != null && pdfFile.exists()) {
+                    System.out.println("✅ PDF generado exitosamente");
 
-        detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-        detalle.append("DESTINATARIO:\n");
-        detalle.append("  • Nombre: ").append(envio.getNombreDestinatario()).append("\n");
-        detalle.append("  • Cédula: ").append(envio.getCedulaDestinatario()).append("\n");
-        detalle.append("  • Teléfono: ").append(envio.getTelefonoDestinatario()).append("\n\n");
+                    // Intentar abrir el PDF automáticamente
+                    if (Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().open(pdfFile);
+                            System.out.println("📂 Abriendo PDF...");
+                        } catch (Exception e) {
+                            System.err.println("⚠️ No se pudo abrir el PDF automáticamente: " + e.getMessage());
+                        }
+                    }
 
-        // INFORMACIÓN DEL REPARTIDOR
-        detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-        detalle.append("REPARTIDOR ASIGNADO:\n");
-        if (envio.getRepartidorAsignado() != null) {
-            Dealer repartidor = envio.getRepartidorAsignado();
-            detalle.append("  • Nombre: ").append(repartidor.getNombre()).append("\n");
-            detalle.append("  • ID: ").append(repartidor.getId()).append("\n");
-            detalle.append("  • Ciudad: ").append(repartidor.getCity()).append("\n");
-        } else {
-            detalle.append("  • Sin repartidor asignado\n");
-        }
-        detalle.append("\n");
+                    // Mostrar mensaje de éxito con la ruta
+                    mostrarAlerta("✅ PDF Generado Exitosamente",
+                            "El comprobante se ha descargado en:\n\n" +
+                                    pdfFile.getAbsolutePath() + "\n\n" +
+                                    "Tamaño: " + (pdfFile.length() / 1024) + " KB",
+                            Alert.AlertType.INFORMATION);
+                } else {
+                    System.err.println("❌ Error: PDF no generado");
+                    mostrarAlerta("Error al Generar PDF",
+                            "No se pudo generar el archivo PDF.\n" +
+                                    "Verifique los permisos de escritura en la carpeta de Descargas.",
+                            Alert.AlertType.ERROR);
+                }
 
-        // ESTADO DE ENTREGA - NUEVO
-        detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-        detalle.append("ESTADO DE ENTREGA:\n");
-        if (envio.getRepartidorAsignado() != null && envio.getEstadoEntrega() != null) {
-            detalle.append("  • Estado: ").append(envio.getEstadoEntregaString()).append("\n");
-
-            if (envio.getFechaActualizacionEstado() != null) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                detalle.append("  • Última actualización: ")
-                        .append(envio.getFechaActualizacionEstado().format(formatter)).append("\n");
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("❌ Excepción al generar PDF: " + e.getMessage());
+                mostrarAlerta("Error Inesperado",
+                        "Ocurrió un error al generar el PDF:\n\n" +
+                                e.getMessage() + "\n\n" +
+                                "Por favor, contacte al administrador del sistema.",
+                        Alert.AlertType.ERROR);
             }
-
-            if (envio.getObservaciones() != null && !envio.getObservaciones().trim().isEmpty()) {
-                detalle.append("  • Observaciones: ").append(envio.getObservaciones()).append("\n");
-            }
-        } else if (envio.getRepartidorAsignado() != null) {
-            detalle.append("  • Estado: Asignado (pendiente de actualización)\n");
-        } else {
-            detalle.append("  • Estado: Sin repartidor asignado\n");
         }
-        detalle.append("\n");
-
-        detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-        detalle.append("INFORMACIÓN DEL PAQUETE:\n");
-        detalle.append("  • Contenido: ").append(envio.getContenido()).append("\n");
-        detalle.append("  • Peso: ").append(String.format("%.2f kg", envio.getPeso())).append("\n");
-        detalle.append("  • Dimensiones: ").append(envio.getDimensiones()).append("\n");
-        detalle.append("  • Volumen: ").append(String.format("%.2f cm³", envio.getVolumen())).append("\n");
-        detalle.append("  • Servicios: ").append(envio.getServiciosAdicionalesString()).append("\n\n");
-
-        detalle.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
-        detalle.append("Costo Total: $").append(String.format("%,.0f", envio.getCostoTotal())).append("\n");
-        detalle.append("Estado de Pago: ").append(envio.getEstado()).append("\n");
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Detalle del Envío");
-        alert.setHeaderText(null);
-        alert.setContentText(detalle.toString());
-        alert.getDialogPane().setPrefWidth(550);
-        alert.showAndWait();
     }
 
     /**
