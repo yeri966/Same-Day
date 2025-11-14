@@ -176,13 +176,24 @@ public class Envio {
     }
 
     /**
-     * Obtiene el estado de entrega como String para mostrar en la UI
+     * Obtiene el estado de entrega como String PARA LA UI (con emojis)
      */
     public String getEstadoEntregaString() {
         if (estadoEntrega == null) {
             return "Sin asignar";
         }
-        return estadoEntrega.toString();
+        return estadoEntrega.toString(); // Con emojis para la UI
+    }
+
+    /**
+     * Obtiene el estado de entrega SIN EMOJIS para usar en PDFs
+     * ✅ MÉTODO NUEVO - Soluciona el error de fuente en PDFs
+     */
+    public String getEstadoEntregaStringPlain() {
+        if (estadoEntrega == null) {
+            return "Sin asignar";
+        }
+        return estadoEntrega.getDisplayName(); // Sin emojis, solo texto
     }
 
     @Override

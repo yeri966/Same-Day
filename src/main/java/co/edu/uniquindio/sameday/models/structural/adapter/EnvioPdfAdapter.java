@@ -67,7 +67,8 @@ public class EnvioPdfAdapter implements PdfGenerator {
         // Sección: Estado de Entrega
         ITextPdfService.PdfSection seccionEstado = new ITextPdfService.PdfSection("ESTADO DE ENTREGA");
         if (envio.getRepartidorAsignado() != null && envio.getEstadoEntrega() != null) {
-            seccionEstado.addField("Estado", envio.getEstadoEntregaString());
+            // ✅ USAR getEstadoEntregaStringPlain() en lugar de getEstadoEntregaString()
+            seccionEstado.addField("Estado", envio.getEstadoEntregaStringPlain());
             seccionEstado.addField("Ultima actualizacion", formatDate(envio.getFechaActualizacionEstado()));
 
             if (envio.getObservaciones() != null && !envio.getObservaciones().trim().isEmpty()) {
@@ -133,7 +134,8 @@ public class EnvioPdfAdapter implements PdfGenerator {
             seccionEnvio.addField("Destinatario", envio.getNombreDestinatario());
             seccionEnvio.addField("Destino",
                     envio.getDestino() != null ? envio.getDestino().getCity().toString() : "N/A");
-            seccionEnvio.addField("Estado", envio.getEstadoEntregaString());
+            // ✅ USAR getEstadoEntregaStringPlain() en lugar de getEstadoEntregaString()
+            seccionEnvio.addField("Estado", envio.getEstadoEntregaStringPlain());
             seccionEnvio.addField("Costo", String.format("$%,.0f", envio.getCostoTotal()));
             content.addSection(seccionEnvio);
         }
