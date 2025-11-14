@@ -210,10 +210,9 @@ public class CrearEnvioController {
                     Alert.AlertType.ERROR);
         }
     }
-
     @FXML
     void onAgregar(ActionEvent event) {
-        // Validar campos del destinatario - NUEVO
+        // Validar campos del destinatario
         if (!validarCamposDestinatario()) {
             return;
         }
@@ -222,7 +221,7 @@ public class CrearEnvioController {
             double peso = Double.parseDouble(txtPeso.getText().trim());
             double volumen = Double.parseDouble(txtVolumen.getText().trim());
 
-            // USANDO FACADE: Simplifica la creación del envío
+            // USANDO FACADE (ahora pasa datos del destinatario) ✨
             ResultadoOperacion resultado = envioFacade.crearEnvio(
                     cmbOrigen.getValue(),
                     cmbDestino.getValue(),
@@ -231,18 +230,13 @@ public class CrearEnvioController {
                     txtDimensiones.getText().trim(),
                     volumen,
                     getServiciosSeleccionados(),
-                    cotizacionActual
+                    cotizacionActual,
+                    txtNombreDestinatario.getText().trim(),  // ✨ AGREGADO
+                    txtCedulaDestinatario.getText().trim(),  // ✨ AGREGADO
+                    txtTelefonoDestinatario.getText().trim() // ✨ AGREGADO
             );
 
             if (resultado.isExitoso()) {
-                // Agregar información del destinatario - NUEVO
-                Envio envioCreado = (Envio) resultado.getDato();
-                envioCreado.setNombreDestinatario(txtNombreDestinatario.getText().trim());
-                envioCreado.setCedulaDestinatario(txtCedulaDestinatario.getText().trim());
-                envioCreado.setTelefonoDestinatario(txtTelefonoDestinatario.getText().trim());
-
-                sameDay.updateEnvio(envioCreado);
-
                 showAlert("Éxito", resultado.getMensaje(), Alert.AlertType.INFORMATION);
                 loadTable();
                 clearForm();
@@ -256,7 +250,6 @@ public class CrearEnvioController {
                     Alert.AlertType.ERROR);
         }
     }
-
     @FXML
     void onActualizar(ActionEvent event) {
         if (selectedEnvio == null) {
@@ -266,7 +259,6 @@ public class CrearEnvioController {
             return;
         }
 
-        // Validar campos del destinatario - NUEVO
         if (!validarCamposDestinatario()) {
             return;
         }
@@ -275,7 +267,7 @@ public class CrearEnvioController {
             double peso = Double.parseDouble(txtPeso.getText().trim());
             double volumen = Double.parseDouble(txtVolumen.getText().trim());
 
-            // USANDO FACADE: Simplifica la actualización
+            // USANDO FACADE (ahora pasa datos del destinatario) ✨
             ResultadoOperacion resultado = envioFacade.actualizarEnvio(
                     selectedEnvio.getId(),
                     cmbOrigen.getValue(),
@@ -285,18 +277,13 @@ public class CrearEnvioController {
                     txtDimensiones.getText().trim(),
                     volumen,
                     getServiciosSeleccionados(),
-                    cotizacionActual
+                    cotizacionActual,
+                    txtNombreDestinatario.getText().trim(),  // ✨ AGREGADO
+                    txtCedulaDestinatario.getText().trim(),  // ✨ AGREGADO
+                    txtTelefonoDestinatario.getText().trim() // ✨ AGREGADO
             );
 
             if (resultado.isExitoso()) {
-                // Actualizar información del destinatario - NUEVO
-                Envio envioActualizado = (Envio) resultado.getDato();
-                envioActualizado.setNombreDestinatario(txtNombreDestinatario.getText().trim());
-                envioActualizado.setCedulaDestinatario(txtCedulaDestinatario.getText().trim());
-                envioActualizado.setTelefonoDestinatario(txtTelefonoDestinatario.getText().trim());
-
-                sameDay.updateEnvio(envioActualizado);
-
                 showAlert("Éxito", resultado.getMensaje(), Alert.AlertType.INFORMATION);
                 loadTable();
                 clearForm();

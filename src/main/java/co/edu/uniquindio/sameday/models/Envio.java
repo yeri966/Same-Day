@@ -6,6 +6,11 @@ import java.util.List;
 
 /**
  * Clase que representa un envío en el sistema SameDay
+ *
+ * PATRONES APLICADOS:
+ * - Builder: Para construcción fluida y legible de envíos complejos
+ * - Decorator: Para servicios adicionales (en conjunto con ServicioDecorator)
+ * - Facade: Para simplificar operaciones (EnvioFacade)
  */
 public class Envio {
     private String id;
@@ -34,14 +39,22 @@ public class Envio {
     private String observaciones; // Notas del repartidor sobre el envío o incidencias
     private LocalDateTime fechaActualizacionEstado; // Última vez que se actualizó el estado
 
+    /**
+     * Constructor por defecto
+     * Inicializa valores por defecto para un envío nuevo
+     */
     public Envio() {
         this.serviciosAdicionales = new ArrayList<>();
         this.fechaCreacion = LocalDateTime.now();
         this.estado = "SOLICITADO";
-        this.estadoEntrega = null; // Se asigna cuando se le asigna un repartidor
+        this.estadoEntrega = null;
         this.observaciones = "";
     }
 
+    /**
+     * Constructor con parámetros básicos
+     * Mantiene compatibilidad con código existente
+     */
     public Envio(String id, Address origen, Address destino, double peso,
                  String dimensiones, double volumen, String contenido) {
         this.id = id;
@@ -58,7 +71,8 @@ public class Envio {
         this.observaciones = "";
     }
 
-    // Getters y Setters básicos
+    // ==================== GETTERS Y SETTERS ====================
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -121,7 +135,7 @@ public class Envio {
 
     public void setRepartidorAsignado(Dealer repartidorAsignado) {
         this.repartidorAsignado = repartidorAsignado;
-        // CORREGIDO: Solo establecer ASIGNADO si no hay estado previo
+        // Solo establecer ASIGNADO si no hay estado previo
         if (repartidorAsignado != null && this.estadoEntrega == null) {
             this.estadoEntrega = EstadoEntrega.ASIGNADO;
             this.fechaActualizacionEstado = LocalDateTime.now();

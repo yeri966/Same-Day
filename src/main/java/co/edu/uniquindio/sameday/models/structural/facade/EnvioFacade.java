@@ -2,6 +2,7 @@ package co.edu.uniquindio.sameday.models.structural.facade;
 
 import co.edu.uniquindio.sameday.models.*;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
+import co.edu.uniquindio.sameday.models.creational.builder.EnvioBuilder;
 import co.edu.uniquindio.sameday.models.structural.decorator.*;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
  * - Cálculo de costos (usando Decorator)
  * - Gestión de envíos (usando Singleton)
  * - Generación de IDs
+ * - Construcción de envíos (usando Builder) ✨ NUEVO
  *
  * Simplifica la complejidad para los controladores de la interfaz.
  */
@@ -29,14 +31,6 @@ public class EnvioFacade {
 
     /**
      * Valida todos los datos necesarios para crear un envío
-     *
-     * @param origen Dirección de origen
-     * @param destino Dirección de destino
-     * @param contenido Descripción del contenido
-     * @param peso Peso del paquete en kg
-     * @param dimensiones Dimensiones del paquete
-     * @param volumen Volumen del paquete en cm³
-     * @return ResultadoOperacion indicando si la validación fue exitosa
      */
     public ResultadoOperacion validarDatosEnvio(Address origen, Address destino,
                                                 String contenido, double peso,
@@ -87,10 +81,6 @@ public class EnvioFacade {
     /**
      * Calcula el costo total del envío aplicando servicios adicionales
      * Utiliza el patrón Decorator para agregar costos incrementales
-     *
-     * @param peso Peso del paquete
-     * @param serviciosAdicionales Lista de servicios adicionales a aplicar
-     * @return ResultadoOperacion con el costo calculado
      */
     public ResultadoOperacion calcularCostoEnvio(double peso,
                                                  List<ServicioAdicional> serviciosAdicionales) {
@@ -125,7 +115,7 @@ public class EnvioFacade {
 
     /**
      * Crea un nuevo envío completo en el sistema
-     * Coordina la validación, cálculo de costo y registro
+     * AHORA USA BUILDER para construcción fluida y validada ✨
      *
      * @param origen Dirección de origen
      * @param destino Dirección de destino
@@ -135,45 +125,44 @@ public class EnvioFacade {
      * @param volumen Volumen en cm³
      * @param serviciosAdicionales Lista de servicios adicionales
      * @param costoTotal Costo total pre-calculado
+     * @param nombreDestinatario Nombre del destinatario ✨ NUEVO
+     * @param cedulaDestinatario Cédula del destinatario ✨ NUEVO
+     * @param telefonoDestinatario Teléfono del destinatario ✨ NUEVO
      * @return ResultadoOperacion indicando el resultado de la operación
      */
     public ResultadoOperacion crearEnvio(Address origen, Address destino,
                                          String contenido, double peso,
                                          String dimensiones, double volumen,
                                          List<ServicioAdicional> serviciosAdicionales,
-                                         double costoTotal) {
+                                         double costoTotal,
+                                         String nombreDestinatario,
+                                         String cedulaDestinatario,
+                                         String telefonoDestinatario) {
 
-        // 1. Validar datos
-        ResultadoOperacion validacion = validarDatosEnvio(origen, destino, contenido,
-                peso, dimensiones, volumen);
-        if (!validacion.isExitoso()) {
-            return validacion;
-        }
-
-        // 2. Verificar que el costo fue calculado
+        // 1. Validar que el costo fue calculado
         if (costoTotal <= 0) {
             return ResultadoOperacion.error("Debe cotizar el envío antes de crearlo");
         }
 
         try {
-            // 3. Generar ID único
+            // 2. Generar ID único
             String idEnvio = generarIdEnvio();
 
-            // 4. Crear el objeto Envio
-            Envio nuevoEnvio = new Envio();
-            nuevoEnvio.setId(idEnvio);
-            nuevoEnvio.setOrigen(origen);
-            nuevoEnvio.setDestino(destino);
-            nuevoEnvio.setContenido(contenido);
-            nuevoEnvio.setPeso(peso);
-            nuevoEnvio.setDimensiones(dimensiones);
-            nuevoEnvio.setVolumen(volumen);
-            nuevoEnvio.setServiciosAdicionales(
-                    serviciosAdicionales != null ? new ArrayList<>(serviciosAdicionales) : new ArrayList<>()
-            );
-            nuevoEnvio.setCostoTotal(costoTotal);
+            // 3. USAR BUILDER para crear el envío ✨
+            //    El Builder se encarga de todas las validaciones INCLUYENDO destinatario
+            Envio nuevoEnvio = new EnvioBuilder(idEnvio)
+                    .origen(origen)
+                    .destino(destino)
+                    .contenido(contenido)
+                    .peso(peso)
+                    .dimensiones(dimensiones)
+                    .volumen(volumen)
+                    .serviciosAdicionales(serviciosAdicionales != null ? serviciosAdicionales : new ArrayList<>())
+                    .costoTotal(costoTotal)
+                    .destinatario(nombreDestinatario, cedulaDestinatario, telefonoDestinatario) // ✨ AGREGADO
+                    .build(); // build() valida automáticamente TODO
 
-            // 5. Registrar en el sistema
+            // 4. Registrar en el sistema
             sameDay.addEnvio(nuevoEnvio);
 
             return ResultadoOperacion.exitoConDato(
@@ -181,6 +170,9 @@ public class EnvioFacade {
                     nuevoEnvio
             );
 
+        } catch (IllegalStateException e) {
+            // Errores de validación del Builder
+            return ResultadoOperacion.error(e.getMessage());
         } catch (Exception e) {
             return ResultadoOperacion.error("Error al crear el envío: " + e.getMessage());
         }
@@ -188,23 +180,16 @@ public class EnvioFacade {
 
     /**
      * Actualiza un envío existente
-     *
-     * @param envioId ID del envío a actualizar
-     * @param origen Nueva dirección de origen
-     * @param destino Nueva dirección de destino
-     * @param contenido Nuevo contenido
-     * @param peso Nuevo peso
-     * @param dimensiones Nuevas dimensiones
-     * @param volumen Nuevo volumen
-     * @param serviciosAdicionales Nuevos servicios
-     * @param costoTotal Nuevo costo total
-     * @return ResultadoOperacion indicando el resultado
+     * AHORA USA BUILDER para construcción fluida y validada ✨
      */
     public ResultadoOperacion actualizarEnvio(String envioId, Address origen, Address destino,
                                               String contenido, double peso,
                                               String dimensiones, double volumen,
                                               List<ServicioAdicional> serviciosAdicionales,
-                                              double costoTotal) {
+                                              double costoTotal,
+                                              String nombreDestinatario,
+                                              String cedulaDestinatario,
+                                              String telefonoDestinatario) {
 
         // 1. Buscar el envío
         Envio envioExistente = buscarEnvioPorId(envioId);
@@ -212,30 +197,32 @@ public class EnvioFacade {
             return ResultadoOperacion.error("Envío no encontrado: " + envioId);
         }
 
-        // 2. Validar datos
-        ResultadoOperacion validacion = validarDatosEnvio(origen, destino, contenido,
-                peso, dimensiones, volumen);
-        if (!validacion.isExitoso()) {
-            return validacion;
-        }
-
-        // 3. Verificar costo
+        // 2. Verificar costo
         if (costoTotal <= 0) {
             return ResultadoOperacion.error("Debe cotizar el envío antes de actualizarlo");
         }
 
         try {
-            // 4. Actualizar campos
-            envioExistente.setOrigen(origen);
-            envioExistente.setDestino(destino);
-            envioExistente.setContenido(contenido);
-            envioExistente.setPeso(peso);
-            envioExistente.setDimensiones(dimensiones);
-            envioExistente.setVolumen(volumen);
-            envioExistente.setServiciosAdicionales(
-                    serviciosAdicionales != null ? new ArrayList<>(serviciosAdicionales) : new ArrayList<>()
-            );
-            envioExistente.setCostoTotal(costoTotal);
+            // 3. USAR BUILDER para reconstruir el envío con las validaciones ✨
+            Envio envioActualizado = new EnvioBuilder(envioId)
+                    .origen(origen)
+                    .destino(destino)
+                    .contenido(contenido)
+                    .peso(peso)
+                    .dimensiones(dimensiones)
+                    .volumen(volumen)
+                    .serviciosAdicionales(serviciosAdicionales != null ? serviciosAdicionales : new ArrayList<>())
+                    .costoTotal(costoTotal)
+                    .destinatario(nombreDestinatario, cedulaDestinatario, telefonoDestinatario) // ✨ AGREGADO
+                    .fechaCreacion(envioExistente.getFechaCreacion())
+                    .estado(envioExistente.getEstado())
+                    .repartidorAsignado(envioExistente.getRepartidorAsignado())
+                    .estadoEntrega(envioExistente.getEstadoEntrega())
+                    .observaciones(envioExistente.getObservaciones())
+                    .build();
+
+            // 4. Copiar datos
+            copiarDatosEnvio(envioActualizado, envioExistente);
 
             // 5. Guardar cambios
             sameDay.updateEnvio(envioExistente);
@@ -245,6 +232,8 @@ public class EnvioFacade {
                     envioExistente
             );
 
+        } catch (IllegalStateException e) {
+            return ResultadoOperacion.error(e.getMessage());
         } catch (Exception e) {
             return ResultadoOperacion.error("Error al actualizar el envío: " + e.getMessage());
         }
@@ -252,9 +241,6 @@ public class EnvioFacade {
 
     /**
      * Elimina un envío del sistema
-     *
-     * @param envioId ID del envío a eliminar
-     * @return ResultadoOperacion indicando el resultado
      */
     public ResultadoOperacion eliminarEnvio(String envioId) {
 
@@ -278,8 +264,6 @@ public class EnvioFacade {
 
     /**
      * Obtiene la lista completa de envíos
-     *
-     * @return Lista de envíos
      */
     public List<Envio> obtenerTodosLosEnvios() {
         return sameDay.getListEnvios();
@@ -287,8 +271,6 @@ public class EnvioFacade {
 
     /**
      * Genera un ID único para un nuevo envío
-     *
-     * @return ID generado con formato ENV0001, ENV0002, etc.
      */
     public String generarIdEnvio() {
         int count = sameDay.getListEnvios().size();
@@ -326,6 +308,26 @@ public class EnvioFacade {
             }
         }
         return null;
+    }
+
+    /**
+     * Copia los datos de un envío a otro (mantiene la referencia del objeto original)
+     * Útil para actualizar envíos sin perder la referencia en la lista
+     */
+    private void copiarDatosEnvio(Envio origen, Envio destino) {
+        destino.setOrigen(origen.getOrigen());
+        destino.setDestino(origen.getDestino());
+        destino.setPeso(origen.getPeso());
+        destino.setDimensiones(origen.getDimensiones());
+        destino.setVolumen(origen.getVolumen());
+        destino.setContenido(origen.getContenido());
+        destino.setNombreDestinatario(origen.getNombreDestinatario());
+        destino.setCedulaDestinatario(origen.getCedulaDestinatario());
+        destino.setTelefonoDestinatario(origen.getTelefonoDestinatario());
+        destino.setServiciosAdicionales(origen.getServiciosAdicionales());
+        destino.setCostoTotal(origen.getCostoTotal());
+        // No copiar fechas, estado de pago, repartidor ni estado de entrega
+        // ya que se mantienen del envío original
     }
 
     // ==================== CLASE INTERNA AUXILIAR ====================

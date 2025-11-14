@@ -16,4 +16,6 @@ module co.edu.uniquindio.sameday {
     opens co.edu.uniquindio.sameday.models.structural.facade to javafx.fxml;
     opens co.edu.uniquindio.sameday.models.structural.adapter to javafx.fxml;
     opens co.edu.uniquindio.sameday.models.creational.singleton to javafx.fxml;
+    opens co.edu.uniquindio.sameday.models.creational.builder to javafx.fxml;
+
 }
