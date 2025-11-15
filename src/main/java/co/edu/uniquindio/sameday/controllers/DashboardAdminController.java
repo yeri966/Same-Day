@@ -92,7 +92,10 @@ public class DashboardAdminController {
     @FXML
     void onAsignarEnvios(ActionEvent event) {
         System.out.println("Asignación de Envíos clickeado");
-        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/AsignacionEnvios.fxml");
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/Prueba.fxml");
+
+//        System.out.println("Asignación de Envíos clickeado");
+//        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/AsignacionEnvios.fxml");
     }
 
     @FXML
