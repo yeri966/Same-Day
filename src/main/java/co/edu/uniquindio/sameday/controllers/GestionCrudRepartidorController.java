@@ -4,10 +4,9 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import co.edu.uniquindio.sameday.models.City;
-import co.edu.uniquindio.sameday.models.Dealer;
-import co.edu.uniquindio.sameday.models.TypeUser;
-import co.edu.uniquindio.sameday.models.UserAccount;
+import co.edu.uniquindio.sameday.models.*;
+import co.edu.uniquindio.sameday.models.creational.factoryMethod.ClienteFactory;
+import co.edu.uniquindio.sameday.models.creational.factoryMethod.DealerFactory;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -168,30 +167,23 @@ public class GestionCrudRepartidorController {
 
         String id = generarIdRepartidor();
 
-        // Crear el nuevo repartidor PRIMERO (sin UserAccount todavía)
-        Dealer newDealer = new Dealer(
-                id,
-                txtDocumento.getText().trim(),
-                txtNombre.getText().trim(),
-                txtCorreo.getText().trim(),
-                txtTelefono.getText().trim(),
-                null, // UserAccount se asigna después
-                true, // Disponible manualmente por defecto
-                cboxCity.getValue()
-        );
-
-        newDealer.setCity(cboxCity.getValue());
-
         // AHORA crear el UserAccount con los 4 parámetros requeridos
         UserAccount userAccount = new UserAccount(
                 txtUsuario.getText().trim(),
                 txtPassword.getText().trim(),
-                newDealer,              // El repartidor recién creado
+                null,              // El repartidor recién creado
                 TypeUser.DEALER         // Tipo de usuario: DEALER
         );
 
-        // Asignar el UserAccount al repartidor
-        newDealer.setUserAccount(userAccount);
+        // Crear el nuevo repartidor PRIMERO (sin UserAccount todavía)
+        DealerFactory factory = new DealerFactory(true,cboxCity.getValue());
+        Dealer newDealer = (Dealer) factory.crearPerson(id,
+                txtDocumento.getText().trim(),
+                txtNombre.getText().trim(),
+                txtCorreo.getText().trim(),
+                txtTelefono.getText().trim(),
+                userAccount
+        );
 
         // Agregar al sistema
         sameDay.agregarPersona(newDealer);

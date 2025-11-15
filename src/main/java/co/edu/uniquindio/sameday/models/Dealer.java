@@ -20,7 +20,6 @@ public class Dealer extends Person {
         return disponibleManual;
     }
 
-
     public void setDisponibleManual(boolean disponibleManual) {
         this.disponibleManual = disponibleManual;
     }

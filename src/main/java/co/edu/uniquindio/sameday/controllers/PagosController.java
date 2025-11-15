@@ -13,6 +13,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
+import javafx.application.Platform;
 
 import java.util.Optional;
 
@@ -21,21 +22,36 @@ public class PagosController {
     private SameDay sameDay = SameDay.getInstance();
     private Envio selectedEnvio = null;
 
-    @FXML private TableView<Envio> tablaEnvios;
-    @FXML private TableColumn<Envio, String> colId;
-    @FXML private TableColumn<Envio, String> colOrigen;
-    @FXML private TableColumn<Envio, String> colDestino;
-    @FXML private TableColumn<Envio, String> colDestinatario; // NUEVA COLUMNA
-    @FXML private TableColumn<Envio, String> colContenido;
-    @FXML private TableColumn<Envio, String> colPeso;
-    @FXML private TableColumn<Envio, String> colServicios;
-    @FXML private TableColumn<Envio, String> colCosto;
-    @FXML private TableColumn<Envio, String> colEstado;
-    @FXML private Button btnPagar;
-    @FXML private javafx.scene.layout.VBox vboxSimulador;
-    @FXML private Label lblSimuladorTitulo;
-    @FXML private ProgressIndicator progressPago;
-    @FXML private Label lblSimuladorMensaje;
+    @FXML
+    private TableView<Envio> tablaEnvios;
+    @FXML
+    private TableColumn<Envio, String> colId;
+    @FXML
+    private TableColumn<Envio, String> colOrigen;
+    @FXML
+    private TableColumn<Envio, String> colDestino;
+    @FXML
+    private TableColumn<Envio, String> colDestinatario; // NUEVA COLUMNA
+    @FXML
+    private TableColumn<Envio, String> colContenido;
+    @FXML
+    private TableColumn<Envio, String> colPeso;
+    @FXML
+    private TableColumn<Envio, String> colServicios;
+    @FXML
+    private TableColumn<Envio, String> colCosto;
+    @FXML
+    private TableColumn<Envio, String> colEstado;
+    @FXML
+    private Button btnPagar;
+    @FXML
+    private javafx.scene.layout.VBox vboxSimulador;
+    @FXML
+    private Label lblSimuladorTitulo;
+    @FXML
+    private ProgressIndicator progressPago;
+    @FXML
+    private Label lblSimuladorMensaje;
 
     @FXML
     void initialize() {
@@ -233,32 +249,32 @@ public class PagosController {
                     sameDay.updateEnvio(selectedEnvio);
                     loadTable();
 
-                    showAlert("Pago Exitoso",
-                            "El pago del envío " + selectedEnvio.getId() + " ha sido procesado correctamente",
-                            Alert.AlertType.INFORMATION);
+                    // ✅ CORRECCIÓN: Envolver en Platform.runLater()
+                    Platform.runLater(() -> {
+                        showAlert("Pago Exitoso",
+                                "El pago del envío " + selectedEnvio.getId() + " ha sido procesado correctamente",
+                                Alert.AlertType.INFORMATION);
+                    });
                 } else {
                     lblSimuladorTitulo.setText("Pago Rechazado");
                     lblSimuladorMensaje.setText("❌ El número de teléfono no coincide con el registrado");
                     lblSimuladorMensaje.setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold;");
 
-                    showAlert("Pago Rechazado",
-                            "El número de teléfono ingresado no coincide con el registrado en su cuenta",
-                            Alert.AlertType.ERROR);
+                    // ✅ CORRECCIÓN: Envolver en Platform.runLater()
+                    Platform.runLater(() -> {
+                        showAlert("Pago Rechazado",
+                                "El número de teléfono ingresado no coincide con el registrado en su cuenta",
+                                Alert.AlertType.ERROR);
+                    });
                 }
 
-                // IMPORTANTE: Limpiar selección y reactivar botón después del simulador
                 PauseTransition ocultarSimulador = new PauseTransition(Duration.seconds(3));
                 ocultarSimulador.setOnFinished(e3 -> {
                     vboxSimulador.setVisible(false);
-                    progressPago.setVisible(true); // Resetear para próximo uso
-
-                    // Limpiar selección de la tabla
+                    progressPago.setVisible(true);
                     tablaEnvios.getSelectionModel().clearSelection();
                     selectedEnvio = null;
-
-                    // Reactivar botón
                     btnPagar.setDisable(false);
-
                     System.out.println("Simulador ocultado - Listo para siguiente pago");
                 });
                 ocultarSimulador.play();

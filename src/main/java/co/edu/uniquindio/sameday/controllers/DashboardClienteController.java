@@ -1,5 +1,9 @@
 package co.edu.uniquindio.sameday.controllers;
 
+import co.edu.uniquindio.sameday.models.Client;
+import co.edu.uniquindio.sameday.models.Dealer;
+import co.edu.uniquindio.sameday.models.Person;
+import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +19,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class DashboardClienteController {
+    private SameDay sameDay;
+    private Client clientActual;
 
     @FXML
     private Label lblNombreUsuario;
@@ -48,8 +54,16 @@ public class DashboardClienteController {
      */
     @FXML
     void initialize() {
-        // Aquí puedes establecer el nombre del usuario logueado
-        lblNombreUsuario.setText("Cliente Demo");
+        sameDay=SameDay.getInstance();
+
+        Person usuarioActivo = sameDay.getUserActive();
+        if (usuarioActivo instanceof Client) {
+            clientActual = (Client) usuarioActivo;
+            lblNombreUsuario.setText(clientActual.getNombre());
+
+        } else {
+            lblNombreUsuario.setText("Usuario no válido");
+        }
 
         // Aplicar efecto hover a los botones del menú
         aplicarEfectoHover(btnPagos);

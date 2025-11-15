@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: #f8fafc;"
+            xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.sameday.controllers.EstadisticaController">
+
+    <content>
+        <AnchorPane prefHeight="950.0" prefWidth="950.0" style="-fx-background-color: #f8fafc;">
+
+            <children>
+                <!-- TÍTULO PRINCIPAL -->
+                <Label layoutX="30.0" layoutY="20.0" text="Dashboard de Estadísticas" textFill="#1e293b">
+                    <font>
+                        <Font name="System Bold" size="28.0" />
+                    </font>
+                </Label>
+
+                <Label layoutX="30.0" layoutY="60.0" text="Métricas y análisis del sistema SameDay" textFill="#64748b">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Label>
+
+                <Separator layoutX="30.0" layoutY="90.0" prefWidth="890.0" />
+
+                <!-- FILA 1 DE CARDS (3 cards) -->
+                <HBox layoutX="30.0" layoutY="110.0" spacing="20.0" alignment="CENTER_LEFT">
+                    <children>
+                        <!-- Card 1: Total Envíos -->
+                        <VBox spacing="5.0" prefWidth="280.0" prefHeight="80.0" alignment="CENTER"
+                              style="-fx-background-color: #dbeafe; -fx-background-radius: 8; -fx-border-color: #3b82f6; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <children>
+                                <Label text="TOTAL ENVÍOS" textFill="#1e40af">
+                                    <font>
+                                        <Font name="System Bold" size="11.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblTotalEnvios" text="0" textFill="#1e40af">
+                                    <font>
+                                        <Font name="System Bold" size="28.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+
+                        <!-- Card 2: Ingresos Totales -->
+                        <VBox spacing="5.0" prefWidth="280.0" prefHeight="80.0" alignment="CENTER"
+                              style="-fx-background-color: #d1fae5; -fx-background-radius: 8; -fx-border-color: #10b981; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <children>
+                                <Label text="INGRESOS TOTALES" textFill="#065f46">
+                                    <font>
+                                        <Font name="System Bold" size="11.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblIngresosTotales" text="0" textFill="#065f46">
+                                    <font>
+                                        <Font name="System Bold" size="22.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+
+                        <!-- Card 3: Envíos Entregados -->
+                        <VBox spacing="5.0" prefWidth="280.0" prefHeight="80.0" alignment="CENTER"
+                              style="-fx-background-color: #d1fae5; -fx-background-radius: 8; -fx-border-color: #10b981; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <children>
+                                <Label text="ENTREGADOS" textFill="#065f46">
+                                    <font>
+                                        <Font name="System Bold" size="11.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblEnviosEntregados" text="0" textFill="#065f46">
+                                    <font>
+                                        <Font name="System Bold" size="28.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+
+                <!-- FILA 2 DE CARDS (3 cards) -->
+                <HBox layoutX="30.0" layoutY="210.0" spacing="20.0" alignment="CENTER_LEFT">
+                    <children>
+                        <!-- Card 4: Tasa de Éxito -->
+                        <VBox spacing="5.0" prefWidth="280.0" prefHeight="80.0" alignment="CENTER"
+                              style="-fx-background-color: #fef3c7; -fx-background-radius: 8; -fx-border-color: #f59e0b; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <children>
+                                <Label text="TASA DE ÉXITO" textFill="#92400e">
+                                    <font>
+                                        <Font name="System Bold" size="11.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblTasaExito" text="0%" textFill="#92400e">
+                                    <font>
+                                        <Font name="System Bold" size="28.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+
+                        <!-- Card 5: Promedio por Envío -->
+                        <VBox spacing="5.0" prefWidth="280.0" prefHeight="80.0" alignment="CENTER"
+                              style="-fx-background-color: #ede9fe; -fx-background-radius: 8; -fx-border-color: #8b5cf6; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <children>
+                                <Label text="PROMEDIO POR ENVÍO" textFill="#5b21b6">
+                                    <font>
+                                        <Font name="System Bold" size="11.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblPromedioEnvio" text="0" textFill="#5b21b6">
+                                    <font>
+                                        <Font name="System Bold" size="22.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+
+                        <!-- Card 6: Repartidores Activos -->
+                        <VBox spacing="5.0" prefWidth="280.0" prefHeight="80.0" alignment="CENTER"
+                              style="-fx-background-color: #fee2e2; -fx-background-radius: 8; -fx-border-color: #ef4444; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <children>
+                                <Label text="REPARTIDORES ACTIVOS" textFill="#991b1b">
+                                    <font>
+                                        <Font name="System Bold" size="11.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblRepartidoresActivos" text="0" textFill="#991b1b">
+                                    <font>
+                                        <Font name="System Bold" size="28.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+
+                <Separator layoutX="30.0" layoutY="310.0" prefWidth="890.0" />
+
+                <!-- FILA DE GRÁFICOS 1 -->
+                <HBox layoutX="30.0" layoutY="330.0" spacing="20.0" alignment="CENTER_LEFT">
+                    <children>
+                        <!-- Gráfico de Pastel: Estados de Entrega -->
+                        <VBox spacing="10.0" prefWidth="430.0" prefHeight="280.0"
+                              style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <children>
+                                <Label text="Distribución por Estado" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <PieChart fx:id="pieEstadoEntrega" prefHeight="240.0" prefWidth="410.0" legendSide="BOTTOM" />
+                            </children>
+                        </VBox>
+
+                        <!-- Gráfico de Barras: Servicios Adicionales -->
+                        <VBox spacing="10.0" prefWidth="430.0" prefHeight="280.0"
+                              style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <children>
+                                <Label text="Servicios Adicionales Solicitados" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <BarChart fx:id="barServiciosAdicionales" prefHeight="240.0" prefWidth="410.0" legendVisible="false">
+                                    <xAxis>
+                                        <CategoryAxis fx:id="xAxisServicios" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis fx:id="yAxisServicios" />
+                                    </yAxis>
+                                </BarChart>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+
+                <!-- FILA DE GRÁFICOS 2 -->
+                <HBox layoutX="30.0" layoutY="630.0" spacing="20.0" alignment="CENTER_LEFT">
+                    <children>
+                        <!-- Gráfico de Líneas: Tendencia de Envíos -->
+                        <VBox spacing="10.0" prefWidth="430.0" prefHeight="280.0"
+                              style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <children>
+                                <Label text="Tendencia de Envíos por Día" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <LineChart fx:id="lineEnviosPorDia" prefHeight="240.0" prefWidth="410.0" createSymbols="true">
+                                    <xAxis>
+                                        <CategoryAxis fx:id="xAxisDias" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis fx:id="yAxisDias" />
+                                    </yAxis>
+                                </LineChart>
+                            </children>
+                        </VBox>
+
+                        <!-- Gráfico de Barras: Ingresos por Ciudad -->
+                        <VBox spacing="10.0" prefWidth="430.0" prefHeight="280.0"
+                              style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-border-width: 2;">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <children>
+                                <Label text="Top 5 Ciudades por Ingresos" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Label>
+                                <BarChart fx:id="barIngresosPorCiudad" prefHeight="240.0" prefWidth="410.0" legendVisible="false">
+                                    <xAxis>
+                                        <CategoryAxis fx:id="xAxisCiudades" />
+                                    </xAxis>
+                                    <yAxis>
+                                        <NumberAxis fx:id="yAxisCiudades" />
+                                    </yAxis>
+                                </BarChart>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+
+            </children>
+        </AnchorPane>
+    </content>
+</ScrollPane>

@@ -8,6 +8,7 @@ import co.edu.uniquindio.sameday.models.Client;
 import co.edu.uniquindio.sameday.models.Person;
 import co.edu.uniquindio.sameday.models.TypeUser;
 import co.edu.uniquindio.sameday.models.UserAccount;
+import co.edu.uniquindio.sameday.models.creational.factoryMethod.ClienteFactory;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -189,18 +190,14 @@ public class GestionCrudClienteController {
         );
 
         // Crear el nuevo cliente
-        Client nuevoCliente = new Client(
-                nuevoId,
+        ClienteFactory factory=new ClienteFactory(txtDireccion.getText().trim());
+        Client nuevoCliente = (Client) factory.crearPerson(nuevoId,
                 txtCedula.getText().trim(),
                 txtNombre.getText().trim(),
                 txtEmail.getText().trim(),
                 txtTelefono.getText().trim(),
-                txtDireccion.getText().trim(),
                 userAccount
         );
-
-        // Establecer relación bidireccional
-        userAccount.setPerson(nuevoCliente);
 
         // Agregar al sistema
         sameDay.agregarPersona(nuevoCliente);

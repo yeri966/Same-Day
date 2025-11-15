@@ -2,6 +2,10 @@ package co.edu.uniquindio.sameday.controllers;
 
 import java.io.IOException;
 
+import co.edu.uniquindio.sameday.models.Admin;
+import co.edu.uniquindio.sameday.models.Client;
+import co.edu.uniquindio.sameday.models.Person;
+import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +19,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class DashboardAdminController {
+    private SameDay sameDay;
+    private Admin adminActual;
 
     @FXML
     private Button btnCerrarSesion;
@@ -39,8 +45,16 @@ public class DashboardAdminController {
 
     @FXML
     void initialize() {
-        System.out.println("=== INICIALIZANDO DASHBOARD ADMINISTRADOR ===");
-        lblNombreUsuario.setText("Administrador");
+        sameDay=SameDay.getInstance();
+
+        Person usuarioActivo = sameDay.getUserActive();
+        if (usuarioActivo instanceof Admin) {
+            adminActual = (Admin) usuarioActivo;
+            lblNombreUsuario.setText(adminActual.getNombre());
+
+        } else {
+            lblNombreUsuario.setText("Usuario no válido");
+        }
     }
 
     @FXML
@@ -84,8 +98,7 @@ public class DashboardAdminController {
     @FXML
     void onReporte(ActionEvent event) {
         System.out.println("Generar Reporte clickeado");
-        // Por ahora mostrar mensaje temporal
-        cargarVistaProximamente("Generación de Reportes - Próximamente");
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/Estadistica.fxml");
     }
 
     /**

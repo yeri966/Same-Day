@@ -3,7 +3,12 @@ module co.edu.uniquindio.sameday {
     requires javafx.fxml;
     requires javafx.graphics;
     requires java.desktop;
+
+    // Módulos PDFBox
     requires org.apache.pdfbox;
+    requires org.apache.fontbox;
+
+
     requires java.logging;
 
     opens co.edu.uniquindio.sameday to javafx.fxml;
@@ -17,5 +22,4 @@ module co.edu.uniquindio.sameday {
     opens co.edu.uniquindio.sameday.models.structural.adapter to javafx.fxml;
     opens co.edu.uniquindio.sameday.models.creational.singleton to javafx.fxml;
     opens co.edu.uniquindio.sameday.models.creational.builder to javafx.fxml;
-
 }

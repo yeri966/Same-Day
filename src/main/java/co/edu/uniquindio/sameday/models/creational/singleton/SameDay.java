@@ -5,6 +5,9 @@ import co.edu.uniquindio.sameday.models.Admin;
 import co.edu.uniquindio.sameday.models.Client;
 import co.edu.uniquindio.sameday.models.Dealer;
 import co.edu.uniquindio.sameday.models.Person;
+import co.edu.uniquindio.sameday.models.creational.factoryMethod.AdminFactory;
+import co.edu.uniquindio.sameday.models.creational.factoryMethod.ClienteFactory;
+import co.edu.uniquindio.sameday.models.creational.factoryMethod.DealerFactory;
 
 import java.util.ArrayList;
 
@@ -35,28 +38,26 @@ public class SameDay {
     }
 
     public void cargarDatos() {
+
         // Crear Cliente de prueba
         UserAccount user1 = new UserAccount("veronica", "1010", null, TypeUser.CLIENT);
-        Client client1 = new Client("0001","251000210","Veronica Mendoza", "verom@mail.com",
-                "3201410110", "Centro",null);
-        client1.setUserAccount(user1);
-        user1.setPerson(client1);
+        ClienteFactory clienteFactory = new ClienteFactory("Centro");
+        Client client1 = (Client) clienteFactory.crearPerson("0001","251000210","Veronica Mendoza", "verom@mail.com",
+                "3201410110", user1);
         agregarPersona(client1);
 
         // Crear Repartidor de prueba
         UserAccount user2 = new UserAccount("yerilin", "2020", null, TypeUser.DEALER);
-        Dealer dealer1=new Dealer("0001" ,"12410001","Yerilin Ul", "yeriul@mail.com",
-                "310121001",null,false,City.ARMENIA);
-        dealer1.setUserAccount(user2);
-        user2.setPerson(client1);
+        DealerFactory dealerFactory = new DealerFactory(false,City.ARMENIA);
+        Dealer dealer1= (Dealer) dealerFactory.crearPerson("0001" ,"12410001","Yerilin Ul", "yeriul@mail.com",
+                "310121001",user2);
         agregarPersona(dealer1);
 
         // Crear Administrador de prueba
         UserAccount user3 = new UserAccount("cristian","3030", null,TypeUser.ADMINISTRATOR);
-        Admin admin1 = new Admin("0001", "10001411","Cristian M", "cristianm@mail.com",
-                "3217412369",null,"Supervisor");
-        admin1.setUserAccount(user3);
-        user3.setPerson(admin1);
+        AdminFactory adminFactory= new AdminFactory("Supervisor");
+        Admin admin1 = (Admin) adminFactory.crearPerson ("0001", "10001411","Cristian M", "cristianm@mail.com",
+                "3217412369",user3);
         agregarPersona(admin1);
 
         // ==================== DIRECCIONES DE PRUEBA ====================
