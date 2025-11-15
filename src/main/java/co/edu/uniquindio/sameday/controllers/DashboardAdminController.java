@@ -3,7 +3,6 @@ package co.edu.uniquindio.sameday.controllers;
 import java.io.IOException;
 
 import co.edu.uniquindio.sameday.models.Admin;
-import co.edu.uniquindio.sameday.models.Client;
 import co.edu.uniquindio.sameday.models.Person;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.event.ActionEvent;
@@ -92,10 +91,8 @@ public class DashboardAdminController {
     @FXML
     void onAsignarEnvios(ActionEvent event) {
         System.out.println("Asignación de Envíos clickeado");
-        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/Prueba.fxml");
+        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/AsignacionEnvio.fxml");
 
-//        System.out.println("Asignación de Envíos clickeado");
-//        cargarVistaEnContentArea("/co/edu/uniquindio/sameday/AsignacionEnvios.fxml");
     }
 
     @FXML

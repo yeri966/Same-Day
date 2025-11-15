@@ -64,7 +64,6 @@
                                 <RowConstraints minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
-                                <RowConstraints minHeight="32.0" prefHeight="32.0" vgrow="SOMETIMES" />
                             </rowConstraints>
 
                             <!-- FILA 1: ID, Nombre y Cédula -->
@@ -101,7 +100,7 @@
                                 </font>
                             </TextField>
 
-                            <!-- FILA 2: Email, Teléfono y Usuario -->
+                            <!-- FILA 2: Email, Teléfono y Dirección -->
                             <Label style="-fx-alignment: center-right;" text="Email:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="1">
                                 <font>
                                     <Font name="System Bold" size="13.0" />
@@ -124,36 +123,35 @@
                                 </font>
                             </TextField>
 
-                            <Label style="-fx-alignment: center-right;" text="Usuario:" textFill="#475569" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                            <Label style="-fx-alignment: center-right;" text="Dirección:" textFill="#475569" GridPane.columnIndex="4" GridPane.rowIndex="1">
                                 <font>
                                     <Font name="System Bold" size="13.0" />
                                 </font>
                             </Label>
-                            <TextField fx:id="txtUsuario" promptText="Nombre de usuario" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                            <TextField fx:id="txtDireccion" promptText="Calle 123 #45-67" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="5" GridPane.rowIndex="1">
                                 <font>
                                     <Font size="12.0" />
                                 </font>
                             </TextField>
 
-                            <!-- FILA 3: Dirección (ocupa todo el ancho) -->
-                            <Label style="-fx-alignment: center-right;" text="Dirección:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                            <!-- FILA 3: Usuario y Contraseña (juntos) -->
+                            <Label style="-fx-alignment: center-right;" text="Usuario:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="2">
                                 <font>
                                     <Font name="System Bold" size="13.0" />
                                 </font>
                             </Label>
-                            <TextField fx:id="txtDireccion" promptText="Calle 123 #45-67" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="1" GridPane.columnSpan="5" GridPane.rowIndex="2">
+                            <TextField fx:id="txtUsuario" promptText="Nombre de usuario" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                 <font>
                                     <Font size="12.0" />
                                 </font>
                             </TextField>
 
-                            <!-- FILA 4: Contraseña -->
-                            <Label style="-fx-alignment: center-right;" text="Contraseña:" textFill="#475569" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                            <Label style="-fx-alignment: center-right;" text="Contraseña:" textFill="#475569" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                 <font>
                                     <Font name="System Bold" size="13.0" />
                                 </font>
                             </Label>
-                            <PasswordField fx:id="txtContrasenia" promptText="Contraseña (dejar vacío para no cambiar)" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="1" GridPane.columnSpan="5" GridPane.rowIndex="3">
+                            <PasswordField fx:id="txtContrasenia" promptText="Dejar vacío para no cambiar" style="-fx-background-color: white; -fx-border-color: #cbd5e1; -fx-border-radius: 6; -fx-background-radius: 6; -fx-border-width: 1.5; -fx-padding: 6 10;" GridPane.columnIndex="3" GridPane.rowIndex="2">
                                 <font>
                                     <Font size="12.0" />
                                 </font>
