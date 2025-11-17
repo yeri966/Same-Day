@@ -1,155 +1,247 @@
 package co.edu.uniquindio.sameday.controllers;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import co.edu.uniquindio.sameday.models.Admin;
+import co.edu.uniquindio.sameday.models.behavioral.state;
 import co.edu.uniquindio.sameday.models.Client;
 import co.edu.uniquindio.sameday.models.Dealer;
-import co.edu.uniquindio.sameday.models.Person;
-import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
-import javafx.event.ActionEvent;
+import co.edu.uniquindio.sameday.services.SameDayFacade;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-
+import javafx.util.Duration;
 
 public class LoginController {
-    SameDay sameDay = SameDay.getInstance();
+
+    @FXML private TextField txtUsuario;
+    @FXML private PasswordField txtContrasena;
+    @FXML private Button btnLogin;
+    @FXML private Label lblMensaje;
+    @FXML private Label lblIntentos;
+    @FXML private ProgressIndicator progressIndicator;
+
+    private SameDayFacade facade;
+    private ContextoLogin contextoLogin;
+    private Timeline bloqueoTimeline;
 
     @FXML
-    private ResourceBundle resources;
+    public void initialize() {
+        facade = SameDayFacade.getInstance();
+        contextoLogin = new ContextoLogin();
+        actualizarUI();
+    }
 
     @FXML
-    private URL location;
+    private void handleLogin() {
+        String usuario = txtUsuario.getText().trim();
+        String contrasena = txtContrasena.getText().trim();
 
-    @FXML
-    private Button btnIngresar;
+        if (usuario.isEmpty() || contrasena.isEmpty()) {
+            mostrarMensaje("Por favor complete todos los campos", "warning");
+            return;
+        }
 
-    @FXML
-    private Button btnSalir;
+        // Verificar si está bloqueado
+        if (contextoLogin.getEstado() instanceof EstadoBloqueado) {
+            contextoLogin.manejarEstado();
+            if (contextoLogin.estaBloqueado()) {
+                iniciarContadorBloqueo();
+                return;
+            }
+        }
 
-    @FXML
-    private PasswordField txtContrasenia;
+        if (!contextoLogin.puedeIntentarLogin()) {
+            return;
+        }
 
-    @FXML
-    private TextField txtUsuario;
+        // Cambiar a estado validando
+        contextoLogin.setEstado(new EstadoValidando());
+        actualizarUI();
 
-    @FXML
-    private Hyperlink hyl;
+        // Simular delay de validación
+        Timeline validacionDelay = new Timeline(new KeyFrame(Duration.millis(500), e -> {
+            validarCredenciales(usuario, contrasena);
+        }));
+        validacionDelay.play();
+    }
 
-    /**
-     * Método que se ejecuta al hacer clic en el botón INGRESAR
-     * Valida las credenciales y abre la ventana correspondiente según el tipo de usuario
-     */
-    @FXML
-    void onIngresar(ActionEvent event) {
+    private void validarCredenciales(String usuario, String contrasena) {
+        // Buscar en clientes
+        Client clienteEncontrado = facade.getClients().stream()
+                .filter(c -> c.getUserAccount().getUsername().equals(usuario) &&
+                        c.getUserAccount().getPassword().equals(contrasena))
+                .findFirst()
+                .orElse(null);
 
-        String usuarioIngresado = txtUsuario.getText();
-        String contraseniaIngresada = txtContrasenia.getText();
+        if (clienteEncontrado != null) {
+            loginExitoso(clienteEncontrado, "CLIENT");
+            return;
+        }
 
-        Person personaEncontrada = sameDay.validarUsuario(usuarioIngresado, contraseniaIngresada);
-        if (personaEncontrada != null) {
-            String fxml = "";
-            String titulo = "";
+        // Buscar en repartidores
+        Dealer repartidorEncontrado = facade.getDealers().stream()
+                .filter(d -> d.getUserAccount().getUsername().equals(usuario) &&
+                        d.getUserAccount().getPassword().equals(contrasena))
+                .findFirst()
+                .orElse(null);
 
-            // Determinar qué ventana abrir según el tipo de usuario
-            if (personaEncontrada instanceof Client) {
-                fxml = "/co/edu/uniquindio/sameday/dashboardCliente.fxml";
-                titulo = "Dashboard Cliente";
-            } else if (personaEncontrada instanceof Dealer) {
-                fxml = "/co/edu/uniquindio/sameday/DashboardDealer.fxml";
-                titulo = "Dashboard Repartidor";
-            } else if (personaEncontrada instanceof Admin) {
-                fxml = "/co/edu/uniquindio/sameday/dashboardAdmin.fxml";
-                titulo = "Dashboard Administrador";
+        if (repartidorEncontrado != null) {
+            loginExitoso(repartidorEncontrado, "DEALER");
+            return;
+        }
+
+        // Verificar admin
+        if (usuario.equals("admin") && contrasena.equals("admin123")) {
+            loginExitoso(null, "ADMIN");
+            return;
+        }
+
+        // Login fallido
+        loginFallido();
+    }
+
+    private void loginExitoso(Object usuario, String tipoUsuario) {
+        contextoLogin.setEstado(new EstadoAutenticado());
+        contextoLogin.manejarEstado();
+        actualizarUI();
+
+        mostrarMensaje(contextoLogin.getMensaje(), "success");
+
+        // Redirigir después de un momento
+        Timeline redirectDelay = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            abrirDashboard(usuario, tipoUsuario);
+        }));
+        redirectDelay.play();
+    }
+
+    private void loginFallido() {
+        contextoLogin.setEstado(new EstadoFallido());
+        contextoLogin.manejarEstado();
+        actualizarUI();
+
+        int intentosRestantes = contextoLogin.getMaxIntentos() - contextoLogin.getIntentosFallidos();
+
+        if (contextoLogin.getEstado() instanceof EstadoBloqueado) {
+            mostrarMensaje(contextoLogin.getMensaje(), "error");
+            iniciarContadorBloqueo();
+        } else {
+            mostrarMensaje("Credenciales incorrectas. Intentos restantes: " + intentosRestantes, "warning");
+        }
+    }
+
+    private void iniciarContadorBloqueo() {
+        btnLogin.setDisable(true);
+        txtUsuario.setDisable(true);
+        txtContrasena.setDisable(true);
+
+        if (bloqueoTimeline != null) {
+            bloqueoTimeline.stop();
+        }
+
+        bloqueoTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            long tiempoRestante = contextoLogin.getTiempoRestanteBloqueo();
+
+            if (tiempoRestante > 0) {
+                int segundos = (int) (tiempoRestante / 1000);
+                lblIntentos.setText("Cuenta bloqueada. Espere " + segundos + " segundos");
+            } else {
+                contextoLogin.manejarEstado();
+                actualizarUI();
+                lblIntentos.setText("");
+                bloqueoTimeline.stop();
+            }
+        }));
+        bloqueoTimeline.setCycleCount(Timeline.INDEFINITE);
+        bloqueoTimeline.play();
+    }
+
+    private void actualizarUI() {
+        EstadoLogin estadoActual = contextoLogin.getEstado();
+
+        boolean habilitado = estadoActual.puedeIntentarLogin();
+        btnLogin.setDisable(!habilitado);
+        txtUsuario.setDisable(!habilitado);
+        txtContrasena.setDisable(!habilitado);
+
+        if (estadoActual instanceof EstadoValidando) {
+            progressIndicator.setVisible(true);
+        } else {
+            progressIndicator.setVisible(false);
+        }
+
+        // Mostrar intentos restantes si hay fallos
+        if (contextoLogin.getIntentosFallidos() > 0 &&
+                !(estadoActual instanceof EstadoBloqueado)) {
+            int restantes = contextoLogin.getMaxIntentos() - contextoLogin.getIntentosFallidos();
+            lblIntentos.setText("Intentos restantes: " + restantes);
+        }
+    }
+
+    private void mostrarMensaje(String mensaje, String tipo) {
+        lblMensaje.setText(mensaje);
+
+        switch (tipo) {
+            case "success":
+                lblMensaje.setStyle("-fx-text-fill: #27ae60;");
+                break;
+            case "error":
+                lblMensaje.setStyle("-fx-text-fill: #e74c3c;");
+                break;
+            case "warning":
+                lblMensaje.setStyle("-fx-text-fill: #f39c12;");
+                break;
+            default:
+                lblMensaje.setStyle("-fx-text-fill: #2c3e50;");
+        }
+    }
+
+    private void abrirDashboard(Object usuario, String tipoUsuario) {
+        try {
+            String fxmlPath;
+            String titulo;
+
+            switch (tipoUsuario) {
+                case "CLIENT":
+                    fxmlPath = "/co/edu/uniquindio/sameday/views/dashboard-client.fxml";
+                    titulo = "Dashboard Cliente";
+                    break;
+                case "DEALER":
+                    fxmlPath = "/co/edu/uniquindio/sameday/views/dashboard-dealer.fxml";
+                    titulo = "Dashboard Repartidor";
+                    break;
+                case "ADMIN":
+                    fxmlPath = "/co/edu/uniquindio/sameday/views/dashboard-admin.fxml";
+                    titulo = "Dashboard Administrador";
+                    break;
+                default:
+                    return;
             }
 
-            abrirVentana(fxml, titulo);
-
-        } else {
-            mostrarAlerta("Error", "Usuario y contraseña no encontrada", Alert.AlertType.ERROR);
-        }
-
-    }
-
-    /**
-     * Método que se ejecuta al hacer clic en el botón SALIR
-     * Cierra la aplicación completamente
-     */
-    @FXML
-    void onSalir(ActionEvent event) {
-        System.exit(0);
-    }
-
-    /**
-     * Método que se ejecuta al hacer clic en el hipervínculo "Crear una Cuenta"
-     * Abre la ventana de registro de nuevos usuarios
-     */
-    @FXML
-    void onCrearCuenta(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/co/edu/uniquindio/sameday/CreateAccount.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
 
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Crear Cuenta - SameDay");
-            stage.setResizable(false); // No permitir redimensionar la ventana
-            stage.show();
+            // Pasar el usuario al controlador si es necesario
+            // Object controller = loader.getController();
+            // if (controller instanceof ClientDashboardController && usuario instanceof Client) {
+            //     ((ClientDashboardController) controller).setCliente((Client) usuario);
+            // }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo abrir la ventana de registro", Alert.AlertType.ERROR);
-        }
-    }
-
-    @FXML
-    void initialize() {
-        // Método de inicialización si se necesita configuración inicial
-    }
-
-    /**
-     * Método auxiliar para abrir una nueva ventana y cerrar la actual
-     *
-     * @param fxml   Ruta del archivo FXML a cargar
-     * @param titulo Título de la nueva ventana
-     */
-    public void abrirVentana(String fxml, String titulo) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
-            Parent root = loader.load();
-
-            Stage stage = new Stage();
+            Stage stage = (Stage) btnLogin.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle(titulo);
             stage.show();
 
-            // Cerrar la ventana de login
-            txtUsuario.getScene().getWindow().hide();
-
-        } catch (IOException e) {
+        } catch (Exception e) {
+            mostrarMensaje("Error al cargar el dashboard: " + e.getMessage(), "error");
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo abrir la ventana", Alert.AlertType.ERROR);
         }
     }
 
-    /**
-     * Método auxiliar para mostrar alertas al usuario
-     *
-     * @param titulo  Título de la alerta
-     * @param mensaje Contenido del mensaje
-     * @param tipo    Tipo de alerta (ERROR, WARNING, INFORMATION, etc.)
-     */
-    private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
-        Alert alerta = new Alert(tipo);
-        alerta.setTitle(titulo);
-        alerta.setHeaderText(null);
-        alerta.setContentText(mensaje);
-        alerta.showAndWait();
+    @FXML
+    private void handleRegistro() {
+        // Abrir ventana de registro
     }
 }
