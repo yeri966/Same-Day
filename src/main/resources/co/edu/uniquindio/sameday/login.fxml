@@ -11,50 +11,73 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.geometry.Insets?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="368.0" prefWidth="487.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.sameday.controllers.LoginController">
    <left>
-      <AnchorPane prefHeight="320.0" prefWidth="185.0" BorderPane.alignment="CENTER">
+      <!-- Panel Izquierdo: Logotipo (Mayor atractivo visual) -->
+      <AnchorPane prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: #3f51b5;" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fitHeight="368.0" fitWidth="181.0" pickOnBounds="true" smooth="false">
+            <!-- Ajuste de imagen para llenar el espacio izquierdo de forma estética -->
+            <ImageView fitHeight="200.0" fitWidth="160.0" layoutX="20.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
                <image>
+                  <!-- Asumiendo que esta es la ruta de tu logo -->
                   <Image url="@Imagen/LogoSameDay.png" />
                </image>
             </ImageView>
+            <Label layoutX="10.0" layoutY="320.0" text="Bienvenido a SameDay" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </left>
-   <right>
-      <AnchorPane prefHeight="367.0" prefWidth="327.0" BorderPane.alignment="CENTER">
-         <children>
-            <TextField fx:id="txtUsuario" layoutX="140.0" layoutY="95.0" />
-            <Label layoutX="22.0" layoutY="93.0" text="Usuario:">
-               <font>
-                  <Font name="System Bold Italic" size="20.0" />
-               </font>
+   <center>
+   <!-- Panel Central: Formulario de Login -->
+   <VBox alignment="CENTER" prefHeight="400.0" prefWidth="350.0" spacing="15.0" BorderPane.alignment="CENTER">
+      <padding>
+         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+      </padding>
+      <children>
+         <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <!-- Imagen de Candado/Usuario centrada -->
+               <Image url="@Imagen/Candado.png" />
+            </image>
+         </ImageView>
+         <Label text="INICIO DE SESIÓN" style="-fx-font-weight: bold; -fx-font-size: 18px;" />
+
+         <!-- Uso de GridPane para alinear etiquetas y campos -->
+         <GridPane hgap="10.0" prefWidth="250.0" vgap="10.0">
+            <rowConstraints>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <Label text="Usuario:" GridPane.rowIndex="0">
+               <font><Font name="System Bold Italic" size="14.0" /></font>
             </Label>
-            <Label layoutX="19.0" layoutY="140.0" text="Contraseña:">
-               <font>
-                  <Font name="System Bold Italic" size="20.0" />
-               </font>
+            <TextField fx:id="txtUsuario" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+            <Label text="Contraseña:" GridPane.rowIndex="1">
+               <font><Font name="System Bold Italic" size="14.0" /></font>
             </Label>
-            <PasswordField fx:id="txtContrasenia" layoutX="140.0" layoutY="143.0" />
-            <Button fx:id="btnIngresar" layoutX="21.0" layoutY="193.0" mnemonicParsing="false" onAction="#onIngresar" prefHeight="30.0" prefWidth="261.0" text="Ingresar">
-               <font>
-                  <Font name="System Bold Italic" size="14.0" />
-               </font>
+            <PasswordField fx:id="txtContrasenia" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         </GridPane>
+
+         <VBox alignment="CENTER" spacing="10.0">
+            <Button fx:id="btnIngresar" mnemonicParsing="false" onAction="#onIngresar" prefWidth="260.0" text="Ingresar" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;">
+               <font><Font name="System Bold Italic" size="14.0" /></font>
             </Button>
-            <Button fx:id="btnSalir" layoutX="21.0" layoutY="231.0" mnemonicParsing="false" onAction="#onSalir" prefHeight="30.0" prefWidth="261.0" text="Salir">
-               <font>
-                  <Font name="System Bold Italic" size="14.0" />
-               </font>
+            <Button fx:id="btnSalir" mnemonicParsing="false" onAction="#onSalir" prefWidth="260.0" text="Salir" style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold;">
+               <font><Font name="System Bold Italic" size="14.0" /></font>
             </Button>
-            <ImageView fitHeight="101.0" fitWidth="96.0" layoutX="105.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@Imagen/Candado.png" />
-               </image>
-            </ImageView>
-            <Hyperlink fx:id="hyl" layoutX="104.0" layoutY="276.0" onAction="#onCrearCuenta" text="Crear Cuenta" />
-         </children>
-      </AnchorPane>
-   </right>
+         </VBox>
+
+         <Hyperlink fx:id="hyl" onAction="#onCrearCuenta" text="Crear Cuenta" />
+      </children>
+   </VBox>
+   </center>
 </BorderPane>
