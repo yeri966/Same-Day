@@ -5,6 +5,8 @@ import co.edu.uniquindio.sameday.models.Admin;
 import co.edu.uniquindio.sameday.models.Client;
 import co.edu.uniquindio.sameday.models.Dealer;
 import co.edu.uniquindio.sameday.models.Person;
+import co.edu.uniquindio.sameday.models.behavioral.state.ActiveState;
+import co.edu.uniquindio.sameday.models.behavioral.state.SuspendedState;
 import co.edu.uniquindio.sameday.models.creational.factoryMethod.AdminFactory;
 import co.edu.uniquindio.sameday.models.creational.factoryMethod.ClienteFactory;
 import co.edu.uniquindio.sameday.models.creational.factoryMethod.DealerFactory;
@@ -192,6 +194,59 @@ public class SameDay {
                 userActive = person;
                 return person;
             }
+        }
+        return null;
+    }
+
+    public UserAccount buscarCuentaPorUsuario(String usuario) {
+        for (Person person : listPersons) {
+            if (person.getUserAccount() != null &&
+                    person.getUserAccount().getUser().equals(usuario)) {
+                return person.getUserAccount();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Suspende la cuenta de un usuario
+     * @param usuario El nombre de usuario a suspender
+     * @param razon La razón de la suspensión
+     * @return true si se suspendió correctamente, false si no se encontró
+     */
+    public boolean suspenderCuenta(String usuario, String razon) {
+        UserAccount cuenta = buscarCuentaPorUsuario(usuario);
+        if (cuenta != null) {
+            cuenta.setAccountState(new SuspendedState(razon));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Activa una cuenta suspendida
+     * @param usuario El nombre de usuario a activar
+     * @return true si se activó correctamente, false si no se encontró
+     */
+    public boolean activarCuenta(String usuario) {
+        UserAccount cuenta = buscarCuentaPorUsuario(usuario);
+        if (cuenta != null) {
+            cuenta.setAccountState(new ActiveState());
+            cuenta.resetFailedAttempts();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Obtiene el estado actual de una cuenta
+     * @param usuario El nombre de usuario
+     * @return El nombre del estado o null si no se encontró
+     */
+    public String obtenerEstadoCuenta(String usuario) {
+        UserAccount cuenta = buscarCuentaPorUsuario(usuario);
+        if (cuenta != null) {
+            return cuenta.getAccountState().getStateName();
         }
         return null;
     }

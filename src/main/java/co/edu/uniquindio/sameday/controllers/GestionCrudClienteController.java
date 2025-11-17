@@ -1,15 +1,15 @@
 package co.edu.uniquindio.sameday.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import co.edu.uniquindio.sameday.models.Client;
-import co.edu.uniquindio.sameday.models.Person;
 import co.edu.uniquindio.sameday.models.TypeUser;
 import co.edu.uniquindio.sameday.models.UserAccount;
+import co.edu.uniquindio.sameday.models.behavioral.state.SuspendedState;
 import co.edu.uniquindio.sameday.models.creational.factoryMethod.ClienteFactory;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,6 +36,12 @@ public class GestionCrudClienteController {
     private Button btnLimpiar;
 
     @FXML
+    private Button btnSuspender;
+
+    @FXML
+    private Button btnActivar;
+
+    @FXML
     private TableColumn<Client, String> colCedula;
 
     @FXML
@@ -52,6 +58,9 @@ public class GestionCrudClienteController {
 
     @FXML
     private TableColumn<Client, String> colTelefono;
+
+    @FXML
+    private TableColumn<Client, String> colEstado;
 
     @FXML
     private Label lblClientesActivos;
@@ -88,7 +97,6 @@ public class GestionCrudClienteController {
         System.out.println("=== INICIALIZANDO GESTIÓN CLIENTE ===");
         sameDay = SameDay.getInstance();
 
-        // Inicializar la lista observable vacía
         listaClientes = FXCollections.observableArrayList();
 
         configurarTabla();
@@ -106,6 +114,16 @@ public class GestionCrudClienteController {
         colEmail.setCellValueFactory(new PropertyValueFactory<>("correo"));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
+
+        // Columna de estado usando el patrón State
+        colEstado.setCellValueFactory(cellData -> {
+            Client cliente = cellData.getValue();
+            if (cliente.getUserAccount() != null) {
+                String estado = cliente.getUserAccount().getAccountState().getStateName();
+                return new SimpleStringProperty(estado);
+            }
+            return new SimpleStringProperty("Sin cuenta");
+        });
     }
 
     private void configurarSeleccionTabla() {
@@ -129,7 +147,6 @@ public class GestionCrudClienteController {
         txtTelefono.setText(cliente.getTelefono());
         txtDireccion.setText(cliente.getDireccion());
 
-        // Cargar el usuario si existe
         if (cliente.getUserAccount() != null) {
             txtUsuario.setText(cliente.getUserAccount().getUser());
         }
@@ -138,24 +155,17 @@ public class GestionCrudClienteController {
     private void cargarClientes() {
         System.out.println("🔄 Recargando clientes...");
 
-        // Obtener DIRECTAMENTE la referencia a la lista de personas del Singleton
-        // NO hacer copias, trabajar con la lista original
         List<Client> soloClientes = sameDay.getListPersons().stream()
                 .filter(persona -> persona instanceof Client)
                 .map(persona -> (Client) persona)
                 .collect(Collectors.toList());
 
-        // Limpiar y recargar la lista observable
         listaClientes.clear();
         listaClientes.addAll(soloClientes);
 
-        // Establecer los items en la tabla
         tablaClientes.setItems(listaClientes);
-
-        // Forzar el refresco visual de la tabla
         tablaClientes.refresh();
 
-        // Actualizar estadísticas
         actualizarEstadisticas();
 
         System.out.println("✅ " + soloClientes.size() + " clientes cargados");
@@ -163,7 +173,111 @@ public class GestionCrudClienteController {
 
     private void actualizarEstadisticas() {
         lblTotalClientes.setText("📊 Total: " + listaClientes.size());
-        lblClientesActivos.setText("✅ Activos: " + listaClientes.size());
+
+        // Contar solo clientes con cuentas activas
+        long clientesActivos = listaClientes.stream()
+                .filter(c -> c.getUserAccount() != null)
+                .filter(c -> c.getUserAccount().getAccountState().getStateName().equals("ACTIVA"))
+                .count();
+
+        lblClientesActivos.setText("✅ Activos: " + clientesActivos);
+    }
+
+    @FXML
+    void onSuspenderCuenta(ActionEvent event) {
+        if (clienteSeleccionado == null) {
+            mostrarAlerta(Alert.AlertType.WARNING,
+                    "Selección Requerida",
+                    "Debe seleccionar un cliente de la tabla");
+            return;
+        }
+
+        if (clienteSeleccionado.getUserAccount() == null) {
+            mostrarAlerta(Alert.AlertType.ERROR,
+                    "Error",
+                    "El cliente no tiene cuenta de usuario");
+            return;
+        }
+
+        // Verificar si ya está suspendida
+        if (clienteSeleccionado.getUserAccount().getAccountState() instanceof SuspendedState) {
+            mostrarAlerta(Alert.AlertType.WARNING,
+                    "Cuenta Ya Suspendida",
+                    "Esta cuenta ya se encuentra suspendida");
+            return;
+        }
+
+        // Pedir razón de suspensión
+        TextInputDialog dialog = new TextInputDialog("Violación de términos de servicio");
+        dialog.setTitle("Suspender Cuenta");
+        dialog.setHeaderText("Suspender cuenta de: " + clienteSeleccionado.getNombre());
+        dialog.setContentText("Razón de suspensión:");
+
+        dialog.showAndWait().ifPresent(razon -> {
+            String usuario = clienteSeleccionado.getUserAccount().getUser();
+
+            if (sameDay.suspenderCuenta(usuario, razon)) {
+                mostrarAlerta(Alert.AlertType.INFORMATION,
+                        "Cuenta Suspendida",
+                        "La cuenta ha sido suspendida correctamente.\nRazón: " + razon);
+
+                tablaClientes.refresh();
+                actualizarEstadisticas();
+                limpiarFormulario();
+            } else {
+                mostrarAlerta(Alert.AlertType.ERROR,
+                        "Error",
+                        "No se pudo suspender la cuenta");
+            }
+        });
+    }
+
+    @FXML
+    void onActivarCuenta(ActionEvent event) {
+        if (clienteSeleccionado == null) {
+            mostrarAlerta(Alert.AlertType.WARNING,
+                    "Selección Requerida",
+                    "Debe seleccionar un cliente de la tabla");
+            return;
+        }
+
+        if (clienteSeleccionado.getUserAccount() == null) {
+            mostrarAlerta(Alert.AlertType.ERROR,
+                    "Error",
+                    "El cliente no tiene cuenta de usuario");
+            return;
+        }
+
+        // Verificar si necesita activación
+        if (clienteSeleccionado.getUserAccount().getAccountState().getStateName().equals("ACTIVA")) {
+            mostrarAlerta(Alert.AlertType.INFORMATION,
+                    "Cuenta Activa",
+                    "La cuenta ya se encuentra activa");
+            return;
+        }
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Activar Cuenta");
+        confirmacion.setHeaderText("¿Activar la cuenta de " + clienteSeleccionado.getNombre() + "?");
+        confirmacion.setContentText("La cuenta volverá a estar activa y el usuario podrá iniciar sesión normalmente.");
+
+        if (confirmacion.showAndWait().get() == ButtonType.OK) {
+            String usuario = clienteSeleccionado.getUserAccount().getUser();
+
+            if (sameDay.activarCuenta(usuario)) {
+                mostrarAlerta(Alert.AlertType.INFORMATION,
+                        "Cuenta Activada",
+                        "La cuenta ha sido activada correctamente");
+
+                tablaClientes.refresh();
+                actualizarEstadisticas();
+                limpiarFormulario();
+            } else {
+                mostrarAlerta(Alert.AlertType.ERROR,
+                        "Error",
+                        "No se pudo activar la cuenta");
+            }
+        }
     }
 
     @FXML
@@ -172,25 +286,21 @@ public class GestionCrudClienteController {
             return;
         }
 
-        // Generar ID único
         String nuevoId = generarIdCliente();
 
-        // Obtener el nombre de usuario del campo o generar uno por defecto
         String nombreUsuario = txtUsuario.getText().trim();
         if (nombreUsuario.isEmpty()) {
             nombreUsuario = "cliente" + nuevoId;
         }
 
-        // Crear UserAccount para el nuevo cliente
         UserAccount userAccount = new UserAccount(
                 nombreUsuario,
-                "1234", // Contraseña por defecto
+                "1234",
                 null,
                 TypeUser.CLIENT
         );
 
-        // Crear el nuevo cliente
-        ClienteFactory factory=new ClienteFactory(txtDireccion.getText().trim());
+        ClienteFactory factory = new ClienteFactory(txtDireccion.getText().trim());
         Client nuevoCliente = (Client) factory.crearPerson(nuevoId,
                 txtCedula.getText().trim(),
                 txtNombre.getText().trim(),
@@ -199,7 +309,6 @@ public class GestionCrudClienteController {
                 userAccount
         );
 
-        // Agregar al sistema
         sameDay.agregarPersona(nuevoCliente);
 
         mostrarAlerta(Alert.AlertType.INFORMATION,
@@ -223,14 +332,12 @@ public class GestionCrudClienteController {
             return;
         }
 
-        // Actualizar datos del cliente seleccionado
         clienteSeleccionado.setNombre(txtNombre.getText().trim());
         clienteSeleccionado.setDocumento(txtCedula.getText().trim());
         clienteSeleccionado.setCorreo(txtEmail.getText().trim());
         clienteSeleccionado.setTelefono(txtTelefono.getText().trim());
         clienteSeleccionado.setDireccion(txtDireccion.getText().trim());
 
-        // Actualizar el nombre de usuario si existe el UserAccount
         if (clienteSeleccionado.getUserAccount() != null && !txtUsuario.getText().trim().isEmpty()) {
             clienteSeleccionado.getUserAccount().setUser(txtUsuario.getText().trim());
         }
@@ -239,7 +346,6 @@ public class GestionCrudClienteController {
                 "Cliente Actualizado",
                 "Los datos del cliente han sido actualizados exitosamente");
 
-        // Refrescar la tabla forzando una recarga completa
         tablaClientes.refresh();
         cargarClientes();
         limpiarFormulario();
@@ -258,7 +364,6 @@ public class GestionCrudClienteController {
             return;
         }
 
-        // Confirmación
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmar Eliminación");
         confirmacion.setHeaderText("¿Está seguro que desea eliminar este cliente?");
@@ -284,47 +389,40 @@ public class GestionCrudClienteController {
     private boolean validarCampos() {
         StringBuilder errores = new StringBuilder();
 
-        // Validar nombre
         if (txtNombre.getText() == null || txtNombre.getText().trim().isEmpty()) {
             errores.append("• El nombre es obligatorio\n");
         } else if (txtNombre.getText().trim().length() < 3) {
             errores.append("• El nombre debe tener al menos 3 caracteres\n");
         }
 
-        // Validar cédula
         if (txtCedula.getText() == null || txtCedula.getText().trim().isEmpty()) {
             errores.append("• La cédula es obligatoria\n");
         } else if (!txtCedula.getText().matches("\\d+")) {
             errores.append("• La cédula debe contener solo números\n");
         }
 
-        // Validar email
         if (txtEmail.getText() == null || txtEmail.getText().trim().isEmpty()) {
             errores.append("• El email es obligatorio\n");
         } else if (!txtEmail.getText().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             errores.append("• El email no tiene un formato válido\n");
         }
 
-        // Validar teléfono
         if (txtTelefono.getText() == null || txtTelefono.getText().trim().isEmpty()) {
             errores.append("• El teléfono es obligatorio\n");
         } else if (!txtTelefono.getText().matches("\\d{10}")) {
             errores.append("• El teléfono debe tener 10 dígitos\n");
         }
 
-        // Validar dirección
         if (txtDireccion.getText() == null || txtDireccion.getText().trim().isEmpty()) {
             errores.append("• La dirección es obligatoria\n");
         }
 
-        // Validar usuario
         if (txtUsuario.getText() == null || txtUsuario.getText().trim().isEmpty()) {
             errores.append("• El usuario es obligatorio\n");
         } else if (txtUsuario.getText().trim().length() < 4) {
             errores.append("• El usuario debe tener al menos 4 caracteres\n");
         }
 
-        // Si hay errores, mostrar alerta
         if (errores.length() > 0) {
             mostrarAlerta(Alert.AlertType.WARNING,
                     "Campos Incompletos",

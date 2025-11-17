@@ -9,75 +9,176 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.Font?>
-
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.geometry.Insets?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="368.0" prefWidth="487.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.sameday.controllers.LoginController">
-   <left>
-      <!-- Panel Izquierdo: Logotipo (Mayor atractivo visual) -->
-      <AnchorPane prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: #3f51b5;" BorderPane.alignment="CENTER">
-         <children>
-            <!-- Ajuste de imagen para llenar el espacio izquierdo de forma estética -->
-            <ImageView fitHeight="200.0" fitWidth="160.0" layoutX="20.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <!-- Asumiendo que esta es la ruta de tu logo -->
-                  <Image url="@Imagen/LogoSameDay.png" />
-               </image>
-            </ImageView>
-            <Label layoutX="10.0" layoutY="320.0" text="Bienvenido a SameDay" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
-         </children>
-      </AnchorPane>
-   </left>
-   <center>
-   <!-- Panel Central: Formulario de Login -->
-   <VBox alignment="CENTER" prefHeight="400.0" prefWidth="350.0" spacing="15.0" BorderPane.alignment="CENTER">
-      <padding>
-         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-      </padding>
-      <children>
-         <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-               <!-- Imagen de Candado/Usuario centrada -->
-               <Image url="@Imagen/Candado.png" />
-            </image>
-         </ImageView>
-         <Label text="INICIO DE SESIÓN" style="-fx-font-weight: bold; -fx-font-size: 18px;" />
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Separator?>
 
-         <!-- Uso de GridPane para alinear etiquetas y campos -->
-         <GridPane hgap="10.0" prefWidth="250.0" vgap="10.0">
-            <rowConstraints>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <Label text="Usuario:" GridPane.rowIndex="0">
-               <font><Font name="System Bold Italic" size="14.0" /></font>
-            </Label>
-            <TextField fx:id="txtUsuario" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="550.0" prefWidth="800.0"
+            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.sameday.controllers.LoginController">
+    <left>
+        <VBox prefHeight="550.0" prefWidth="300.0"
+              style="-fx-background-color: #1a1a2e;"
+              BorderPane.alignment="CENTER">
+            <children>
+                <VBox alignment="CENTER" prefWidth="300.0" style="-fx-background-color: #16213e;">
+                    <padding>
+                        <Insets bottom="30.0" top="30.0" />
+                    </padding>
+                    <children>
+                        <ImageView fitHeight="120.0" fitWidth="120.0"
+                                   pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@Imagen/LogoSameDay.png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </VBox>
 
-            <Label text="Contraseña:" GridPane.rowIndex="1">
-               <font><Font name="System Bold Italic" size="14.0" /></font>
-            </Label>
-            <PasswordField fx:id="txtContrasenia" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-         </GridPane>
+                <Separator prefWidth="300.0" style="-fx-background-color: #2d3748;">
+                    <VBox.margin>
+                        <Insets bottom="20.0" top="20.0" />
+                    </VBox.margin>
+                </Separator>
 
-         <VBox alignment="CENTER" spacing="10.0">
-            <Button fx:id="btnIngresar" mnemonicParsing="false" onAction="#onIngresar" prefWidth="260.0" text="Ingresar" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;">
-               <font><Font name="System Bold Italic" size="14.0" /></font>
-            </Button>
-            <Button fx:id="btnSalir" mnemonicParsing="false" onAction="#onSalir" prefWidth="260.0" text="Salir" style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-font-weight: bold;">
-               <font><Font name="System Bold Italic" size="14.0" /></font>
-            </Button>
-         </VBox>
+                <VBox alignment="CENTER" spacing="10.0">
+                    <padding>
+                        <Insets left="20.0" right="20.0" />
+                    </padding>
+                    <children>
+                        <Label text="SameDay" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="32.0" />
+                            </font>
+                        </Label>
+                        <Label text="Plataforma de Logística" textFill="#94a3b8">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
 
-         <Hyperlink fx:id="hyl" onAction="#onCrearCuenta" text="Crear Cuenta" />
-      </children>
-   </VBox>
-   </center>
+                <Region VBox.vgrow="ALWAYS" />
+
+                <VBox alignment="CENTER" spacing="5.0">
+                    <padding>
+                        <Insets bottom="30.0" left="20.0" right="20.0" />
+                    </padding>
+                    <children>
+                        <Label text="📦 Envíos rápidos y seguros" textFill="#cbd5e1">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Label>
+                        <Label text="🚚 Seguimiento en tiempo real" textFill="#cbd5e1">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Label>
+                        <Label text="✅ Gestión eficiente" textFill="#cbd5e1">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <AnchorPane prefHeight="550.0" prefWidth="500.0"
+                    style="-fx-background-color: #f8fafc;"
+                    BorderPane.alignment="CENTER">
+            <children>
+                <VBox alignment="CENTER" spacing="25.0"
+                      layoutX="50.0" layoutY="50.0"
+                      prefWidth="400.0"
+                      style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 3);">
+                    <padding>
+                        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+                    </padding>
+                    <children>
+                        <VBox alignment="CENTER" spacing="8.0">
+                            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                <image>
+                                    <Image url="@Imagen/Candado.png" />
+                                </image>
+                            </ImageView>
+                            <Label text="Iniciar Sesión" textFill="#1e293b">
+                                <font>
+                                    <Font name="System Bold" size="24.0" />
+                                </font>
+                            </Label>
+                            <Label text="Ingresa tus credenciales para continuar" textFill="#64748b">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </Label>
+                        </VBox>
+
+                        <VBox spacing="15.0" prefWidth="320.0">
+                            <VBox spacing="8.0">
+                                <Label text="Usuario" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txtUsuario"
+                                           promptText="Ingrese su usuario"
+                                           prefHeight="42.0"
+                                           style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-font-size: 14px; -fx-prompt-text-fill: #94a3b8;" />
+                            </VBox>
+
+                            <VBox spacing="8.0">
+                                <Label text="Contraseña" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <PasswordField fx:id="txtContrasenia"
+                                               promptText="Ingrese su contraseña"
+                                               prefHeight="42.0"
+                                               style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-font-size: 14px; -fx-prompt-text-fill: #94a3b8;" />
+                            </VBox>
+                        </VBox>
+
+                        <VBox alignment="CENTER" spacing="10.0">
+                            <Button fx:id="btnIngresar"
+                                    mnemonicParsing="false"
+                                    onAction="#onIngresar"
+                                    prefWidth="320.0"
+                                    prefHeight="45.0"
+                                    text="Ingresar"
+                                    style="-fx-background-color: #16213e; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 8; -fx-cursor: hand;" />
+
+                            <Button fx:id="btnSalir"
+                                    mnemonicParsing="false"
+                                    onAction="#onSalir"
+                                    prefWidth="320.0"
+                                    prefHeight="45.0"
+                                    text="Salir"
+                                    style="-fx-background-color: transparent; -fx-text-fill: #ef4444; -fx-font-weight: bold; -fx-font-size: 14px; -fx-border-color: #ef4444; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;" />
+                        </VBox>
+
+                        <VBox alignment="CENTER" spacing="5.0">
+                            <Label text="¿No tienes cuenta?" textFill="#64748b">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </Label>
+                            <Hyperlink fx:id="hyl"
+                                       onAction="#onCrearCuenta"
+                                       text="Crear una cuenta"
+                                       style="-fx-text-fill: #16213e; -fx-font-size: 13px; -fx-font-weight: bold;" />
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </center>
 </BorderPane>

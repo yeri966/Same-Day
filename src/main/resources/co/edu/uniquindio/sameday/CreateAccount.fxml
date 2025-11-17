@@ -1,93 +1,220 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="550.0" prefWidth="500.0"
-            xmlns="http://javafx.com/javafx/8"
+            prefHeight="680.0" prefWidth="900.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="co.edu.uniquindio.sameday.controllers.CreateAccountController">
 
-    <center>
-        <AnchorPane prefHeight="550.0" prefWidth="500.0" style="-fx-background-color: #f5f5f5;" BorderPane.alignment="CENTER">
+    <left>
+        <VBox prefHeight="680.0" prefWidth="300.0"
+              style="-fx-background-color: #1a1a2e;"
+              BorderPane.alignment="CENTER">
             <children>
-                <AnchorPane layoutX="0.0" layoutY="0.0" prefHeight="100.0" prefWidth="500.0" style="-fx-background-color: #2196F3;">
+                <VBox alignment="CENTER" prefWidth="300.0" style="-fx-background-color: #16213e;">
+                    <padding>
+                        <Insets bottom="30.0" top="30.0" />
+                    </padding>
                     <children>
-                        <Label layoutX="120.0" layoutY="25.0" text="CREAR NUEVA CUENTA" textFill="WHITE">
+                        <Label text="👤" textFill="WHITE">
                             <font>
-                                <Font name="System Bold" size="24.0" />
+                                <Font size="60.0" />
                             </font>
                         </Label>
-                        <Label layoutX="150.0" layoutY="60.0" text="Sistema de Logística SameDay" textFill="WHITE">
+                    </children>
+                </VBox>
+
+                <Separator prefWidth="300.0" style="-fx-background-color: #2d3748;">
+                    <VBox.margin>
+                        <Insets bottom="20.0" top="20.0" />
+                    </VBox.margin>
+                </Separator>
+
+                <VBox alignment="CENTER" spacing="10.0">
+                    <padding>
+                        <Insets left="20.0" right="20.0" />
+                    </padding>
+                    <children>
+                        <Label text="Únete a" textFill="#94a3b8">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </Label>
+                        <Label text="SameDay" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="32.0" />
+                            </font>
+                        </Label>
+                        <Label text="Plataforma de Logística" textFill="#94a3b8">
                             <font>
                                 <Font size="14.0" />
                             </font>
                         </Label>
                     </children>
-                </AnchorPane>
+                </VBox>
 
-                <AnchorPane layoutX="50.0" layoutY="120.0" prefHeight="380.0" prefWidth="400.0" style="-fx-background-color: white; -fx-background-radius: 10;">
+                <Region VBox.vgrow="ALWAYS" />
+
+                <VBox alignment="CENTER" spacing="8.0">
+                    <padding>
+                        <Insets bottom="30.0" left="20.0" right="20.0" />
+                    </padding>
                     <children>
-                        <Label layoutX="20.0" layoutY="20.0" text="Nombre Completo:">
+                        <Label text="✨ Registro rápido y sencillo" textFill="#cbd5e1">
                             <font>
-                                <Font name="System Bold" size="12.0" />
+                                <Font size="12.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtNombre" layoutX="20.0" layoutY="42.0" prefHeight="30.0" prefWidth="360.0" promptText="Ingrese su nombre completo" />
-
-                        <Label layoutX="20.0" layoutY="82.0" text="Correo Electrónico:">
+                        <Label text="🔒 Tus datos están seguros" textFill="#cbd5e1">
                             <font>
-                                <Font name="System Bold" size="12.0" />
+                                <Font size="12.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtCorreo" layoutX="20.0" layoutY="104.0" prefHeight="30.0" prefWidth="360.0" promptText="ejemplo@correo.com" />
-
-                        <Label layoutX="20.0" layoutY="144.0" text="Teléfono:">
+                        <Label text="🚀 Comienza a enviar hoy" textFill="#cbd5e1">
                             <font>
-                                <Font name="System Bold" size="12.0" />
+                                <Font size="12.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="txtTelefono" layoutX="20.0" layoutY="166.0" prefHeight="30.0" prefWidth="360.0" promptText="3001234567" />
-
-                        <Label layoutX="20.0" layoutY="206.0" text="Dirección:">
-                            <font>
-                                <Font name="System Bold" size="12.0" />
-                            </font>
-                        </Label>
-                        <TextField fx:id="txtDireccion" layoutX="20.0" layoutY="228.0" prefHeight="30.0" prefWidth="360.0" promptText="Calle 123 #45-67" />
-
-                        <Label layoutX="20.0" layoutY="268.0" text="Usuario:">
-                            <font>
-                                <Font name="System Bold" size="12.0" />
-                            </font>
-                        </Label>
-                        <TextField fx:id="txtUsuario" layoutX="20.0" layoutY="290.0" prefHeight="30.0" prefWidth="360.0" promptText="Nombre de usuario" />
-
-                        <Label layoutX="20.0" layoutY="330.0" text="Contraseña:">
-                            <font>
-                                <Font name="System Bold" size="12.0" />
-                            </font>
-                        </Label>
-                        <PasswordField fx:id="txtContrasenia" layoutX="20.0" layoutY="352.0" prefHeight="30.0" prefWidth="360.0" promptText="Mínimo 4 caracteres" />
                     </children>
-                </AnchorPane>
-
-                <Button fx:id="btnRegistrar" layoutX="80.0" layoutY="510.0" mnemonicParsing="false" onAction="#onRegistrar"
-                        prefHeight="35.0" prefWidth="160.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="REGISTRAR">
-                    <font>
-                        <Font name="System Bold" size="13.0" />
-                    </font>
-                </Button>
-
-                <Button fx:id="btnCancelar" layoutX="260.0" layoutY="510.0" mnemonicParsing="false" onAction="#onCancelar"
-                        prefHeight="35.0" prefWidth="160.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;" text="CANCELAR">
-                    <font>
-                        <Font name="System Bold" size="13.0" />
-                    </font>
-                </Button>
+                </VBox>
             </children>
-        </AnchorPane>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox alignment="CENTER"
+              style="-fx-background-color: #f8fafc;"
+              BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
+            </padding>
+            <children>
+                <VBox alignment="CENTER" spacing="20.0"
+                      prefWidth="500.0"
+                      style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 3);">
+                    <padding>
+                        <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                    </padding>
+                    <children>
+                        <VBox alignment="CENTER" spacing="5.0">
+                            <Label text="Crear Nueva Cuenta" textFill="#1e293b">
+                                <font>
+                                    <Font name="System Bold" size="24.0" />
+                                </font>
+                            </Label>
+                            <Label text="Completa tus datos para registrarte" textFill="#64748b">
+                                <font>
+                                    <Font size="12.0" />
+                                </font>
+                            </Label>
+                        </VBox>
+
+                        <VBox spacing="12.0" prefWidth="420.0">
+                            <VBox spacing="5.0">
+                                <Label text="Nombre Completo" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txtNombre"
+                                           promptText="Ingrese su nombre completo"
+                                           prefHeight="38.0"
+                                           style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-font-size: 13px; -fx-prompt-text-fill: #94a3b8;" />
+                            </VBox>
+
+                            <VBox spacing="5.0">
+                                <Label text="Correo Electrónico" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txtCorreo"
+                                           promptText="ejemplo@correo.com"
+                                           prefHeight="38.0"
+                                           style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-font-size: 13px; -fx-prompt-text-fill: #94a3b8;" />
+                            </VBox>
+
+                            <VBox spacing="5.0">
+                                <Label text="Teléfono" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txtTelefono"
+                                           promptText="3001234567"
+                                           prefHeight="38.0"
+                                           style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-font-size: 13px; -fx-prompt-text-fill: #94a3b8;" />
+                            </VBox>
+
+                            <VBox spacing="5.0">
+                                <Label text="Dirección" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txtDireccion"
+                                           promptText="Calle 123 #45-67"
+                                           prefHeight="38.0"
+                                           style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-font-size: 13px; -fx-prompt-text-fill: #94a3b8;" />
+                            </VBox>
+
+                            <VBox spacing="5.0">
+                                <Label text="Usuario" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="txtUsuario"
+                                           promptText="Nombre de usuario"
+                                           prefHeight="38.0"
+                                           style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-font-size: 13px; -fx-prompt-text-fill: #94a3b8;" />
+                            </VBox>
+
+                            <VBox spacing="5.0">
+                                <Label text="Contraseña" textFill="#1e293b">
+                                    <font>
+                                        <Font name="System Bold" size="13.0" />
+                                    </font>
+                                </Label>
+                                <PasswordField fx:id="txtContrasenia"
+                                               promptText="Mínimo 4 caracteres"
+                                               prefHeight="38.0"
+                                               style="-fx-background-color: #f1f5f9; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8; -fx-font-size: 13px; -fx-prompt-text-fill: #94a3b8;" />
+                            </VBox>
+                        </VBox>
+
+                        <VBox alignment="CENTER" spacing="10.0">
+                            <Button fx:id="btnRegistrar"
+                                    mnemonicParsing="false"
+                                    onAction="#onRegistrar"
+                                    prefWidth="420.0"
+                                    prefHeight="42.0"
+                                    text="Registrar"
+                                    style="-fx-background-color: #16213e; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 8; -fx-cursor: hand;" />
+
+                            <Button fx:id="btnCancelar"
+                                    mnemonicParsing="false"
+                                    onAction="#onCancelar"
+                                    prefWidth="420.0"
+                                    prefHeight="42.0"
+                                    text="Cancelar"
+                                    style="-fx-background-color: transparent; -fx-text-fill: #ef4444; -fx-font-weight: bold; -fx-font-size: 14px; -fx-border-color: #ef4444; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;" />
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
     </center>
 </BorderPane>

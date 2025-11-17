@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import co.edu.uniquindio.sameday.models.*;
-import co.edu.uniquindio.sameday.models.creational.factoryMethod.ClienteFactory;
+import co.edu.uniquindio.sameday.models.behavioral.state.SuspendedState;
 import co.edu.uniquindio.sameday.models.creational.factoryMethod.DealerFactory;
 import co.edu.uniquindio.sameday.models.creational.singleton.SameDay;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,12 +16,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-/**
- * Controlador para la gestión CRUD de repartidores
- * Permite al administrador crear, leer, actualizar y eliminar repartidores
- * Incluye gestión de credenciales de acceso (usuario y contraseña)
- * La disponibilidad es calculada automáticamente basándose en envíos activos
- */
 public class GestionCrudRepartidorController {
 
     private SameDay sameDay;
@@ -31,7 +25,6 @@ public class GestionCrudRepartidorController {
     @FXML private ResourceBundle resources;
     @FXML private URL location;
 
-    // Campos del formulario
     @FXML private TextField txtId;
     @FXML private TextField txtDocumento;
     @FXML private TextField txtNombre;
@@ -41,13 +34,13 @@ public class GestionCrudRepartidorController {
     @FXML private PasswordField txtPassword;
     @FXML private ComboBox<City> cboxCity;
 
-    // Botones de acción
     @FXML private Button addButton;
     @FXML private Button updateButton;
     @FXML private Button deleteButton;
     @FXML private Button clearButton;
+    @FXML private Button btnSuspender;
+    @FXML private Button btnActivar;
 
-    // Tabla y columnas
     @FXML private TableView<Dealer> dealerTable;
     @FXML private TableColumn<Dealer, String> colId;
     @FXML private TableColumn<Dealer, String> colDocumento;
@@ -57,8 +50,8 @@ public class GestionCrudRepartidorController {
     @FXML private TableColumn<Dealer, String> colCity;
     @FXML private TableColumn<Dealer, String> colUsuario;
     @FXML private TableColumn<Dealer, String> colDisponible;
+    @FXML private TableColumn<Dealer, String> colEstadoCuenta;
 
-    // Estadísticas
     @FXML private Label lblTotalRepartidores;
     @FXML private Label lblRepartidoresDisponibles;
 
@@ -112,6 +105,16 @@ public class GestionCrudRepartidorController {
             return new SimpleStringProperty(disponible ? "Disponible" : "Ocupado");
         });
 
+        // Nueva columna para estado de cuenta (Patrón State)
+        colEstadoCuenta.setCellValueFactory(cellData -> {
+            Dealer dealer = cellData.getValue();
+            if (dealer.getUserAccount() != null) {
+                String estado = dealer.getUserAccount().getAccountState().getStateName();
+                return new SimpleStringProperty(estado);
+            }
+            return new SimpleStringProperty("Sin cuenta");
+        });
+
         dealerTable.setItems(listDealer);
     }
 
@@ -156,9 +159,90 @@ public class GestionCrudRepartidorController {
         txtPassword.setPromptText("Dejar vacío para mantener la actual");
     }
 
-    /**
-     * Agrega un nuevo repartidor al sistema
-     */
+    @FXML
+    void onSuspenderCuenta(ActionEvent event) {
+        if (selecionadoDealer == null) {
+            showAlert(Alert.AlertType.WARNING, "Selección Requerida",
+                    "Debe seleccionar un repartidor de la tabla");
+            return;
+        }
+
+        if (selecionadoDealer.getUserAccount() == null) {
+            showAlert(Alert.AlertType.ERROR, "Error",
+                    "El repartidor no tiene cuenta de usuario");
+            return;
+        }
+
+        if (selecionadoDealer.getUserAccount().getAccountState() instanceof SuspendedState) {
+            showAlert(Alert.AlertType.WARNING, "Cuenta Ya Suspendida",
+                    "Esta cuenta ya se encuentra suspendida");
+            return;
+        }
+
+        TextInputDialog dialog = new TextInputDialog("Violación de términos de servicio");
+        dialog.setTitle("Suspender Cuenta");
+        dialog.setHeaderText("Suspender cuenta de: " + selecionadoDealer.getNombre());
+        dialog.setContentText("Razón de suspensión:");
+
+        dialog.showAndWait().ifPresent(razon -> {
+            String usuario = selecionadoDealer.getUserAccount().getUser();
+
+            if (sameDay.suspenderCuenta(usuario, razon)) {
+                showAlert(Alert.AlertType.INFORMATION, "Cuenta Suspendida",
+                        "La cuenta ha sido suspendida correctamente.\nRazón: " + razon);
+
+                dealerTable.refresh();
+                actualizarEstadisticas();
+                handleClear(event);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error",
+                        "No se pudo suspender la cuenta");
+            }
+        });
+    }
+
+    @FXML
+    void onActivarCuenta(ActionEvent event) {
+        if (selecionadoDealer == null) {
+            showAlert(Alert.AlertType.WARNING, "Selección Requerida",
+                    "Debe seleccionar un repartidor de la tabla");
+            return;
+        }
+
+        if (selecionadoDealer.getUserAccount() == null) {
+            showAlert(Alert.AlertType.ERROR, "Error",
+                    "El repartidor no tiene cuenta de usuario");
+            return;
+        }
+
+        if (selecionadoDealer.getUserAccount().getAccountState().getStateName().equals("ACTIVA")) {
+            showAlert(Alert.AlertType.INFORMATION, "Cuenta Activa",
+                    "La cuenta ya se encuentra activa");
+            return;
+        }
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Activar Cuenta");
+        confirmacion.setHeaderText("¿Activar la cuenta de " + selecionadoDealer.getNombre() + "?");
+        confirmacion.setContentText("La cuenta volverá a estar activa y el repartidor podrá iniciar sesión normalmente.");
+
+        if (confirmacion.showAndWait().get() == ButtonType.OK) {
+            String usuario = selecionadoDealer.getUserAccount().getUser();
+
+            if (sameDay.activarCuenta(usuario)) {
+                showAlert(Alert.AlertType.INFORMATION, "Cuenta Activada",
+                        "La cuenta ha sido activada correctamente");
+
+                dealerTable.refresh();
+                actualizarEstadisticas();
+                handleClear(event);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error",
+                        "No se pudo activar la cuenta");
+            }
+        }
+    }
+
     @FXML
     void handleAdd(ActionEvent event) {
         if (!validateFields(true)) {
@@ -167,16 +251,14 @@ public class GestionCrudRepartidorController {
 
         String id = generarIdRepartidor();
 
-        // AHORA crear el UserAccount con los 4 parámetros requeridos
         UserAccount userAccount = new UserAccount(
                 txtUsuario.getText().trim(),
                 txtPassword.getText().trim(),
-                null,              // El repartidor recién creado
-                TypeUser.DEALER         // Tipo de usuario: DEALER
+                null,
+                TypeUser.DEALER
         );
 
-        // Crear el nuevo repartidor PRIMERO (sin UserAccount todavía)
-        DealerFactory factory = new DealerFactory(true,cboxCity.getValue());
+        DealerFactory factory = new DealerFactory(true, cboxCity.getValue());
         Dealer newDealer = (Dealer) factory.crearPerson(id,
                 txtDocumento.getText().trim(),
                 txtNombre.getText().trim(),
@@ -185,7 +267,6 @@ public class GestionCrudRepartidorController {
                 userAccount
         );
 
-        // Agregar al sistema
         sameDay.agregarPersona(newDealer);
         listDealer.add(newDealer);
 
@@ -196,9 +277,6 @@ public class GestionCrudRepartidorController {
         actualizarEstadisticas();
     }
 
-    /**
-     * Actualiza los datos del repartidor seleccionado
-     */
     @FXML
     void handleUpdate(ActionEvent event) {
         if (selecionadoDealer == null || !validateFields(false)) {
@@ -215,30 +293,25 @@ public class GestionCrudRepartidorController {
 
         Optional<ButtonType> result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Actualizar información básica del repartidor
             selecionadoDealer.setDocumento(txtDocumento.getText().trim());
             selecionadoDealer.setNombre(txtNombre.getText().trim());
             selecionadoDealer.setCorreo(txtCorreo.getText().trim());
             selecionadoDealer.setTelefono(txtTelefono.getText().trim());
             selecionadoDealer.setCity(cboxCity.getValue());
 
-            // Gestionar credenciales de acceso
             if (selecionadoDealer.getUserAccount() != null) {
-                // Actualizar usuario existente
                 selecionadoDealer.getUserAccount().setUser(txtUsuario.getText().trim());
 
-                // Solo actualizar contraseña si se ingresó una nueva
                 if (!txtPassword.getText().trim().isEmpty()) {
                     selecionadoDealer.getUserAccount().setContrasenia(txtPassword.getText().trim());
                 }
             } else {
-                // Crear nueva cuenta de usuario si no existe
                 if (!txtUsuario.getText().trim().isEmpty() && !txtPassword.getText().trim().isEmpty()) {
                     UserAccount newAccount = new UserAccount(
                             txtUsuario.getText().trim(),
                             txtPassword.getText().trim(),
-                            selecionadoDealer,      // El repartidor actual
-                            TypeUser.DEALER         // Tipo de usuario: DEALER
+                            selecionadoDealer,
+                            TypeUser.DEALER
                     );
                     selecionadoDealer.setUserAccount(newAccount);
                 }
